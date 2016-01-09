@@ -12,7 +12,8 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+/**%include "L:\SAS\Inc\StdLocal.sas";**/
+%include "C:\DCData\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
