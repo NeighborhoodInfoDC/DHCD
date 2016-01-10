@@ -20,9 +20,9 @@
 
   data &out;
 
-    length Notice_type $ 3 Address $ 160 inbuff inbuff2 $ 1000;
+    length Notice_type $ 3 Orig_address $ 160 Source_file $ 120 inbuff inbuff2 $ 1000;
     
-    retain Notice_type "" Count 0;
+    retain Notice_type "" Count 0 Source_file "%lowcase(&file)";
 
     infile inf dsd missover firstobs=6;
     
@@ -43,7 +43,7 @@
       
       do i = 1 to Count;
         
-        input Notice_date :mmddyy10. Address inbuff inbuff2;
+        input Notice_date :mmddyy10. Orig_address inbuff inbuff2;
         
         if inbuff ~= "" then do;
         end;

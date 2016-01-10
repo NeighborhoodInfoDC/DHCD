@@ -25,8 +25,6 @@
   %let i = 1;
   %let v = %scan( &infilelist, &i, %str( ) );
   %let outlist = ;
-options mprint symbolgen mlogic spool;
-
 
   %do %until ( %length(&v) = 0 );
 
@@ -39,7 +37,7 @@ options mprint symbolgen mlogic spool;
 
   %end;
 
-  data &out;
+  data _Rcasd_read_all_files_1;
 
     length Nidc_id $ 12;
     
@@ -54,21 +52,25 @@ options mprint symbolgen mlogic spool;
     drop doc_num;
 
   run;
-
-  %File_info( data=&out, printobs=100, freqvars=Notice_type )
   
-  %Dup_check(
-  data=&out,
-  by=Nidc_id,
-  id=,
-  out=_dup_check,
-  listdups=Y
-  )
-
+  ** Split out individual addresses **;
   
+  %Rcasd_address_parse( data=_Rcasd_read_all_files_1, out=_Rcasd_read_all_files_addr, id=Nidc_id, addr=Orig_address )
+  
+  data &out;
+  
+    merge
+      _Rcasd_read_all_files_1
+      _Rcasd_read_all_files_addr;
+    by Nidc_id;
+    
+  run;
+
+  %File_info( data=&out, printobs=5, freqvars=Notice_type )
+    
   data export;
   
-    set &out (keep=Nidc_id address);
+    set &out (keep=Nidc_id Address);
     
   run;
     
