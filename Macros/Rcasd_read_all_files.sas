@@ -18,7 +18,7 @@
  
   %local i v out outlist;
   
-  %let out = Rcasd_&year._&fileid;
+  %let out = DHCD.Rcasd_&year._&fileid;
   
   %** Read individual input data sets **;
 
