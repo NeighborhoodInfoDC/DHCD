@@ -17,80 +17,47 @@
 
 ** Define libraries **;
 %DCData_lib( DHCD )
-%DCData_lib( RealProp )
 %DCData_lib( MAR )
 
-/*%File_info( data=Mar.address_points )*/
+data Rcasd_2015_000;
 
-data test;
-
-  set Mar.address_points (keep=address_id fulladdres where=(fulladdres~=''));
+  set DHCD.Rcasd_2015_000 (keep=Nidc_id Addr_num Address);
   
-  length xnumber $ 32 number 8 streetname streettype dir $ 40 buff $ 200;
+  retain city "Washington" state "DC";
   
-  buff = left( compbl( fulladdres ) );
+  length Address_clean last_word $ 80;
   
-  xnumber = scan( buff, 1, ' ' );
-  number = input( xnumber, 32. );
+  Address_clean = Address;
   
-  buff = substr( buff, length( xnumber ) + 2 );
+  last_word = scan( Address_clean, -1, " " );
   
-  if scan( buff, 1, ' ' ) in ( '1/2', 'REAR' ) then buff = substr( buff, length( scan( buff, 1, ' ' ) ) + 2 );
+  if last_word =: "#" then Address_clean = substr( Address_clean, 1, length( Address_clean ) - ( length( last_word ) + 1 ) );
   
-  if scan( buff, 1, ' ' ) in ( 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K' ) then do;
-    if scan( buff, 2, ' ' ) not in ( 'STREET', 'ROAD', 'COURT', 'PLACE', 'TERRACE' ) then buff = substr( buff, 3 );
-  end;
+  drop Address;
   
-  dir = scan( buff, -1, ' ' );
-  
-  streettype = scan( buff, -2, ' ' );
-  
-  streetname = substr( buff, 1, length( buff ) - ( length( dir ) + length( streettype ) + 2 ) );
-  
-  drop buff;
+  rename Address_clean=Address;
   
 run;
 
-proc print data=Test (obs=20);
-  where streetname contains 'WEST LANE';
-  id address_id;
-run;
-
-proc freq data=Test;
-  tables streetname streettype dir;
-run;
-
-ENDSAS;
-
-%File_info( data=sashelp.GEOEXM /*, freqvars=name*/ )
-%File_info( data=sashelp.GEOEXS, freqvars=PREDIRABRV SUFDIRABRV SUFTYPABRV )
-%File_info( data=sashelp.GEOEXP )
-%File_info( data=SASHELP.PLFIPS )
-%File_info( data=SASHELP.GCTYPE )
-
-proc print data=sashelp.GEOEXM;
-  where name = "YORK";
-run;
-
-proc print data=sashelp.GEOEXS (firstobs=100523 obs=100538);
-run;
-
-endsas;
-
-data Rcasd_geocode;
-
-  set dhcd.rcasd_2015_000 (obs=10 keep=Nidc_id Addr_num Address);
-  
-  retain City "Washington" State "DC";
-  
-run;
-
-proc geocode
-  method=street
-  data=rcasd_geocode
-  lookupstreet=RealProp.Parcel_base
-  attribute_var=(ssl);
+proc geocode method=street nozip nocity
+  data=Rcasd_2015_000
+  out=Rcasd_2015_000_geo
+  lookupstreet=Mar.Geocode_dc_m
+  attributevar=(address_id ssl);
   run;
 quit;
 
+proc print data=Rcasd_2015_000_geo n='TOTAL MATCHED = ';
+  where _score_ >= 45 and scan( address, 1, ' ' ) = scan( m_addr, 1, ' ' );
+  id nidc_id Addr_num;
+  var address m_addr _matched_ _score_ address_id ssl;
+  title2 'MATCHED ADDRESSES';
+run;
+
+proc print data=Rcasd_2015_000_geo n='TOTAL UNMATCHED = ';
+  where not( _score_ >= 45 and scan( address, 1, ' ' ) = scan( m_addr, 1, ' ' ) );
+  id nidc_id Addr_num;
+  var address m_addr _score_  _notes_;
+  title2 'UNMATCHED ADDRESSES';
+run;
 
