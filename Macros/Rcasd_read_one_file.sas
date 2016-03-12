@@ -12,8 +12,6 @@
  Modifications:
 **************************************************************************/
 
-/** Macro Rcasd_read_one_file - Start Definition **/
-
 %macro Rcasd_read_one_file( file=, path=, out= );
 
   filename inf  "&path\&file" lrecl=1000;
@@ -69,6 +67,4 @@
   filename inf clear;
 
 %mend Rcasd_read_one_file;
-
-/** End Macro Definition **/
 

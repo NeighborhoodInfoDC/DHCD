@@ -13,8 +13,6 @@ addresses.
  Modifications:
 **************************************************************************/
 
-/** Macro Rcasd_address_parse - Start Definition **/
-
 %macro Rcasd_address_parse( data=, out=, id=, addr= );
 
   %local MAX_NUMBERS;
@@ -116,5 +114,4 @@ addresses.
 
 %mend Rcasd_address_parse;
 
-/** End Macro Definition **/
 

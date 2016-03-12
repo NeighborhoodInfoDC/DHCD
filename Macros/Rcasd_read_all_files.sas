@@ -12,13 +12,12 @@
  Modifications:
 **************************************************************************/
 
-/** Macro Rcasd_read_all_files - Start Definition **/
-
-%macro Rcasd_read_all_files( year=, fileid=, infilelist=, path=&_dcdata_l_path\DHCD\Raw\RCASD );
+%macro Rcasd_read_all_files( year=, fileid=, infilelist=, path=&_dcdata_r_path\DHCD\Raw\RCASD );
  
   %local i v out outlist;
   
-  %let out = DHCD.Rcasd_&year._&fileid;
+  %if &_remote_batch_submit %then %let out = DHCD.Rcasd_&year._&fileid;
+  %else %let out = Work.Rcasd_&year._&fileid;
   
   %** Read individual input data sets **;
 
@@ -85,6 +84,4 @@
   filename fexport clear;
 
 %mend Rcasd_read_all_files;
-
-/** End Macro Definition **/
 
