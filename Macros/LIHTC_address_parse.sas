@@ -42,7 +42,7 @@
 
     do until ( _buff = '' );
     
-      PUT / 'START OUTER LOOP';
+      PUT / 'START OUTER LOOP' _N_=;
       
       _street_name = '';
       _unit = '';
@@ -55,11 +55,20 @@
     
       do until ( _buff = '' );
       
+        _number_suffix = '';
+        
         _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
         put _buff= _street_name=;
         
+        if ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 1, 1 ), 'ABCDEFGH' ) > 0 ) and
+           ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 2, 1 ), '0123456789' ) > 0 ) then do;
+          _number_suffix = substr( left( reverse( compress( _buff, ',' ) ) ), 1, 1 );
+          _buff = left( reverse( substr( left( reverse( compress( _buff, ',' ) ) ), 2 ) ) );
+          put _buff= _number_suffix=;
+        end;
+        
         if input( compress( _buff, ',' ), ??8. ) > 0 then do;
-          _number{_num_idx} = compress( _buff, ',' );
+          _number{_num_idx} = trim( compress( _buff, ',' ) ) || _number_suffix;
           _num_idx = _num_idx + 1;
         end;
         else if indexc( _buff, '-' ) then do;

@@ -72,3 +72,8 @@ data A;
 run;
 
 %File_info( data=A, printobs=50 )
+
+%LIHTC_address_parse( data=A, out=B, id=dhcd_project_id dhcd_seg_id, addr=seg_address )
+
+%File_info( data=B, printobs=50 )
+
