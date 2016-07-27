@@ -21,7 +21,9 @@
 
   data &out;
 
-    length Address $ 120 _addresslist _buff $ 500 _number1-_number&MAX_NUMBERS $ 50 _street_name _unit $ 200;
+    length 
+      Address $ 120 _addresslist _buff $ 500 _number1-_number&MAX_NUMBERS $ 50 
+      _street_name _unit $ 200 _number_suffix $ 8;
     
     array _number{*} _number1-_number&MAX_NUMBERS;
 
@@ -42,7 +44,7 @@
 
     do until ( _buff = '' );
     
-      PUT / 'START OUTER LOOP' _N_=;
+      PUT / 'START OUTER LOOP ' _N_= (&id) (=);
       
       _street_name = '';
       _unit = '';
@@ -64,23 +66,40 @@
            ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 2, 1 ), '0123456789' ) > 0 ) then do;
           _number_suffix = substr( left( reverse( compress( _buff, ',' ) ) ), 1, 1 );
           _buff = left( reverse( substr( left( reverse( compress( _buff, ',' ) ) ), 2 ) ) );
-          put _buff= _number_suffix=;
+          PUT _BUFF= _NUMBER_SUFFIX=;
+        end;
+        
+        if ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 1, 1 ), 'ABCDEFGH' ) > 0 ) and
+           ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 2, 1 ), '/' ) > 0 ) and
+           ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 3, 1 ), 'ABCDEFGH' ) > 0 ) and
+           ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 4, 1 ), '0123456789' ) > 0 ) then do;
+          _number_suffix = substr( left( reverse( compress( _buff, ',' ) ) ), 1, 3 );
+          _buff = left( reverse( substr( left( reverse( compress( _buff, ',' ) ) ), 4 ) ) );
+          PUT _BUFF= _NUMBER_SUFFIX=;
         end;
         
         if input( compress( _buff, ',' ), ??8. ) > 0 then do;
           _number{_num_idx} = trim( compress( _buff, ',' ) ) || _number_suffix;
+          PUT _NUMBER{_NUM_IDX}=;
           _num_idx = _num_idx + 1;
         end;
         else if indexc( _buff, '-' ) then do;
         
           ** number range **;
-          _r1 = input( scan( _buff, 1, '-' ), 8. );
+          _r1 = input( compress( scan( _buff, 1, '-' ), 'ABCDEFGH/' ), 8. );
           _r2 = input( scan( _buff, 2, '-' ), 8. );
+          PUT _R1= _R2=;
           
-          do i = _r1 to _r2 by 2;
-            _number{_num_idx} = left( put( i, 8. ) );
-            _num_idx = _num_idx + 1;
-          end;      
+          if _r2 < _r1 then do;
+            %err_put( macro=LIHTC_address_parse, msg="Invalid address range: " _n_= _addresslist= _r1= _r2= )
+          end;
+          else do;
+            do i = _r1 to _r2 by 2;
+              _number{_num_idx} = left( put( i, 8. ) );
+              PUT _NUMBER{_NUM_IDX}=;
+              _num_idx = _num_idx + 1;
+            end;
+          end;
           
         end;
         else if upcase( _buff ) in ( 'AND', '&' ) then do;

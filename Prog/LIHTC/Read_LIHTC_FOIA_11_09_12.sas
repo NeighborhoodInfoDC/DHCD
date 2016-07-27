@@ -18,7 +18,7 @@
 ** Define libraries **;
 %DCData_lib( DHCD )
 
-filename foia  "L:\Libraries\DHCD\Raw\LIHTC\FOIA Request Tax Credit Properties 11-9-12.csv" lrecl=2000;
+filename foia  "L:\Libraries\DHCD\Raw\LIHTC\FOIA Request Tax Credit Properties 11-9-12 (Urban edit).csv" lrecl=2000;
 
 data A;
 
