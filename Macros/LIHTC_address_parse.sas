@@ -60,7 +60,7 @@
         _number_suffix = '';
         
         _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
-        put _buff= _street_name=;
+        PUT _BUFF= _STREET_NAME=;
         
         if ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 1, 1 ), 'ABCDEFGH' ) > 0 ) and
            ( indexc( substr( left( reverse( compress( _buff, ',' ) ) ), 2, 1 ), '0123456789' ) > 0 ) then do;
@@ -78,7 +78,19 @@
           PUT _BUFF= _NUMBER_SUFFIX=;
         end;
         
-        if input( compress( _buff, ',' ), ??8. ) > 0 then do;
+        if prxmatch( '/\d+[A-H]?[,&] *\d+[A-H]?[ ,&]/', _buff ) > 0 then do;
+          
+          ** Delimited list of street numbers **;
+          _i = 1;
+          do while ( prxmatch( '/\d+[A-H]?/', scan( _buff, _i, ' ,&' ) ) > 0 );
+            _number{_num_idx} = left( scan( _buff, _i, ' ,&' ) );
+            PUT _NUMBER{_NUM_IDX}=;
+            _num_idx = _num_idx + 1;
+            _i = _i + 1;
+          end;
+
+        end;
+        else if input( compress( _buff, ',' ), ??8. ) > 0 then do;
           _number{_num_idx} = trim( compress( _buff, ',' ) ) || _number_suffix;
           PUT _NUMBER{_NUM_IDX}=;
           _num_idx = _num_idx + 1;

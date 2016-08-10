@@ -17,6 +17,7 @@
 
 ** Define libraries **;
 %DCData_lib( DHCD )
+%DCData_lib( MAR )
 
 filename foia  "L:\Libraries\DHCD\Raw\LIHTC\FOIA Request Tax Credit Properties 11-9-12 (Urban edit).csv" lrecl=2000;
 
@@ -59,6 +60,7 @@ data A;
         seg_placed_in_service : mmddyy10.;
     
     if seg_address ~= "" then do;
+        seg_address = prxchange( 's/(\(.*\))//', -1, seg_address );
         dhcd_seg_id + 1;
         output;
     end;
@@ -71,9 +73,10 @@ data A;
 
 run;
 
-%File_info( data=A, printobs=50 )
-
 %LIHTC_address_parse( data=A, out=B, id=dhcd_project_id dhcd_seg_id, addr=seg_address )
 
-%File_info( data=B, printobs=50 )
+%File_info( data=B, printobs=10 )
 
+%DC_mar_geocode( data=B, staddr=Address, out=C, id=dhcd_project_id dhcd_seg_id, keep_geo=address_id ssl, streetalt_file=D:\DCData\Libraries\DHCD\Prog\LIHTC\StreetAlt.txt )
+
+%File_info( data=C, printobs=10 )
