@@ -90,6 +90,9 @@
           end;
 
         end;
+        else if prxmatch( '/\d\d\d\d\d/', _buff ) > 0 then do;
+          ** ZIP code: do not process **;
+        end;  
         else if input( compress( _buff, ',' ), ??8. ) > 0 then do;
           _number{_num_idx} = trim( compress( _buff, ',' ) ) || _number_suffix;
           PUT _NUMBER{_NUM_IDX}=;
@@ -114,11 +117,20 @@
           end;
           
         end;
+        else if upcase( compress( _buff, '.' ) ) in ( 'STE', 'SUITE', 'APT', 'APARTMENT' ) then do;
+          ** Next word is a suite or apartment number, so skip **;
+          _addr_idx = _addr_idx + 1;
+        end;
         else if upcase( _buff ) in ( 'AND', '&' ) then do;
           if _street_name ~= '' then leave;
         end;
         else if substr( _buff, 1, 1 ) = '#' then do;
           _unit = _buff;
+        end;
+        else if upcase( _buff ) in ( 'SE', 'NE', 'SW', 'NW' ) then do;
+          ** Quadrant marks end of current address **;
+          _street_name = left( trim( _street_name ) || ' ' || _buff ); 
+          leave;
         end;
         else do;
           
