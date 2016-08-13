@@ -58,6 +58,23 @@ data A;
         skip4
         skip5
         seg_placed_in_service : mmddyy10.;
+
+    ** Corrections **;
+    
+    select ( seg_address );
+      when ( '400 M Street' )
+        seg_address = '400 M Street SE';
+      when ( '107-113 58th Street  (Amended)' )
+        seg_address = '107-113 58th Street SE (Amended)';
+      when ( '5745-5765 Blaine Street  (Amended)' )
+        seg_address = '5745,5747,5763,5765 Blaine Street  (Amended)';
+      when ( '5747-5751 East Capitol Street   (Amended)' )
+        seg_address = '5747 East Capitol Street   (Amended)';
+      when ( '1374 Congress Street (Acq.)', '1374 Congress Street (Rehab.)' )
+        seg_address = '';
+      otherwise
+        /** Do nothing **/;
+    end;
     
     if seg_address ~= "" then do;
         seg_address = prxchange( 's/(\(.*\))//', -1, seg_address );
@@ -77,6 +94,19 @@ run;
 
 %File_info( data=B, printobs=10 )
 
-%DC_mar_geocode( data=B, staddr=Address, out=C, id=dhcd_project_id dhcd_seg_id, keep_geo=address_id ssl, streetalt_file=D:\DCData\Libraries\DHCD\Prog\LIHTC\StreetAlt.txt )
+%DC_mar_geocode( 
+  data=B, 
+  staddr=Address, 
+  out=C, 
+  id=dhcd_project_id dhcd_seg_id, 
+  keep_geo=address_id ssl, streetalt_file=D:\DCData\Libraries\DHCD\Prog\LIHTC\StreetAlt.txt )
 
-%File_info( data=C, printobs=10 )
+data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12");
+
+  set C;
+
+  drop m_state m_city;
+  
+run;
+
+%File_info( data=Dhcd.Lihtc_foia_11_09_12, printobs=10 )
