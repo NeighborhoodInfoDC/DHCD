@@ -44,7 +44,7 @@
     
     set &outlist;
 
-    Nidc_id = "&year-&fileid-" || left( put( doc_num, z3. ) );
+    Nidc_id = "&year-" || left( put( doc_num, z5. ) );
     
     doc_num + 1;
 
@@ -56,7 +56,7 @@
   
   %Rcasd_address_parse( data=_Rcasd_read_all_files_1, out=_Rcasd_read_all_files_addr, id=Nidc_id, addr=Orig_address )
   
-  data &out;
+  data Rcsad_indiv_addr;
   
     merge
       _Rcasd_read_all_files_1
@@ -64,24 +64,22 @@
     by Nidc_id;
     
   run;
+  
+  ** Run addresses through geocoder **;
+  
+  %DC_mar_geocode(
+    geo_match=Y,
+    data=Rcsad_indiv_addr,
+    out=&out,
+    staddr=address,
+    zip=,
+    id=nidc_id addr_num,
+    ds_label=,
+    listunmatched=Y,
+    streetalt_file=D:\DCData\Libraries\DHCD\Prog\RCASD\StreetAlt.txt
+  )
 
   %File_info( data=&out, printobs=5, freqvars=Notice_type )
     
-  data export;
-  
-    set &out (keep=Nidc_id Address);
-    
-  run;
-    
-  filename fexport "&_dcdata_l_path\dhcd\raw\rcasd\&out._geocode.csv" lrecl=2000;
-
-  proc export data=export
-      outfile=fexport
-      dbms=csv replace;
-
-  run;
-
-  filename fexport clear;
-
 %mend Rcasd_read_all_files;
 

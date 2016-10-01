@@ -25,24 +25,33 @@ addresses.
     
     array _number{*} _number1-_number&MAX_NUMBERS;
 
-    set &data (keep=&id &addr);
-    
-    _addr_idx = 1;
+    set &data (keep=&id &addr Source_file);
     
     _addresslist = left( compbl( &addr ) );
     
+    ** Remove parenthetical info (...) **;
+    _addresslist = prxchange( 's/\(.*\)//', -1, _addresslist );
+
     _addresslist = tranwrd( _addresslist, '&', ' & ' );
     _addresslist = tranwrd( _addresslist, ' -', '-' );
     _addresslist = tranwrd( _addresslist, '- ', '-' );
-    _addresslist = tranwrd( _addresslist, 'W#', 'W #' );
-    _addresslist = tranwrd( _addresslist, 'E#', 'E #' );
+    _addresslist = tranwrd( _addresslist, ',-', ',' );
+    _addresslist = tranwrd( _addresslist, ',#', ' #' );    
+    _addresslist = tranwrd( _addresslist, ', #', ' #' );    
+    _addresslist = tranwrd( _addresslist, '#', ' #' );    
     _addresslist = tranwrd( _addresslist, '# ', '#' );
+    _addresslist = tranwrd( _addresslist, ' ,', ',' );
+    _addresslist = tranwrd( _addresslist, ',', ', ' );
     
     _addresslist = left( compbl( _addresslist ) );
 
+    Addr_num = 1;
+    _addr_idx = 1;
+    _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
+    
     do until ( _buff = '' );
     
-      PUT / 'START OUTER LOOP';
+      PUT / "START OUTER LOOP / " Source_file= / _addresslist= '/ ' _addr_idx=;
       
       _street_name = '';
       _unit = '';
@@ -55,30 +64,54 @@ addresses.
     
       do until ( _buff = '' );
       
-        _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
         put _buff= _street_name=;
         
         if input( compress( _buff, ',' ), ??8. ) > 0 then do;
-          _number{_num_idx} = compress( _buff, ',' );
-          _num_idx = _num_idx + 1;
+          if put( upcase( scan( _addresslist, _addr_idx + 1, ' ' ) ), $maraltsttyp. ) in ( 'STREET', 'PLACE' ) then do;
+            ** Next word is STREET or PLACE, so number is a street name **;
+            _street_name = left( trim( _street_name ) || ' ' || _buff );
+          end;
+          else do;
+            ** Number is a street address number **;
+            _number{_num_idx} = compress( _buff, ',' );
+            _num_idx = _num_idx + 1;
+          end;            
+        end;
+        else if substr( _buff, 1, 1 ) = '#' then do;
+          _unit = compress( _buff, ',' );
+          PUT _UNIT=;
+          leave;
         end;
         else if indexc( _buff, '-' ) then do;
         
-          ** number range **;
-          _r1 = input( scan( _buff, 1, '-' ), 8. );
-          _r2 = input( scan( _buff, 2, '-' ), 8. );
+          _r1 = input( scan( _buff, 1, '-' ), ??8. );
+          _r2 = input( scan( _buff, 2, '-' ), ??8. );
           
-          do i = _r1 to _r2 by 2;
-            _number{_num_idx} = left( put( i, 8. ) );
-            _num_idx = _num_idx + 1;
-          end;      
+          if missing( _r1 ) or missing( _r2 ) then do;
+            ** Not a number range, process pieces separately **;
+             _i = indexw( _addresslist, _buff, ' ' );
+             substr( _addresslist, _i + ( indexc( substr( _addresslist, _i ), '-' ) - 1 ), 1 ) = ' ';
+            _addr_idx = _addr_idx - 1;
+            PUT _R1= _R2= _ADDRESSLIST= _I= _ADDR_IDX=;
+          end;
+          else if 0 < _r1 <= _r2 then do;
+            ** Valid number range **;
+            do i = _r1 to _r2 by 2;
+              _number{_num_idx} = left( put( i, 8. ) );
+              _num_idx = _num_idx + 1;
+            end;
+          end;
+          else do;
+            %warn_put( macro=Rcasd_address_parse, msg="Invalid number range: " _r1 " to " _r2 "/ " &addr= )
+          end;
           
         end;
         else if upcase( _buff ) in ( 'AND', '&' ) then do;
           if _street_name ~= '' then leave;
         end;
-        else if substr( _buff, 1, 1 ) = '#' then do;
-          _unit = _buff;
+        else if left( reverse( _buff ) ) =: ',' then do;
+          _street_name = left( trim( _street_name ) || ' ' || compress( _buff, ',' ) );
+          leave;
         end;
         else do;
           
@@ -87,21 +120,27 @@ addresses.
         end;
         
         _addr_idx = _addr_idx + 1;
+        _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
         
       end;
       
-      Addr_num = 1;
-      
-      do i = 1 to _num_idx - 1;
-        Address = trim( left( _number{i} ) ) || ' ' || trim( _street_name ) || ' ' || _unit;
-        if not missing( Address ) then do;
-          output;
-          Addr_num = Addr_num + 1;
+      PUT _NUM_IDX=;
+      if _street_name ~= '' then do;
+        do i = 1 to _num_idx - 1;
+          Address = trim( left( _number{i} ) ) || ' ' || trim( _street_name ) || ' ' || _unit;
+          if not missing( Address ) then do;
+            output;
+            Addr_num = Addr_num + 1;
+          end;
         end;
+      end;
+      else do;
+        %warn_put( macro=Rcasd_address_parse, msg="No street name found. " &addr= )
       end;
       
       _addr_idx = _addr_idx + 1;
-      
+      _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
+
     end;
     
     label

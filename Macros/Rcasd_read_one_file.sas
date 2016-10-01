@@ -39,9 +39,11 @@
         stop;
       end;
       
-      do i = 1 to Count;
+      input Notice_date :mmddyy10. @; 
         
-        input Notice_date :mmddyy10. Orig_address inbuff inbuff2;
+      do while ( not missing( Notice_date ) );
+      
+        input Orig_address inbuff inbuff2;
         
         if inbuff ~= "" then do;
         end;
@@ -50,8 +52,14 @@
           Num_units = input( scan( inbuff2, 1, '/' ), 8. );
           Sale_price = input( scan( inbuff2, 2, '/' ), dollar16. );
         end;
+        
         output;
+        
+        input Notice_date :mmddyy10. @; 
+        
       end;
+      
+      input;
       
     end;
     else do;
@@ -60,7 +68,7 @@
    
    format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
    
-   drop inbuff: i count;
+   drop inbuff: count;
 
   run;
   
