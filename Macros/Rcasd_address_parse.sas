@@ -21,7 +21,7 @@ addresses.
 
   data &out;
 
-    length Address $ 120 _addresslist _buff $ 500 _number1-_number&MAX_NUMBERS $ 50 _street_name _unit $ 200;
+    length Address $ 120 _addresslist _buff $ 500 _number1-_number&MAX_NUMBERS $ 50 _street_name _unit $ 200 _def_quad $ 2;
     
     array _number{*} _number1-_number&MAX_NUMBERS;
 
@@ -44,7 +44,13 @@ addresses.
     _addresslist = tranwrd( _addresslist, ',', ', ' );
     
     _addresslist = left( compbl( _addresslist ) );
-
+    
+    if indexw( upcase( _addresslist ), 'NW' ) then _def_quad = 'NW';
+    else if indexw( upcase( _addresslist ), 'SW' ) then _def_quad = 'SW';
+    else if indexw( upcase( _addresslist ), 'NE' ) then _def_quad = 'NE';
+    else if indexw( upcase( _addresslist ), 'SE' ) then _def_quad = 'SE';
+    else _def_quad = '  ';
+    
     Addr_num = 1;
     _addr_idx = 1;
     _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
@@ -67,8 +73,9 @@ addresses.
         put _buff= _street_name=;
         
         if input( compress( _buff, ',' ), ??8. ) > 0 then do;
-          if put( upcase( scan( _addresslist, _addr_idx + 1, ' ' ) ), $maraltsttyp. ) in ( 'STREET', 'PLACE' ) then do;
-            ** Next word is STREET or PLACE, so number is a street name **;
+          /** NOTE: Can't include TERRACE in the list that follows because TERRACE is also a street name. **/
+          if put( upcase( scan( _addresslist, _addr_idx + 1, ' ' ) ), $maraltsttyp. ) in ( 'STREET', 'PLACE', 'AVENUE', 'COURT' ) then do;
+            ** Next word is street type, so number is a street name **;
             _street_name = left( trim( _street_name ) || ' ' || _buff );
           end;
           else do;
@@ -126,6 +133,11 @@ addresses.
       
       PUT _NUM_IDX=;
       if _street_name ~= '' then do;
+      
+        if not( indexw( upcase( _street_name ), 'NW' ) or indexw( upcase( _street_name ), 'SW' ) or
+           indexw( upcase( _street_name ), 'NE' ) or indexw( upcase( _street_name ), 'SE' ) ) then
+           _street_name = trim( _street_name ) || ' ' || _def_quad;
+           
         do i = 1 to _num_idx - 1;
           Address = trim( left( _number{i} ) ) || ' ' || trim( _street_name ) || ' ' || _unit;
           if not missing( Address ) then do;

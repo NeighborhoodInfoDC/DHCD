@@ -12,8 +12,7 @@
  Modifications:
 **************************************************************************/
 
-/**%include "L:\SAS\Inc\StdLocal.sas";**/
-%include "C:\DCData\SAS\Inc\StdLocal.sas";
+%include "L:\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
@@ -22,7 +21,10 @@ proc format library=DHCD;
 
   value $rcasd_text2type 
     "CONDOMINIUMREGISTRATIONAPPLICATION" = "101"
-    "NOT-A-HOUSINGACCOMMODATIONEXEMPTIONAPPLICATIONS" = "102"
+    "NOT-A-HOUSINGACCOMMODATIONEXEMPTIONAPPLICATIONS",
+    "NOTAHOUSINGACCOMODATIONAPPLICATION",
+    "NOTAHOUSINGACCOMODATION"
+    "NOTAHOUSINGACCOMMODATIONAPPLICATIONS" = "102"
     "VACANCYEXEMPTIONAPPLICATIONS" = "103"
     "LOWINCOMEEQUITYSHARECOOPERATIVECONVERSIONAPPLICATIONS" = "104"
     "TENANTELECTIONAPPLICATION" = "105"
@@ -39,18 +41,18 @@ proc format library=DHCD;
     "2-4RENTALUNITOFFERSOFSALE" = "209"
     "5+RENTALUNITOFFERSOFSALE" = "210"
     "RIGHTOFFIRSTREFUSAL" = "211"
-    other = "";
+    other = " ";
 
   value $rcasd_notice_type
     "101" = "Condominium registration application"
-    "102" = "Not-a-housing accommodation exemption application"
+    "102" = "Not a housing accommodation exemption application"
     "103" = "Vacancy exemption application"
     "104" = "Low income equity share cooperative conversion application"
     "105" = "Tenant election application"
     "106" = "Housing assistance payment application"
     "107" = "Property tax abatement application"
     "201" = "Notice of transfer"
-    "202" = "Sale data":"" = " other filings"
+    "202" = "Other filings"
     "203" = "Notice of foreclosure"
     "204" = "DC opportunity to purchase act notice"
     "205" = "Raze permit application"
