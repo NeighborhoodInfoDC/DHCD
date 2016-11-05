@@ -35,6 +35,7 @@ addresses.
     _addresslist = tranwrd( _addresslist, '&', ' & ' );
     _addresslist = tranwrd( _addresslist, ' -', '-' );
     _addresslist = tranwrd( _addresslist, '- ', '-' );
+    _addresslist = tranwrd( _addresslist, '--', '-' );
     _addresslist = tranwrd( _addresslist, ',-', ',' );
     _addresslist = tranwrd( _addresslist, ',#', ' #' );    
     _addresslist = tranwrd( _addresslist, ', #', ' #' );    
@@ -89,6 +90,13 @@ addresses.
           PUT _UNIT=;
           leave;
         end;
+        else if upcase( compress( _buff, ',' ) ) in ( 'UNIT', 'APT' ) then do;
+          _addr_idx = _addr_idx + 1;
+          _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
+          _unit = '#' || compress( _buff, ',#' );
+          PUT _UNIT=;
+          leave;
+        end;
         else if indexc( _buff, '-' ) then do;
         
           _r1 = input( scan( _buff, 1, '-' ), ??8. );
@@ -109,20 +117,21 @@ addresses.
             end;
           end;
           else do;
-            %warn_put( macro=Rcasd_address_parse, msg="Invalid number range: " _r1 " to " _r2 "/ " &addr= )
+            %warn_put( macro=Rcasd_address_parse, msg="Invalid number range: " _r1 " to " _r2 "/ " _addresslist= )
           end;
           
         end;
         else if upcase( _buff ) in ( 'AND', '&' ) then do;
           if _street_name ~= '' then leave;
         end;
-        else if left( reverse( _buff ) ) =: ',' then do;
+        /***else if left( reverse( _buff ) ) =: ',' then do;***/
+        else if left( reverse( _buff ) ) =: ',' and not( missing( input( scan( scan( _addresslist, _addr_idx + 1, ' ' ), 1, ',-&' ), ??8. ) ) ) then do;
           _street_name = left( trim( _street_name ) || ' ' || compress( _buff, ',' ) );
           leave;
         end;
         else do;
           
-          _street_name = left( trim( _street_name ) || ' ' || _buff );
+          _street_name = left( trim( _street_name ) || ' ' || compress( _buff, ',' ) );
           
         end;
         
@@ -147,7 +156,7 @@ addresses.
         end;
       end;
       else do;
-        %warn_put( macro=Rcasd_address_parse, msg="No street name found. " &addr= )
+        %warn_put( macro=Rcasd_address_parse, msg="No street name found at word #" _addr_idx "/ " _addresslist= )
       end;
       
       _addr_idx = _addr_idx + 1;
@@ -166,3 +175,67 @@ addresses.
 %mend Rcasd_address_parse;
 
 
+/******************** UNCOMMENT FOR TESTING ***********************************
+
+data A;
+
+  length Orig_address $ 120;
+  
+  retain Source_file ' ';
+  
+  Orig_address = '255 G Street SW #111 unit B';
+  output;
+  
+  Orig_address = '1250 4th Street SW #W 412';
+  output;
+
+  Orig_address = '273 56th Street # 1&2';
+  output;
+  
+  Orig_address = '1227 Queen Street NE Apt 3&4';
+  output;
+  
+  Orig_address = "1842 California Street NW #4 B";
+  output;
+  
+  Orig_address = "3883 Connecticut Ave unit #105";
+  output;
+  
+  Orig_address = "2505--2513 Bowen Road, 2604-2610 Sheridan Road & 2600-2608 Stanton Road SE";
+  output;
+
+  Orig_address = '1727 Massachusetts Ave, NW unit 112';
+  output;
+
+  Orig_address = '5011 14th Street NW';
+  output;
+  
+  Orig_address = '300 Hamilton Street NE, 350 Galloway Street NE and 5210 3rd Street NE';
+  output;
+  
+  Orig_address = '2804 Terrace Road SE #A-544';
+  output;
+  
+  Orig_address = '3576 -3722 Hayes Street & 3539-3699 Jay Street NE';
+  output;
+  
+  Orig_address = '4800-4822 & 4900-4903 Alabama Avenue SE, & 4400-441 Falls Terrace SE';
+  output;
+
+  Orig_address = '2000 New York Ave';
+  output;
+
+  Orig_address = '1200 Seaton Place';
+  output;
+
+run;
+
+%Rcasd_address_parse( data=A, out=B, id=, addr=Orig_address );
+
+proc print data=A;
+run;
+
+proc print data=B;
+run;
+
+/******************** END TESTING *********************************************/
