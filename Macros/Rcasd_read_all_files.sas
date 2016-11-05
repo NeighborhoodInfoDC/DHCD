@@ -82,17 +82,16 @@
   %DC_mar_geocode(
     geo_match=Y,
     data=_Rcsad_indiv_addr,
-    out=&outlib..&out,
+    out=&out,
     staddr=address,
     zip=,
     id=Nidc_rcasd_id addr_num Source_file,
-    ds_label="Rental Conversion and Sale Division, TOPA-related filings, &year",
     listunmatched=Y,
     streetalt_file=&_dcdata_l_path\DHCD\Prog\RCASD\StreetAlt.txt
   )
   
-  proc datasets library=&outlib memtype=(data) nolist;
-    modify &out (sortedby=Nidc_rcasd_id);
+  proc datasets library=work memtype=(data) nolist;
+    modify &out;
       label
         Nidc_rcasd_id = "NIDC unique RCASD notice ID"
         Notice_date = "Notice date"
@@ -102,14 +101,12 @@
         Sale_price = "Sale price (if applicable)"
         Source_file = "RCASD data source file";
   quit;
-
-  %File_info( data=&outlib..&out, printobs=5, freqvars=Notice_type )
-  
+ 
   ** Create export data set **;
   
   filename fexport "&_dcdata_r_path\DHCD\Raw\RCASD\&out..csv" lrecl=2000;
 
-  proc export data=&outlib..&out
+  proc export data=&out
       outfile=fexport
       dbms=csv replace;
 
@@ -123,29 +120,26 @@
     delete _Rcasd_: /memtype=data;
   quit;
   
-  %** Register metadata only if final batch submit **;
+  %** Finalize data set only if final batch submit **;
   
-  %if &_remote_batch_submit %then %do;
+  proc sql noprint;
+    select put( max( Notice_date ), mmddyy10. ) into :last_notice from &out;
+  quit;
   
-    ** Register metadata **;
+  %if &revisions = %then %let revisions = Updated with notices through &last_notice..;
+   
+  %put revisions=&revisions;
+    
+  %Finalize_data_set( 
+    data=&out,
+    out=&out,
+    outlib=DHCD,
+    label="Rental Conversion and Sale Division, TOPA-related filings, &year",
+    sortby=Nidc_rcasd_id Addr_num,
+    revisions=%str(&revisions),
+    printobs=5,
+    freqvars=Notice_type ward2012
+  )  
 
-    proc sql noprint;
-      select put( max( Notice_date ), mmddyy10. ) into :last_notice from &outlib..&out;
-    quit;
-    
-    %if &revisions = %then %let revisions = Updated with notices through &last_notice..;
-     
-    %put revisions=&revisions;
-    
-    %Dc_update_meta_file(
-      ds_lib=&outlib,
-      ds_name=&out,
-      creator_process=&out..sas,
-      restrictions=None,
-      revisions=%str(&revisions)
-    )
-    
-  %end;
-    
 %mend Rcasd_read_all_files;
 
