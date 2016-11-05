@@ -13,7 +13,7 @@ addresses.
  Modifications:
 **************************************************************************/
 
-%macro Rcasd_address_parse( data=, out=, id=, addr= );
+%macro Rcasd_address_parse( data=, out=, id=, addr=, debug=N );
 
   %local MAX_NUMBERS;
 
@@ -58,7 +58,9 @@ addresses.
     
     do until ( _buff = '' );
     
-      PUT / "START OUTER LOOP / " Source_file= / _addresslist= '/ ' _addr_idx=;
+      %if %mparam_is_yes( &debug ) %then %do;
+        PUT / "START OUTER LOOP / " Source_file= / _addresslist= '/ ' _addr_idx=;
+      %end;
       
       _street_name = '';
       _unit = '';
@@ -71,7 +73,9 @@ addresses.
     
       do until ( _buff = '' );
       
-        put _buff= _street_name=;
+        %if %mparam_is_yes( &debug ) %then %do;
+          PUT _buff= _street_name=;
+        %end;
         
         if input( compress( _buff, ',' ), ??8. ) > 0 then do;
           /** NOTE: Can't include TERRACE in the list that follows because TERRACE is also a street name. **/
@@ -87,14 +91,18 @@ addresses.
         end;
         else if substr( _buff, 1, 1 ) = '#' then do;
           _unit = compress( _buff, ',' );
-          PUT _UNIT=;
+          %if %mparam_is_yes( &debug ) %then %do;
+            PUT _UNIT=;
+          %end;
           leave;
         end;
         else if upcase( compress( _buff, ',' ) ) in ( 'UNIT', 'APT' ) then do;
           _addr_idx = _addr_idx + 1;
           _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
           _unit = '#' || compress( _buff, ',#' );
-          PUT _UNIT=;
+          %if %mparam_is_yes( &debug ) %then %do;
+            PUT _UNIT=;
+          %end;
           leave;
         end;
         else if indexc( _buff, '-' ) then do;
@@ -107,7 +115,9 @@ addresses.
              _i = indexw( _addresslist, _buff, ' ' );
              substr( _addresslist, _i + ( indexc( substr( _addresslist, _i ), '-' ) - 1 ), 1 ) = ' ';
             _addr_idx = _addr_idx - 1;
-            PUT _R1= _R2= _ADDRESSLIST= _I= _ADDR_IDX=;
+            %if %mparam_is_yes( &debug ) %then %do;
+              PUT _R1= _R2= _ADDRESSLIST= _I= _ADDR_IDX=;
+            %end;
           end;
           else if 0 < _r1 <= _r2 then do;
             ** Valid number range **;
@@ -140,7 +150,10 @@ addresses.
         
       end;
       
-      PUT _NUM_IDX=;
+      %if %mparam_is_yes( &debug ) %then %do;
+        PUT _NUM_IDX=;
+      %end;
+      
       if _street_name ~= '' then do;
       
         if not( indexw( upcase( _street_name ), 'NW' ) or indexw( upcase( _street_name ), 'SW' ) or
@@ -176,6 +189,12 @@ addresses.
 
 
 /******************** UNCOMMENT FOR TESTING ***********************************
+
+%include "L:\SAS\Inc\StdLocal.sas";
+
+** Define libraries **;
+%DCData_lib( DHCD )
+%DCData_lib( MAR )
 
 data A;
 
@@ -230,7 +249,7 @@ data A;
 
 run;
 
-%Rcasd_address_parse( data=A, out=B, id=, addr=Orig_address );
+%Rcasd_address_parse( data=A, out=B, id=, addr=Orig_address, debug=y );
 
 proc print data=A;
 run;
