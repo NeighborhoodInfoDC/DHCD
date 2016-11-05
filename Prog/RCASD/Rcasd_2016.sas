@@ -53,9 +53,11 @@
     2016-07-22.csv
     2016-07-29.csv
     2016-08-19.csv
+)
+
+/*** NEW FORMAT FOR THESE FILES
     2016-10-07_Revised.csv
     2016-10-14.csv
     2016-10-21.csv
     2016-10-28.csv
-)
 
