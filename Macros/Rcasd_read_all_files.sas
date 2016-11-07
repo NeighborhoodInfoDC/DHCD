@@ -96,6 +96,7 @@
         Nidc_rcasd_id = "NIDC unique RCASD notice ID"
         Notice_date = "Notice date"
         Notice_type = "RCASD notice type"
+        Notes = "Additional notes"
         Num_units = "Number of housing units (if applicable)"
         Orig_address = "Street address field from RCASD source file"
         Sale_price = "Sale price (if applicable)"
@@ -138,7 +139,7 @@
     sortby=Nidc_rcasd_id Addr_num,
     revisions=%str(&revisions),
     printobs=5,
-    freqvars=Notice_type ward2012
+    freqvars=Notice_type ward2012 Notes
   )  
 
 %mend Rcasd_read_all_files;

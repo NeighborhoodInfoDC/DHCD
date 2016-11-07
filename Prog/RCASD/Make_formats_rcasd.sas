@@ -20,19 +20,22 @@
 proc format library=DHCD;
 
   value $rcasd_text2type 
-    "CONDOMINIUMREGISTRATIONAPPLICATION" = "101"
+    "CONDOMINIUMREGISTRATIONAPPLICATION",
+    "CONDOMINIUMREGISTRATIONAPPLICATIONS" = "101"
     "NOT-A-HOUSINGACCOMMODATIONEXEMPTIONAPPLICATIONS",
     "NOTAHOUSINGACCOMODATIONAPPLICATION",
     "NOTAHOUSINGACCOMODATION",
     "NOTAHOUSINGACCOMMODATIONAPPLICATIONS" = "102"
     "VACANCYEXEMPTIONAPPLICATIONS" = "103"
     "LOWINCOMEEQUITYSHARECOOPERATIVECONVERSIONAPPLICATIONS" = "104"
+    "TENANTELECTIONAPPLICATIONS",
     "TENANTELECTIONAPPLICATION" = "105"
     "HOUSINGASSISTANCEPAYMENTAPPLICATIONS" = "106"
     "PROPERTYTAXABATEMENTAPPLICATIONS" = "107"
     "NOTICESOFTRANSFER" = "201"
     "OTHERFILINGS" = "202"
     "NOTICESOFFORECLOSURE" = "203"
+    "DCOPPORTUNITYTOPURCHASEACTDOPANOTICES",
     "DCOPPORTUNITYTOPURCHASEACTNOTICES" = "204"
     "RAZEPERMITAPPLICATIONS" = "205"
     "PETITIONSFORDECLARATORYRELIEF" = "206"
@@ -40,7 +43,11 @@ proc format library=DHCD;
     "SINGLEFAMILYDWELLINGOFFERSOFSALE" = "208"
     "2-4RENTALUNITOFFERSOFSALE" = "209"
     "5+RENTALUNITOFFERSOFSALE" = "210"
+    "RIGHTSOFFIRSTREFUSAL",
     "RIGHTOFFIRSTREFUSAL" = "211"
+    "TOPALETTEROFINTEREST" = "212"
+    "TOPAASSIGNMENTOFRIGHTS" = "213"
+    "TOPACOMPLAINTS" = "214"
     other = " ";
 
   value $rcasd_notice_type
@@ -61,7 +68,10 @@ proc format library=DHCD;
     "208" = "Single family dwelling offer of sale"
     "209" = "2-4 rental unit offer of sale"
     "210" = "5+ rental unit offer of sale"
-    "211" = "Right of first refusal";
+    "211" = "Right of first refusal"
+    "212" = "TOPA letter of interest"
+    "213" = "TOPA assignment of rights"
+    "214" = "TOPA complaints";
 
 run;
 
@@ -70,4 +80,8 @@ proc catalog catalog=DHCD.Formats;
   modify rcasd_notice_type (desc="RCASD notice type code") / entrytype=formatc;
   contents;
 quit;
+
+proc format library=DHCD fmtlib;
+  select $rcasd_text2type $rcasd_notice_type;
+run;
 
