@@ -17,7 +17,7 @@ addresses.
 
   %local MAX_NUMBERS;
 
-  %let MAX_NUMBERS = 100;
+  %let MAX_NUMBERS = 200;
 
   data &out;
 

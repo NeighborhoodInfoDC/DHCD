@@ -75,10 +75,16 @@
           input Orig_address inbuff inbuff2;
           
           if inbuff ~= "" then do;
-            Notes = left( compbl( inbuff ) );
+            if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff ) then do;
+              Num_units = input( scan( inbuff, 1, '/' ), 8. );
+              Sale_price = input( scan( inbuff, 2, '/' ), dollar16. );
+            end;
+            else do;
+              Notes = left( compbl( inbuff ) );
+            end;
           end;
           
-          if inbuff2 ~= "" then do;
+          if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff2 ) then do;
             Num_units = input( scan( inbuff2, 1, '/' ), 8. );
             Sale_price = input( scan( inbuff2, 2, '/' ), dollar16. );
           end;
@@ -116,15 +122,16 @@
       
       retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
 
-      infile inf dsd missover firstobs=10;
+      infile inf dsd missover firstobs=7;
       
       input inbuff @;
       input inbuff @;
       /*put _n_= inbuff=;*/
       
-      if inbuff =: '# Received:' then do;
+      if inbuff =: '# Received:' or input( inbuff, ??8. ) > 0 then do;
       
-        Count = input( substr( inbuff, 12 ), 8. );
+        if input( inbuff, ??8. ) > 0 then Count = input( inbuff, 8. );
+        else Count = input( substr( inbuff, 12 ), 8. );
       
         input inbuff @;
         input inbuff;
@@ -150,10 +157,16 @@
           input Orig_address inbuff inbuff2;
           
           if inbuff ~= "" then do;
-            Notes = left( compbl( inbuff ) );
+            if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff ) then do;
+              Num_units = input( scan( inbuff, 1, '/' ), 8. );
+              Sale_price = input( scan( inbuff, 2, '/' ), dollar16. );
+            end;
+            else do;
+              Notes = left( compbl( inbuff ) );
+            end;
           end;
           
-          if inbuff2 ~= "" and inbuff2 ~=: "Note" then do;
+          if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff2 ) then do;
             Num_units = input( scan( inbuff2, 1, '/' ), 8. );
             Sale_price = input( scan( inbuff2, 2, '/' ), dollar16. );
           end;

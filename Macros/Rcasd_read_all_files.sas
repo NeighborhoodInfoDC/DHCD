@@ -87,7 +87,7 @@
     zip=,
     id=Nidc_rcasd_id addr_num Source_file,
     listunmatched=Y,
-    streetalt_file=&_dcdata_l_path\DHCD\Prog\RCASD\StreetAlt.txt
+    streetalt_file=&_dcdata_default_path\DHCD\Prog\RCASD\StreetAlt.txt
   )
   
   proc datasets library=work memtype=(data) nolist;
@@ -127,10 +127,10 @@
     select put( max( Notice_date ), mmddyy10. ) into :last_notice from &out;
   quit;
   
-  %if &revisions = %then %let revisions = Updated with notices through &last_notice..;
+  %if %length( &revisions ) = 0 %then %let revisions = Updated with notices through &last_notice..;
+  
+  %Note_mput( macro=Rcasd_read_all_files, msg=%str(Revisions=&revisions) )
    
-  %put revisions=&revisions;
-    
   %Finalize_data_set( 
     data=&out,
     out=&out,
