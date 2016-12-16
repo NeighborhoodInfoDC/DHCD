@@ -104,7 +104,8 @@ run;
 
 data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12");
 
-  set C;
+  merge A C;
+  by dhcd_project_id dhcd_seg_id;
 
   drop m_state m_city;
   
