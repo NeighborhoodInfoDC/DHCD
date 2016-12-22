@@ -71,12 +71,12 @@ data A;
       when ( '5747-5751 East Capitol Street   (Amended)' )
         seg_address = '5747 East Capitol Street   (Amended)';
       when ( '1374 Congress Street (Acq.)', '1374 Congress Street (Rehab.)' )
-        seg_address = '';
+        seg_address = '-SKIP-';
       otherwise
         /** Do nothing **/;
     end;
     
-    if seg_address ~= "" then do;
+    if seg_address not in ( '', '-SKIP-' ) then do;
         seg_address = prxchange( 's/(\(.*\))//', -1, seg_address );
         dhcd_seg_id + 1;
         output;
