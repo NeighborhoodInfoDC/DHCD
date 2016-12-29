@@ -111,4 +111,4 @@ data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12");
   
 run;
 
-%File_info( data=Dhcd.Lihtc_foia_11_09_12, printobs=10 )
+%File_info( data=Dhcd.Lihtc_foia_11_09_12, printobs=10, freqvars=_matched_ _status_ )

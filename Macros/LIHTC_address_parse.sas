@@ -42,10 +42,12 @@
     
     _addresslist = left( compbl( _addresslist ) );
 
+    Addr_num = 1;
+      
+    PUT / 'START OUTER LOOP ' _N_= (&id) (=) _addresslist=;
+      
     do until ( _buff = '' );
     
-      PUT / 'START OUTER LOOP ' _N_= (&id) (=);
-      
       _street_name = '';
       _unit = '';
       
@@ -141,8 +143,6 @@
         _addr_idx = _addr_idx + 1;
         
       end;
-      
-      Addr_num = 1;
       
       do i = 1 to _num_idx - 1;
         Address = trim( left( _number{i} ) ) || ' ' || trim( _street_name ) || ' ' || _unit;
