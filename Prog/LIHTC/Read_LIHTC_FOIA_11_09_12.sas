@@ -8,7 +8,31 @@
  Environment:  Local Windows session (desktop)
  
  Description:  Read tax credit data provided by DHCD.
- L:\Libraries\DHCD\Raw\LIHTC\FOIA Request Tax Credit Properties 11-9-12.csv
+ Original: L:\Libraries\DHCD\Raw\LIHTC\FOIA Request Tax Credit Properties 11-9-12.csv
+ Edited: FOIA Request Tax Credit Properties 11-9-12 (Urban edit).csv
+
+ In edited file, 
+ Copied the following missing addresses to Mayfair Mansions
+   3726 Hayes St NE 
+   3780 Hayes St NE 
+   3810 Hayes St NE 
+ Removed these addresses from Faircliff Plaza
+  "1424 Euclid Street, NW (Acq.)",,,,,,03/18/05,,,
+  "1424 Euclid Street, NW (Reb.)",,,,,,12/01/05,,,
+  "1426 Euclid Street, NW (Acq.)",,,,,,03/18/05,,,
+  "1426 Euclid Street, NW (Reb.)",,,,,,12/01/05,,,
+  "1428 Euclid Street, NW (Acq.)",,,,,,03/18/05,,,
+  "1428 Euclid Street, NW (Reb.)",,,,,,12/01/05,,,
+  "1430 Euclid Street, NW (Acq.)",,,,,,03/18/05,,,
+  "1430 Euclid Street, NW (Reb.)",,,,,,12/01/05,,,
+  "1432 Euclid Street, NW (Acq.)",,,,,,03/18/05,,,
+  "1432 Euclid Street, NW (Reb.)",,,,,,12/01/05,,,
+ Added to Faircliff Plaza
+  1424 - 1432 CLIFTON ST NW
+ Replaced business address for PV Limited Partnership with actual 
+ property addresses
+ For Comm. Group/Regency Pool (WDC I) replaced "5115 Drake Place, SE" with
+ "5115 QUEENS STROLL PL SE"
 
  Modifications:
 **************************************************************************/
@@ -107,6 +131,14 @@ data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12");
   merge A C;
   by dhcd_project_id dhcd_seg_id;
 
+  ** Remove extraneous geo matches from LIHTC FOIA data **;
+
+  if scan( address_std, 1 ) ~= scan( m_addr, 1 ) then _score_ = .n;
+  
+  if _score_ >= 45;
+  
+  if indexw( _notes_, 'NODSM' ) then delete;
+  
   drop m_state m_city;
   
 run;
