@@ -11,7 +11,7 @@
  Original: L:\Libraries\DHCD\Raw\LIHTC\FOIA Request Tax Credit Properties 11-9-12.csv
  Edited: FOIA Request Tax Credit Properties 11-9-12 (Urban edit).csv
 
- In edited file, 
+ In edited input file:
  Copied the following missing addresses to Mayfair Mansions
    3726 Hayes St NE 
    3780 Hayes St NE 
@@ -30,9 +30,10 @@
  Added to Faircliff Plaza
   1424 - 1432 CLIFTON ST NW
  Replaced business address for PV Limited Partnership with actual 
- property addresses
+ property addresses.
  For Comm. Group/Regency Pool (WDC I) replaced "5115 Drake Place, SE" with
- "5115 QUEENS STROLL PL SE"
+ "5115 QUEENS STROLL PL SE".
+ Changed R Street Apartments addresses from NE to NW. 
 
  Modifications:
 **************************************************************************/
@@ -126,7 +127,7 @@ run;
   keep_geo=address_id ssl, 
   streetalt_file=D:\DCData\Libraries\DHCD\Prog\LIHTC\StreetAlt.txt )
 
-data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12");
+data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12") Bad_addresses;
 
   merge A C;
   by dhcd_project_id dhcd_seg_id;
@@ -137,10 +138,29 @@ data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12");
   
   if _score_ >= 45;
   
-  if indexw( _notes_, 'NODSM' ) then delete;
+  if dhcd_project_id = 113 and indexw( _notes_, 'NOTYM' ) then delete;
+  
+  if indexw( _notes_, 'NODSM' ) then 
+    output Bad_addresses;
+  else 
+    output Dhcd.Lihtc_foia_11_09_12;
   
   drop m_state m_city;
   
 run;
 
 %File_info( data=Dhcd.Lihtc_foia_11_09_12, printobs=10, freqvars=_matched_ _status_ )
+
+
+** Export bad addresses for examination **;
+
+filename fexport "D:\DCData\Libraries\DHCD\Prog\LIHTC\Read_LIHTC_FOIA_11_09_12_bad_addr.csv" lrecl=2000;
+
+proc export data=Bad_addresses
+    outfile=fexport
+    dbms=csv replace;
+
+run;
+
+filename fexport clear;
+
