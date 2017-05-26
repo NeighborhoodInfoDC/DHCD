@@ -34,6 +34,8 @@
  For Comm. Group/Regency Pool (WDC I) replaced "5115 Drake Place, SE" with
  "5115 QUEENS STROLL PL SE".
  Changed R Street Apartments addresses from NE to NW. 
+ Added to Parkland
+   1717 ALABAMA AVE SE
 
  Modifications:
 **************************************************************************/
@@ -140,6 +142,11 @@ data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12") Ba
   
   if dhcd_project_id = 113 and indexw( _notes_, 'NOTYM' ) then delete;
   
+  ** Fix bad format SSLs **;
+  
+  if ssl = '5907 0002' then ssl = '5907    0002';
+  else if ssl = '5907 0009' then ssl = '5907    0009';
+  
   if indexw( _notes_, 'NODSM' ) then 
     output Bad_addresses;
   else 
@@ -159,8 +166,26 @@ filename fexport "D:\DCData\Libraries\DHCD\Prog\LIHTC\Read_LIHTC_FOIA_11_09_12_b
 proc export data=Bad_addresses
     outfile=fexport
     dbms=csv replace;
-
 run;
 
 filename fexport clear;
 
+
+** Export addresses for geocoding in MAR Tool **;
+
+data Mar_export;
+
+  set Dhcd.Lihtc_foia_11_09_12;
+  
+  keep dhcd_: addr_num m_addr;
+  
+run;
+
+filename fexport "D:\DCData\Libraries\DHCD\Prog\LIHTC\Read_LIHTC_FOIA_11_09_12_mar_tool.csv" lrecl=2000;
+
+proc export data=Mar_export
+    outfile=fexport
+    dbms=csv replace;
+run;
+
+filename fexport clear;
