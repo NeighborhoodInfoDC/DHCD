@@ -119,8 +119,6 @@ run;
 
 %LIHTC_address_parse( data=A, out=B, id=dhcd_project_id dhcd_seg_id, addr=seg_address )
 
-%File_info( data=B, printobs=10 )
-
 %DC_mar_geocode( 
   data=B, 
   staddr=Address, 
@@ -129,7 +127,7 @@ run;
   keep_geo=address_id ssl, 
   streetalt_file=D:\DCData\Libraries\DHCD\Prog\LIHTC\StreetAlt.txt )
 
-data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12") Bad_addresses;
+data Lihtc_foia_11_09_12 (label="") Bad_addresses;
 
   merge A C;
   by dhcd_project_id dhcd_seg_id;
@@ -150,13 +148,36 @@ data Dhcd.Lihtc_foia_11_09_12 (label="LIHTC projects, FOIA request, 11/9/12") Ba
   if indexw( _notes_, 'NODSM' ) then 
     output Bad_addresses;
   else 
-    output Dhcd.Lihtc_foia_11_09_12;
+    output Lihtc_foia_11_09_12;
   
+  label
+    dhcd_project_id = "Project ID"
+    dhcd_seg_id = "Project address segment ID"
+    owner = "Property owner"
+    proj_bldgs = "Number of buildings"
+    proj_compliance_start = "Tax credit compliance start date"
+    proj_extended_expiration = "Tax credit extended use date"
+    proj_initial_expiration = "Tax credit compliance end date"
+    proj_lihtc_units = "Tax credit units"
+    proj_placed_in_service = "Tax credit placed in service date"
+    proj_units = "Total project units"
+    project = "Project name"
+    seg_address = "Project address segment"
+    seg_placed_in_service = "Project segment placed in service date"
+    ward = "Ward";
+
   drop m_state m_city;
   
 run;
 
-%File_info( data=Dhcd.Lihtc_foia_11_09_12, printobs=10, freqvars=_matched_ _status_ )
+%Finalize_data_set( 
+  data=Lihtc_foia_11_09_12,
+  out=Lihtc_foia_11_09_12,
+  outlib=DHCD,
+  label="LIHTC projects, FOIA request, 11/9/12",
+  sortby=dhcd_project_id dhcd_seg_id Addr_num,
+  revisions=%str(New file.)
+)
 
 
 ** Export bad addresses for examination **;
@@ -175,7 +196,7 @@ filename fexport clear;
 
 data Mar_export;
 
-  set Dhcd.Lihtc_foia_11_09_12;
+  set Lihtc_foia_11_09_12;
   
   keep dhcd_: addr_num m_addr;
   
