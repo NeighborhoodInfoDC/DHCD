@@ -251,7 +251,6 @@ proc sort data=PresCat.Parcel_subsidy out=Parcel_subsidy;
 %Dup_check(
   data=Parcel_subsidy,
   by=ssl,
-  id=nlihc_id,
   listdups=Y
 )
 
@@ -336,22 +335,19 @@ run;
 	merge 
 	  rental_5 (in=a) 
 	  /*RealProp.Parcel_rental_units (in=b drop=ui_proptype)*/
-	  Dhcd.Units_regression (keep=ssl units_mar units_full);
+	  /*Dhcd.Units_regression (keep=ssl units_mar units_full)*/
+	  RealProp.Parcel_units (drop=ui_proptype rename=(total_res_units=units_mar));
 	by ssl;
 	if a=1;
-    if units_mar > 0 then do;
-	  ** Unit count reported in MAR **;
-	  predicted = 0;
-	  units_full = units_mar;
-	end;
-	else if units_full > 0 then do;
-	  ** Unit count estimated from MAR using regression **;
-	  predicted = 1;
-	end;
-	else if ui_proptype in ( '10', '11' ) then do;
+	if ui_proptype in ( '10', '11' ) then do;
 	  ** Single family homes and condo units **;
 	  units_full = 1;
 	  predicted = 0;
+	end;
+      else if units_mar > 0 then do;
+	  ** Unit count reported in MAR **;
+	  predicted = 0;
+	  units_full = units_mar;
 	end;
 	else if ui_proptype = '13' and usecode in ( '023', '024' ) then do;
 	  ** Rented townhomes/assume unit count = 1 **;
@@ -802,7 +798,7 @@ proc sort data=DHCD.rent_control_database_041511 out=rent_control_database_04151
   by ssl;
 run;
 
-data dhcd.Parcels_Rent_Control;
+data Parcels_Rent_Control;
 merge 
   rental_7_1 
   rent_control_database_041511 
@@ -849,21 +845,26 @@ drop _type_ _freq_;
 run;
 
 %Dup_check(
-  data=dhcd.Parcels_Rent_Control,
+  data=Parcels_Rent_Control,
   by=ssl,
   id=premiseadd,
   listdups=Y
 )
 
-%File_info( data=dhcd.Parcels_Rent_Control, freqvars=Rent_controlled Rent_controlled_2011 )
+%File_info( data=Parcels_Rent_Control, freqvars=Rent_controlled Rent_controlled_2011 )
 
-proc freq data=dhcd.Parcels_Rent_Control;
+proc freq data=Parcels_Rent_Control;
   tables Rent_controlled * Rent_controlled_2011 / list missing;
 run;
 
+proc compare base=Dhcd.Parcels_rent_control compare=Parcels_rent_control maxprint=(40,32000);
+  id ssl;
+run;
+
+
 data test8;
 
-  set dhcd.Parcels_Rent_Control;
+  set Parcels_Rent_Control;
   where Rent_controlled and Rent_controlled_2011 in ( 0, .n );
 
 run;
@@ -873,7 +874,7 @@ run;
 proc compare maxprint=(40,32000) out=compare1 outnoequal outbase outcomp outdif noprint
     base=rent_control_database_041511 
 	  (where=(not Rent_controlled))
-    compare=dhcd.Parcels_Rent_Control 
+    compare=Parcels_Rent_Control 
       (where=(Rent_controlled and Rent_controlled_2011 = 0));
   id ssl;
   var Rent_controlled exempt_: Indiv Unit_count_pred_flag Receive_Exempt Excluded_Foreign;
@@ -908,13 +909,13 @@ run;
 */
 %fdate( fmt=yymmddd10. )
 
-proc export data=dhcd.Parcels_Rent_Control outfile="D:\DCData\Libraries\DHCD\Raw\Rent_Control_&fdate..csv"
+proc export data=Parcels_Rent_Control outfile="D:\DCData\Libraries\DHCD\Raw\Rent_Control_&fdate..csv"
 dbms=csv
 replace;
 run;
 
 
-proc freq data=dhcd.Parcels_Rent_Control;
+proc freq data=Parcels_Rent_Control;
 table ownercat*Exempt_lt5units_Indiv / list missing;  /*only case where not being an individual matters*/
 table ownercat*Exempt_built1978 / list missing;
 table ownercat*Excluded_nontaxable / list missing;
@@ -930,7 +931,7 @@ data Parcel_compare;
 
   merge
     Parcel_rent_control_2_24_2011 (in=inA)
-	dhcd.Parcels_Rent_Control (in=inB);
+	Parcels_Rent_Control (in=inB);
   by ssl;
 
   in_old = inA;
