@@ -41,7 +41,7 @@
 
     data &out;
 
-      length Notice_type $ 3 Orig_address Notes $ 160 Source_file $ 120 inbuff inbuff2 $ 2000;
+      length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
       
       retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
 
@@ -118,7 +118,7 @@
     
     data &out;
 
-      length Notice_type $ 3 Orig_address Notes $ 160 Source_file $ 120 inbuff inbuff2 $ 2000;
+      length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
       
       retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
 
