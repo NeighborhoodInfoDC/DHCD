@@ -21,7 +21,7 @@ addresses.
 
   data &out;
 
-    length Address $ 120 _addresslist _buff $ 500 _number1-_number&MAX_NUMBERS $ 50 _street_name _unit $ 200 _def_quad $ 2;
+    length Address $ 120 _addresslist _buff $ 1000 _number1-_number&MAX_NUMBERS $ 50 _street_name _unit $ 200 _def_quad $ 2;
     
     array _number{*} _number1-_number&MAX_NUMBERS;
 
@@ -134,7 +134,6 @@ addresses.
         else if upcase( _buff ) in ( 'AND', '&' ) then do;
           if _street_name ~= '' then leave;
         end;
-        /***else if left( reverse( _buff ) ) =: ',' then do;***/
         else if left( reverse( _buff ) ) =: ',' and not( missing( input( scan( scan( _addresslist, _addr_idx + 1, ' ' ), 1, ',-&' ), ??8. ) ) ) then do;
           _street_name = left( trim( _street_name ) || ' ' || compress( _buff, ',' ) );
           leave;
