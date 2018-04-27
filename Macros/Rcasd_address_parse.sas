@@ -13,7 +13,7 @@ addresses.
  Modifications:
 **************************************************************************/
 
-%macro Rcasd_address_parse( data=, out=, id=, addr=, debug=N );
+%macro Rcasd_address_parse( data=, out=, id=, addr=, keepin=Source_file, debug=N );
 
   %local MAX_NUMBERS;
 
@@ -25,7 +25,7 @@ addresses.
     
     array _number{*} _number1-_number&MAX_NUMBERS;
 
-    set &data (keep=&id &addr Source_file);
+    set &data (keep=&id &addr &keepin);
     
     _addresslist = left( compbl( &addr ) );
     
