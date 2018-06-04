@@ -2,8 +2,8 @@
  Program:  Rcasd_2018.sas
  Library:  DHCD
  Project:  NeighborhoodInfo DC
- Author:   N. Strayer
- Created:  02/06/18
+ Author:   W. Oliver
+ Created:  05/01/18
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
  
@@ -35,5 +35,9 @@
 	2018-03-16.csv
 	2018-03-23.csv
 	2018-03-30.csv
+	2018-04-06.csv
+	2018-04-13.csv
+	2018-04-20.csv
+	2018-04-27.csv
 )
 
