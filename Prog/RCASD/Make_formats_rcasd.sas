@@ -48,8 +48,6 @@ proc format library=DHCD;
     "TOPALETTEROFINTEREST" = "212"
     "TOPAASSIGNMENTOFRIGHTS" = "213"
     "TOPACOMPLAINTS" = "214"
-	"SFDNOTICEOFSOLICIATIONOFOFFER&NOTICEOFINTENTTOSELL",
-	"SINGLEFAMILYDWELLINGNOTICEOFSOLICIATIONOFOFFER&NOTICEOFINTENTTOSELL" = "215"
     other = " ";
 
   value $rcasd_notice_type
@@ -73,8 +71,7 @@ proc format library=DHCD;
     "211" = "Right of first refusal"
     "212" = "TOPA letter of interest"
     "213" = "TOPA assignment of rights"
-    "214" = "TOPA complaints"
-	"215" = "Single Family Dwelling Notice of Solicitation of Offer & Notice of Intent to Sell";
+    "214" = "TOPA complaints";
 
 run;
 
