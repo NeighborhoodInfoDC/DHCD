@@ -51,7 +51,9 @@ proc format library=DHCD;
     "TOPACOMPLAINTS" = "214"
 	"SFDNOTICEOFSOLICITATIONOFOFFER&NOTICEOFINTENTTOSELL",
 	"SINGLEFAMILYDWELLINGNOTICEOFSOLICITATIONOFOFFER&NOTICEOFINTENTTOSELL" = "215"
-	"TENANTSNOTICETOLANDLORD" = "216"
+	"TENANTSNOTICETOLANDLORD",
+	"TENANTSLETTERTOLANDLORD"= "216"
+	"TENANTSCLAIMOFELDERLY/DISABLEDSTATUS" = "217"
     other = " ";
 
   value $rcasd_notice_type
@@ -77,7 +79,8 @@ proc format library=DHCD;
     "213" = "TOPA assignment of rights"
     "214" = "TOPA complaints"
 	"215" = "Single family notice of solicitation of offer & notice of intent to sell"
-	"216" = "Tenant's notice to landlord";
+	"216" = "Tenant's notice to landlord"
+	"217" = "Tenant's claim of elderly/disabled status";
 
 run;
 
