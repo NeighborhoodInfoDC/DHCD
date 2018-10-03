@@ -137,7 +137,7 @@
         input inbuff;
         /*put _n_= count= inbuff=;*/
         
-        Notice_type = put( compress( upcase( inbuff ), ' .()' ), $rcasd_text2type. );
+        Notice_type = put( compress( upcase( inbuff ), " '.()" ), $rcasd_text2type. );
         
         if Notice_type = "" then do;
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
