@@ -61,8 +61,7 @@
         
         if Notice_type = "" then do;
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="No further records will be read from this file." )
-          stop;
+          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
         end;
         
         input Notice_date :mmddyy10. @; 
@@ -141,8 +140,7 @@
         
         if Notice_type = "" then do;
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="No further records will be read from this file." )
-          stop;
+          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
         end;
         
         input inbuff @;
