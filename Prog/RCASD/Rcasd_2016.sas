@@ -20,6 +20,7 @@
 
 
 %Rcasd_read_all_files( 
+  revisions=%str(Add Cluster2017, Bridgepk, Stantoncommons vars. Update geocoding.),
   year=2016, 
   infilelist=
     2016-01-08.csv
@@ -45,7 +46,7 @@
     2016-05-27.csv
     2016-06-03.csv
     2016-06-10.csv
-    2016-06-17.csv
+    2016-06-17_Revised.csv
     2016-06-24.csv
     2016-07-01.csv
     2016-07-08.csv
@@ -54,14 +55,14 @@
     2016-07-29.csv
     2016-08-19.csv
     2016-08-26.csv
-    2016-09-02.csv
+    2016-09-02_Revised.csv
     2016-09-09-.csv
     2016-09-16_Revised_02.csv
     2016-09-23.csv
     2016-09-30.csv
     2016-10-07_Revised.csv
     2016-10-14.csv
-    2016-10-21.csv
+    2016-10-21_Revised.csv
     2016-10-28.csv
     2016-11-04.csv
 	2016-11-11.csv

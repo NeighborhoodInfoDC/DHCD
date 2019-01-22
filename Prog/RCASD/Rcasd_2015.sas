@@ -19,7 +19,7 @@
 %DCData_lib( MAR )
 
 %Rcasd_read_all_files( 
-  revisions=%str(Add Notes var; cleanup Num_units, Sale_price.),
+  revisions=%str(Add Cluster2017, Bridgepk, Stantoncommons vars. Update geocoding.),
   year=2015, 
   infilelist=
     2015-01-09.csv
