@@ -58,6 +58,12 @@ proc format library=DHCD;
 	"TENANTSLETTERTOLANDLORD"= "216"
 	"SFDCLAIMOFELDERLYORDISABLEDSTATUS",
 	"TENANTSCLAIMOFELDERLY/DISABLEDSTATUS" = "217"
+    "SINGLEFAMILYDWELLINGOFFERSOFSALEW/CONTRACT" = "220"
+    "SINGLEFAMILYDWELLINGOFFERSOFSALEW/OCONTRACT" = "221"
+	"2-4UNITSOFFEROFSALEW/CONTRACT" = "224"
+	"2-4UNITSOFFEROFSALEW/OCONTRACT" = "225"
+	"5+UNITSOFFEROFSALEW/CONTRACT" = "228"
+	"5+UNITSOFFEROFSALEW/OCONTRACT" = "229"
     other = " ";
 
   value $rcasd_notice_type
@@ -84,7 +90,14 @@ proc format library=DHCD;
     "214" = "TOPA complaints"
 	"215" = "Single family notice of solicitation of offer & notice of intent to sell"
 	"216" = "Tenant's notice to landlord"
-	"217" = "Tenant's claim of elderly/disabled status";
+	"217" = "Tenant's claim of elderly/disabled status"
+    "220" = "Single family dwelling offer of sale with contract"
+    "221" = "Single family dwelling offer of sale without contract"
+    "224" = "2-4 units offer of sale with contract"
+    "225" = "2-4 units offer of sale without contract"
+    "228" = "5+ units offer of sale with contract"
+    "229" = "5+ units offer of sale without contract"
+	;
 
 run;
 
