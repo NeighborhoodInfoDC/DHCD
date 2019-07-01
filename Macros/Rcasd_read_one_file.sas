@@ -14,7 +14,7 @@
 
 %macro Rcasd_read_one_file( file=, path=, out= );
 
-  %local is_old_fmt is_v3_fmt wrote_obs;
+  %local is_old_fmt is_v3_fmt input_count wrote_obs;
   
   filename inf  "&path\&file" lrecl=1000;
   
@@ -60,7 +60,9 @@
       
       if input( inbuff, ??8. ) > 0 then do;
         
-        Count = input( inbuff, 8. );
+        Count = Count + input( inbuff, 8. );
+        
+        call symput( 'input_count', put( Count, 12. ) );
         
         input inbuff;
         /*put _n_= count= inbuff=;*/
@@ -129,25 +131,30 @@
       length Notice_type $ 3 Orig_address Notes $ 1000 Related_address Source_file $ 120 inbuff inbuff2 $ 2000;
       
       retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
+      
+      Notes = "";
 
       infile inf dsd missover firstobs=5;
       
-      input inbuff @;
+      input @1 inbuff @;
       
-      inbuff = left( tranwrd( compbl( upcase( inbuff ) ), ' - ', ' | ' ) );
-      PUT "VERSION 3 FILE: " _N_= INBUFF=;
+      /***if scan( inbuff, 1, '|' ) in ( 'CONVERSION', 'SALE AND TRANSFER' ) then do;***/
+      do while ( left( upcase( inbuff ) ) in: ( 'CONVERSION', 'SALE AND TRANSFER' ) );
+      
+        PUT "VERSION 3 FILE: " _N_= INBUFF=;
+        inbuff = left( tranwrd( compbl( upcase( inbuff ) ), ' - ', ' | ' ) );
 
-      if scan( inbuff, 1, '|' ) in ( 'CONVERSION', 'SALE AND TRANSFER' ) then do;
-      
         i = index( inbuff, 'ITEM' );
         
         if i > 0 then do;
           j = index( reverse( substr( inbuff, 1, i - 1 ) ), '(' ) - 1;
-          Count = input( substr( inbuff, i - j, j ), 8. );
+          Count = Count + input( substr( inbuff, i - j, j ), 8. );
         end;
         else do;
           Count = .;
         end;
+        
+        call symput( 'input_count', put( Count, 12. ) );
         
         inbuff2 = left( scan( inbuff, 2, '|' ) );
         PUT INBUFF2= INBUFF=;
@@ -173,6 +180,7 @@
         do while( missing( Notice_date ) );
         
           input inbuff;
+          
           input inbuff @;
           input Notice_date :mmddyy10. @; 
         
@@ -199,28 +207,39 @@
           end;
           
           output;
-          Notices + 1;
           
-          input inbuff;
-          input inbuff @;
-          input Notice_date :mmddyy10. @; 
+          Notices + 1;
+
+          call symput( 'wrote_obs', put( Notices, 12. ) );
+          
+          ** Advance to next record **;
+          
+          do while ( 1 );
+          
+            input inbuff @;
+            
+            Notice_date = .;
+            
+            if left( upcase( inbuff ) ) in: ( 'CONVERSION', 'SALE AND TRANSFER' ) then leave;
+
+            input Notice_date :mmddyy10. @; 
+            
+            if not( missing( Notice_date ) ) then leave;
+            else input;
+            
+          end;
           
         end;
         
-        input;
+        ***input;
         
       end;
-      else do;
-        input;
-     end;
-     
-     call symput( 'wrote_obs', put( Notices, 12. ) );
-     
-     label Related_address = "Related address numbers";
-     
-     format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
-     
-     drop inbuff: count Notices i j;
+
+      label Related_address = "Related address numbers";
+      
+      format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
+      
+      drop inbuff: count Notices i j;
 
     run;
     
@@ -244,9 +263,11 @@
       
       if inbuff =: '# Received:' or input( inbuff, ??8. ) > 0 then do;
       
-        if input( inbuff, ??8. ) > 0 then Count = input( inbuff, 8. );
-        else Count = input( substr( inbuff, 12 ), 8. );
+        if input( inbuff, ??8. ) > 0 then Count = Count + input( inbuff, 8. );
+        else Count = Count + input( substr( inbuff, 12 ), 8. );
       
+        call symput( 'input_count', put( Count, 12. ) );
+        
         input inbuff @;
         input inbuff;
         /*put _n_= count= inbuff=;*/
@@ -316,6 +337,9 @@
   
   %if &wrote_obs > 0 %then %do;
     %Note_mput( macro=Rcasd_read_one_file, msg=&wrote_obs notices read from &file.. )
+    %if &wrote_obs ~= &input_count %then %do;
+      %Warn_mput( macro=Rcasd_read_one_file, msg=Read notices not equal to input file count of &input_count.. )
+    %end;
   %end;
   %else %do;
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
