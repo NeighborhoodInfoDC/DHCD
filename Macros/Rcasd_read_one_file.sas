@@ -14,20 +14,28 @@
 
 %macro Rcasd_read_one_file( file=, path=, out= );
 
-  %local is_old_fmt wrote_obs;
+  %local is_old_fmt is_v3_fmt wrote_obs;
+  
+  filename inf  "&path\&file" lrecl=1000;
   
   ** Check input file version **;
 
   %let is_old_fmt = 0;
+  %let is_v3_fmt = 0;
   
-  filename inf  "&path\&file" lrecl=1000;
+  ** Identify input file version **;
   
   data _null_;
     length inbuff $ 2000;  
     infile inf dsd missover obs=1;
     input inbuff;
     if inbuff = "Department of Housing and Community Development" then do;
+      ** Old file format **;
       call symput( 'is_old_fmt', '1' );
+    end;
+    else if inbuff =: "DHCD CASD Mail Log" then do;
+      ** Version 3 format, Jan 14, 2019 or later **;
+      call symput( 'is_v3_fmt', '1' );
     end;
   run;
   
@@ -111,9 +119,116 @@
     run;
     
   %end;
+
+  %else %if &is_v3_fmt %then %do;
+  
+    **** Version 3 file format (Jan 14, 2019 or later) ****;
+    
+    data &out;
+
+      length Notice_type $ 3 Orig_address Notes $ 1000 Related_address Source_file $ 120 inbuff inbuff2 $ 2000;
+      
+      retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
+
+      infile inf dsd missover firstobs=5;
+      
+      input inbuff @;
+      
+      inbuff = left( tranwrd( compbl( upcase( inbuff ) ), ' - ', ' | ' ) );
+      PUT "VERSION 3 FILE: " _N_= INBUFF=;
+
+      if scan( inbuff, 1, '|' ) in ( 'CONVERSION', 'SALE AND TRANSFER' ) then do;
+      
+        i = index( inbuff, 'ITEM' );
+        
+        if i > 0 then do;
+          j = index( reverse( substr( inbuff, 1, i - 1 ) ), '(' ) - 1;
+          Count = input( substr( inbuff, i - j, j ), 8. );
+        end;
+        else do;
+          Count = .;
+        end;
+        
+        inbuff2 = left( scan( inbuff, 2, '|' ) );
+        PUT INBUFF2= INBUFF=;
+        
+        if inbuff2 = '(EMPTY)' then do;
+          inbuff2 = left( scan( inbuff, 3, '|' ) );
+        PUT INBUFF2= INBUFF=;
+          i = index( inbuff2, '(' );
+          if i > 0 then inbuff2 = substr( inbuff2, 1, i - 1 );
+        end;
+      
+        Notice_type = put( compress( left( inbuff2 ), " '.()" ), $rcasd_text2type. );
+        
+        if Notice_type = "" then do;
+          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff2= )
+          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+        end;
+        
+        Notice_date = .;
+        
+        ** Advance to first nonblank notice record **;
+        
+        do while( missing( Notice_date ) );
+        
+          input inbuff;
+          input inbuff @;
+          input Notice_date :mmddyy10. @; 
+        
+        end;          
+
+        put _n_= count= Notice_date= inbuff= ;
+        
+        do while ( not missing( Notice_date ) );
+        
+          Num_units = .;
+          Sale_price = .;
+        
+          input Orig_address Related_address @;
+          input inbuff @;
+          input inbuff @;
+          input inbuff2;
+          
+          if inbuff ~= "" then do;
+            Num_units = input( inbuff, 8. );
+          end;
+          
+          if inbuff2 ~= "" then do;
+            Sale_price = input( inbuff2, dollar16. );
+          end;
+          
+          output;
+          Notices + 1;
+          
+          input inbuff;
+          input inbuff @;
+          input Notice_date :mmddyy10. @; 
+          
+        end;
+        
+        input;
+        
+      end;
+      else do;
+        input;
+     end;
+     
+     call symput( 'wrote_obs', put( Notices, 12. ) );
+     
+     label Related_address = "Related address numbers";
+     
+     format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
+     
+     drop inbuff: count Notices i j;
+
+    run;
+    
+  %end;
+    
   %else %do;
   
-    **** New file format ****;
+    **** New file format (before Jan 14, 2019) ****;
     
     data &out;
 
