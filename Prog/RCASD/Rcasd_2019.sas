@@ -25,7 +25,27 @@
 	2019-01-04.csv
 	2019-1-11 Revised.csv
 	Weekly Report January 14-18 2019.csv
-	
+	Weekly Report June 24 – 28 2019.csv
+	Weekly Report June 17 – 21 2019.csv
 	Week of June 10 – 24 2019 Revised.csv
+	Weekly Report June 3 -7 2019.csv
+	Weekly Report May 27-31 2019.csv
+	Weekly Report May 20 - 24 2019.csv
+	Weekly Report May 13-17 2019.csv
+	Weekly Report May 6-10 2019.csv
+	TOPA Weekly Report April 29-May 03 2019.csv
+	TOPA-Related Filings – Weekly Report April 22 – 26 2019.csv
+	topa week of 4-8 to 15 2019.csv
+	topa week of 4-1 to 5 2019.csv
+	topa week of 3.25 - 3.29.csv
+	topa week of 3.18 - 3.22.csv
+	TOPA Weekly Report March 11-15.csv
+	Week of March 4-8 2019.csv
+	Weekly Report February 25- March 1 2019.csv
+	2.11. to 2.15. 2019 report.csv
+	topa report 2.8 to 22.19.csv
+	2.4 - 2.8. 2019 report.csv
+	TOPA-Related Filings  Weekly Report January 21-25 2019.csv
+
 	)
 
