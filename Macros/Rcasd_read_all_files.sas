@@ -140,7 +140,7 @@
     label="Rental Conversion and Sale Division, TOPA-related filings, &year",
     sortby=Nidc_rcasd_id Addr_num,
     revisions=%str(&revisions),
-    printobs=5,
+    printobs=0,
     freqvars=Notice_type ward2012 Notes
   )  
 

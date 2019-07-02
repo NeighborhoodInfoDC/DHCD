@@ -138,10 +138,8 @@
       
       input @1 inbuff @;
       
-      /***if scan( inbuff, 1, '|' ) in ( 'CONVERSION', 'SALE AND TRANSFER' ) then do;***/
       do while ( left( upcase( inbuff ) ) in: ( 'CONVERSION', 'SALE AND TRANSFER' ) );
       
-        PUT "VERSION 3 FILE: " _N_= INBUFF=;
         inbuff = left( tranwrd( compbl( upcase( inbuff ) ), ' - ', ' | ' ) );
 
         i = index( inbuff, 'ITEM' );
@@ -157,11 +155,9 @@
         call symput( 'input_count', put( Count, 12. ) );
         
         inbuff2 = left( scan( inbuff, 2, '|' ) );
-        PUT INBUFF2= INBUFF=;
         
         if inbuff2 = '(EMPTY)' then do;
           inbuff2 = left( scan( inbuff, 3, '|' ) );
-        PUT INBUFF2= INBUFF=;
           i = index( inbuff2, '(' );
           if i > 0 then inbuff2 = substr( inbuff2, 1, i - 1 );
         end;
@@ -186,8 +182,6 @@
         
         end;          
 
-        put _n_= count= Notice_date= inbuff= ;
-        
         do while ( not missing( Notice_date ) );
         
           Num_units = .;
