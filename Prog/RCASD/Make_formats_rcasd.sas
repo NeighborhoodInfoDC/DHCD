@@ -108,8 +108,7 @@ proc format library=DHCD;
 	"PETITIONFORRECONSIDERATION" = "244"
 
 	"WARRANTYSECURITYRELEASEREQUEST" = "245"
-	
-    
+	    
     other = " ";
 
   value $rcasd_notice_type
