@@ -51,5 +51,8 @@
 	Week of July 15 – 19 2019.csv
 	TOPA Week of July 22 – 26 2019.csv
 	Week of July 29 – August 2 2019.csv
+	week of 8-5 to 8-9.csv
+	Week of August 12 - 16 2019.csv
+	Week of August 19 - 23 2019.csv
 	)
 
