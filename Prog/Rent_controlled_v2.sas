@@ -23,7 +23,37 @@
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
 
-/*Download parcel base file*/
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$nlihcid_to_projname,
+  Desc=,
+  Data=PresCat.Project_category_view,
+  Value=nlihc_id,
+  Label=proj_name,
+  OtherLabel=,
+  DefaultLen=.,
+  MaxLen=.,
+  MinLen=.,
+  Print=N,
+  Contents=N
+  )
+
+%Data_to_format(
+  FmtLib=work,
+  FmtName=$nlihcid_to_subsidized,
+  Desc=,
+  Data=PresCat.Project_category_view,
+  Value=nlihc_id,
+  Label=put(subsidized,$1.),
+  OtherLabel='0',
+  DefaultLen=.,
+  MaxLen=.,
+  MinLen=.,
+  Print=N,
+  Contents=N
+  )
+
 
 /**************************************************
 **************************************************
@@ -50,6 +80,8 @@ data rental_1;
 	end;
 
 	if MIX2TXTYPE = "TX" or MIX1TXTYPE = "TX" then Excluded_Nontaxable=0; else Excluded_Nontaxable=1;
+
+  if left( ownername_full ) =: "+ " then ownername_full = "";
 
 	run;
 					/*proc format;
@@ -79,6 +111,7 @@ data rental_1;
 		2.1.2. Create flag for properties built after 1975 (1976, 1977) 
 **************************************************/;
 
+/*
 data Camarespt (keep= ssl ayb);
 	length ssl $17;
 	set Realprop.camarespt_2014_03;
@@ -93,6 +126,7 @@ data Camacondo (keep=ssl ayb);
   length ssl $17;
   set Realprop.camacondopt_2013_08;
   run;
+*/
 
 /*
 proc sort data= camacommpt;	by ssl;	run;
@@ -101,9 +135,9 @@ proc sort data= camarespt;	by ssl;	run;
 */
 
 data cama;
-set camacommpt camarespt camacondo;
-by ssl;
-if ayb < 1800 then ayb = .u;
+set RealProp.Cama_building;
+if ayb < 1800 or ayb > year( today() ) then ayb = .u;
+if eyb < 1800 or eyb > year( today() ) then eyb = .u;
 run;
 
 /*
@@ -117,7 +151,7 @@ run;
 
 proc summary data=cama n;
 by ssl;
-var ayb;
+var ayb eyb;
 output out=test1 (where=(_freq_>1)) 
  min= max= /autoname;
 run;
@@ -145,7 +179,7 @@ title2;
 
 ** Use earliest AYB value for identifying possible rent controlled properties **;
 proc summary data=cama min;
-var ayb;
+var ayb eyb;
 by ssl;
 output out=cama_min min= /autoname;
 run;
@@ -156,12 +190,14 @@ data rental_2;  * there are A LOT where the ayb=0;
 	by ssl;
 	if a=1;
 
+  year_built_min = min( ayb_min, eyb_min );
+
 	/*2.1 Flag buildings built before 1978*/
-	if ayb_min < 1978 then Exempt_built1978=0; else Exempt_built1978=1; 
+	if year_built_min < 1978 then Exempt_built1978=0; else Exempt_built1978=1; 
 
 	/*2.2 create post 1975 flag*/
-	if ayb_min ge 1976 then AYB_assumption=1;	else AYB_assumption=0;
-	if ayb_min =0 or missing(ayb_min) then AYB_missing=1;	else AYB_missing=0;
+	if year_built_min ge 1976 then AYB_assumption=1;	else AYB_assumption=0;
+	if year_built_min =0 or missing(ayb_min) then AYB_missing=1;	else AYB_missing=0;
 
 	run;	
 
@@ -245,25 +281,19 @@ proc sort data=assisted;
 	run;
 */
 
-proc sort data=PresCat.Parcel_subsidy out=Parcel_subsidy;
+proc sort data=PresCat.Parcel (where=(put( nlihc_id, $nlihcid_to_subsidized. ) = '1')) out=Prescat_parcel nodupkey;
   by ssl;
-
-%Dup_check(
-  data=Parcel_subsidy,
-  by=ssl,
-  listdups=Y
-)
-
+run;
 
 data rental_3;
 	merge 
 	  rental_2 (in=a) 
-	  PresCat.Parcel_subsidy (keep=ssl Sub_all_proj);
+	  Prescat_parcel (keep=nlihc_id ssl in=b);
 	by ssl;
 
 	if a;
 
-	if Sub_all_proj > 0 then Exempt_assisted=1; else Exempt_assisted=0; 
+	if b then Exempt_assisted=1; else Exempt_assisted=0; 
 	
 	run;
 
@@ -295,12 +325,43 @@ run;
 data rental_5;
 merge 
   rental_3 (in=a) 
-  realprop.parcel_geo (keep=ssl anc2002 ANC2012 Ward2002 Ward2012  Cluster2000  geo2000 geo2010 Cluster_tr2000 zip);
+  realprop.parcel_geo (keep=ssl ANC2012 Ward2012 Cluster2017 geo2010 zip x_coord y_coord);
 by ssl;
 if a=1;
+
+  ** Fill in missing geos for selected properties **;
+  select ( ssl );
+    when ( '0158    0084' ) do;
+      ward2012 = '2';
+      cluster2017 = '06';
+    end;
+    when ( '0701    7040' ) do;
+      ward2012 = '6';
+      cluster2017 = '27';
+    end;
+    when ( '3117    0096' ) do;
+      ward2012 = '5';
+      cluster2017 = '21';
+    end;
+    when ( '4513    0082' ) do;
+      ward2012 = '6';
+      cluster2017 = '25';
+    end;
+    when ( '5622    0073' ) do;
+      ward2012 = '8';
+      cluster2017 = '34';
+    end;
+    when ( '5933    0114' ) do;
+      ward2012 = '8';
+      cluster2017 = '39';
+    end;
+    otherwise
+      /** SKIP **/;
+  end;
+
 run;
 
-%File_info( data=rental_5, contents=n, stats=, printobs=0, freqvars=ward2012 cluster_tr2000 )
+%File_info( data=rental_5, contents=n, stats=, printobs=0, freqvars=ward2012 cluster2017 )
 
 /**************************************************
 **************************************************
@@ -412,7 +473,7 @@ value $owner
 run;
 */
 
-*Create new dummy variable to indicate if property is greater than 5;
+*Create new dummy variable to indicate if property is greater than 5 units;
 data rental_6_1;
 	set rental_6;
 
@@ -461,6 +522,8 @@ proc sql noprint;
 quit;
 */
 
+** Check for owners of multiple properties by address **;
+
 proc sql noprint;
   create table rental_6_2 as
   select rental_6_1.*, Owner_add_sum.*
@@ -476,6 +539,12 @@ proc sql noprint;
 ;
 quit;
 
+proc print data=rental_6_2 (obs=200);
+  where owner_add_count > 1;
+  id owner_add;
+  var ssl owner_add_count adj_unit_count_owner_add_sum;
+run;
+
 /*
 proc sql noprint;
   create table rental_6_1_ownername_sum (where=(ownername_count > 1)) as
@@ -488,6 +557,8 @@ proc sql noprint;
   group by ownername_full;
 quit;
 */
+
+** Check for owners of multiple properties by name **;
 
 proc sql noprint;
   create table rental_6_3 as
@@ -503,6 +574,12 @@ proc sql noprint;
   on Ownername_sum.ownername_full = rental_6_2.ownername_full
 ;
 quit;
+
+proc print data=rental_6_3 (obs=200);
+  where ownername_count > 1;
+  id ownername_full;
+  var ssl ownername_count adj_unit_count_ownername_sum;
+run;
 
 /*
 proc sort data= rental_6_1;
@@ -543,6 +620,11 @@ if a;
 run;
 */
 
+proc freq data=rental_6_3;
+  tables ownercat;
+  format ownercat ;
+run;
+
 ** Create owner exemption flags **;
 data rental_7;
 	set rental_6_3;
@@ -556,7 +638,7 @@ data rental_7;
 	if units5plus_flag=1 or owns5plus_assump_flag=1 then Exempt_lt5units_ALL=0; else Exempt_lt5units_ALL=1;
 
 	*Exemption does not apply to non individuals;
-	if ownercat in ("010", "020", "030", "10", "20", "30") then Indiv=1; 
+	if ownercat in ("010", "020", "030") then Indiv=1; 
 		else Indiv=0;
 
 	* Create final flag for those who are not individuals and have lt 5 units;
@@ -590,15 +672,13 @@ data rental_7;
   	if indexw( address3, 'DC' ) then OwnerDC=1;
   	else OwnerDC= 0;
  	 end;
- 	 else OwnerDC = 9;
+ 	 else OwnerDC = .u;
 ** Assume OwnerDC=1 for government & quasi-gov. owners **;
   
-  if OwnerCat in ( '040', '050', '060', '070' ) then OwnerDC = 1;
+  if OwnerCat in ( '040', '045', '050', '060', '070' ) then OwnerDC = 1;
   label OwnerDC = 'DC-based owner';
 
 				run;
-
-%File_info( data=rental_7, printobs=0, contents=n )
 
 proc freq data=rental_7;
   tables Indiv * Exempt_lt5units_ALL * Exempt_lt5units_Indiv / list missing;
@@ -620,7 +700,9 @@ run;
 
 data rental_7_1;
 set rental_7;
-if ownercat in ("40", "040", "50", "050") then Exempt_govowned=1; else Exempt_govowned=0;
+
+if ownercat in ("040", "045", "050") then Exempt_govowned=1; else Exempt_govowned=0;
+
 if ownercat="060" then Excluded_Foreign=1; else Excluded_Foreign=0;
 
 *flag if a trust;
@@ -629,6 +711,8 @@ Trust1=find(OWNERNAME_full, "trust", "i");
 If trust1>0 then Trust_flag=1; else Trust_flag=0;
 
 run;
+
+%File_info( data=rental_7_1, printobs=0, contents=n )
 
 /*
 proc print data=rental_7_1 obs="100";
@@ -733,11 +817,10 @@ ssl
 
 Premiseadd_Full
 Zip
-ANC2002
-Ward2002
-Cluster2000
-Geo2000
-Cluster_tr2000
+ANC2012
+Ward2012
+Cluster2017
+Geo2010
 Zip
 X_COORD
 Y_COORD
@@ -787,7 +870,7 @@ Excluded_Foreign
 
 proc format;
 value ayb
-0="Unknown";
+.u="Unknown";
 run;
 
 proc sort data=rental_7_1;
@@ -852,6 +935,37 @@ run;
 )
 
 %File_info( data=Parcels_Rent_Control, freqvars=Rent_controlled Rent_controlled_2011 )
+
+proc format;
+  value rc (notsorted)
+    1 = 'Rent controlled'
+    0 = 'Not rent controlled';
+run;
+
+proc tabulate data=Parcels_Rent_Control format=comma12.0 noseps missing;
+  where in_last_ownerpt;
+  class ui_proptype ward2012;
+  class rent_controlled / preloadfmt order=data;
+  var adj_unit_count;
+  table 
+    /** Pages **/
+    ui_proptype=' ',
+    /** Rows **/
+    all='DC' ward2012=' ',
+    /** Columns **/
+    ( all='Total' rent_controlled=' ' ) *
+    ( n='Properties' sum=' '*adj_unit_count='Units' )
+    / condense;
+  format rent_controlled rc.;
+run;
+
+title2 '--Missing geography--';
+proc print data=Parcels_Rent_Control;
+  where missing( Ward2012 ) and not missing( ui_proptype );
+  id ssl; 
+  var premiseadd ui_proptype;
+run;
+title2;
 
 proc freq data=Parcels_Rent_Control;
   tables Rent_controlled * Rent_controlled_2011 / list missing;
