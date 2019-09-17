@@ -27,9 +27,11 @@
   %let out = Rcasd_&year;
   
   %** Read individual input data sets **;
+  
+  %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .csv, .csv | ) );
 
   %let i = 1;
-  %let v = %scan( &infilelist, &i, %str( ) );
+  %let v = %scan( &infilelist, &i, '|' );
   %let outlist = ;
 
   %do %until ( %length(&v) = 0 );
@@ -39,7 +41,7 @@
     %let outlist = &outlist _rcasd_&i;
     
     %let i = %eval( &i + 1 );
-    %let v = %scan( &infilelist, &i, %str( ) );
+    %let v = %scan( &infilelist, &i, '|' );
 
   %end;
 
@@ -85,7 +87,7 @@
     out=&out,
     staddr=address,
     zip=,
-    id=Nidc_rcasd_id addr_num Source_file,
+    id=Nidc_rcasd_id addr_num Source_file Orig_address,
     listunmatched=Y,
     streetalt_file=&_dcdata_default_path\DHCD\Prog\RCASD\StreetAlt.txt
   )
@@ -138,7 +140,7 @@
     label="Rental Conversion and Sale Division, TOPA-related filings, &year",
     sortby=Nidc_rcasd_id Addr_num,
     revisions=%str(&revisions),
-    printobs=5,
+    printobs=0,
     freqvars=Notice_type ward2012 Notes
   )  
 

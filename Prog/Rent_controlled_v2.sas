@@ -23,7 +23,6 @@
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
 
-
 %Data_to_format(
   FmtLib=work,
   FmtName=$nlihcid_to_projname,
@@ -199,7 +198,7 @@ data rental_2;  * there are A LOT where the ayb=0;
 	if year_built_min ge 1976 then AYB_assumption=1;	else AYB_assumption=0;
 	if year_built_min =0 or missing(ayb_min) then AYB_missing=1;	else AYB_missing=0;
 
-	run;	
+run;	
 
 ** Double check for duplicate SSLs **;
 
@@ -409,6 +408,15 @@ run;
 	  ** Unit count reported in MAR **;
 	  predicted = 0;
 	  units_full = units_mar;
+	end;
+	else if units_full > 0 then do;
+	  ** Unit count estimated from MAR using regression **;
+	  predicted = 1;
+	end;
+	else if ui_proptype in ( '10', '11' ) then do;
+	  ** Single family homes and condo units **;
+	  units_full = 1;
+	  predicted = 0;
 	end;
 	else if ui_proptype = '13' and usecode in ( '023', '024' ) then do;
 	  ** Rented townhomes/assume unit count = 1 **;
