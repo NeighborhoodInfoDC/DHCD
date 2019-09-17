@@ -23,6 +23,8 @@
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
 
+%let revisions = New file.;
+
 %Data_to_format(
   FmtLib=work,
   FmtName=$nlihcid_to_projname,
@@ -554,7 +556,7 @@ run;
   sortby=ssl,
   /** Metadata parameters **/
   restrictions=None,
-  revisions=%str(New file.),
+  revisions=%str(&revisions),
   /** File info parameters **/
   printobs=0,
   freqvars=Rent_controlled Rent_controlled_2011
