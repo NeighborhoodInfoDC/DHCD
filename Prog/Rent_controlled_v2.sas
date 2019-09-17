@@ -66,7 +66,7 @@ data rental_1;
 		 drop=ui_proptype in_last_ownerpt)
 	  realprop.Parcel_base 
 	    (in=b
-	     keep=ssl ui_proptype in_last_ownerpt ownerpt_extractdat_first usecode premiseadd);
+	     keep=ssl ui_proptype in_last_ownerpt ownerpt_extractdat_first ownerpt_extractdat_last usecode premiseadd);
 	by ssl;  
 	if b and ui_proptype in ( "10", "11", "13" ) and ssl ne "" and in_last_ownerpt = 1; *Residential: Rental apartment building ;
 
@@ -81,26 +81,10 @@ data rental_1;
 	if MIX2TXTYPE = "TX" or MIX1TXTYPE = "TX" then Excluded_Nontaxable=0; else Excluded_Nontaxable=1;
 
   if left( ownername_full ) =: "+ " then ownername_full = "";
+  
+  label Excluded_Nontaxable = "Nontaxable property exclusion applies";
 
 	run;
-					/*proc format;
-				value $proptype
-				  "10" = "Single-family home"   
-				  "11" = "Condominium unit"   
-				  "12" = "Cooperative building"     
-				  "13" = "Rental apartment building"     
-				  "20" = "Retail"     
-				  "21" = "Office"     
-				  "22" = "Parking garage/lot"     
-				  "23" = "Industrial"
-				  "24" = "Hotel/motel"    
-				  "29" = "Other"
-				  "30" = "Group quarters"
-				  "40" = "Garage"
-				  "50" = "Unimproved land"    
-				  "51" = "Vacant With structures"   
-				 "99" = "Unknown";
-				run; */
 
 
 /**************************************************
@@ -162,6 +146,12 @@ data rental_2;  * there are A LOT where the ayb=0;
 	/*2.2 create post 1975 flag*/
 	if year_built_min ge 1976 then AYB_assumption=1;	else AYB_assumption=0;
 	if year_built_min =0 or missing(ayb_min) then AYB_missing=1;	else AYB_missing=0;
+	
+	label 
+	  year_built_min = "Composite property year built minimum from AYB and EYB"
+	  Exempt_built1978 = "Property built 1978 or later exemption applies"
+	  AYB_assumption = "Property year built >= 1976"
+	  AYB_missing = "Property year built missing";
 
 run;	
 
@@ -198,6 +188,8 @@ data rental_3;
 	if a;
 
 	if b then Exempt_assisted=1; else Exempt_assisted=0; 
+	
+	label Exempt_assisted = "Assisted housing exemption applies";
 	
 	run;
 
@@ -248,7 +240,7 @@ if a=1;
 
 run;
 
-%File_info( data=rental_5, contents=n, stats=, printobs=0, freqvars=ward2012 cluster2017 )
+%File_info( data=rental_5, contents=n, printobs=0, freqvars=ward2012 cluster2017 )
 
 
 /**************************************************
@@ -259,8 +251,6 @@ run;
 data rental_6;
 	merge 
 	  rental_5 (in=a) 
-	  /*RealProp.Parcel_rental_units (in=b drop=ui_proptype)*/
-	  /*Dhcd.Units_regression (keep=ssl units_mar units_full)*/
 	  RealProp.Parcel_units (drop=ui_proptype rename=(total_res_units=units_mar));
 	by ssl;
 	if a=1;
@@ -274,20 +264,16 @@ data rental_6;
 	  predicted = 0;
 	  units_full = units_mar;
 	end;
-	else if units_full > 0 then do;
-	  ** Unit count estimated from MAR using regression **;
-	  predicted = 1;
-	end;
-	else if ui_proptype in ( '10', '11' ) then do;
-	  ** Single family homes and condo units **;
-	  units_full = 1;
-	  predicted = 0;
-	end;
 	else if ui_proptype = '13' and usecode in ( '023', '024' ) then do;
 	  ** Rented townhomes/assume unit count = 1 **;
 	  units_full = 1;
 	  predicted = 1;
 	end;
+	
+	label 
+	  units_full = "Full property unit count"
+	  predicted = "Property unit count is estimated";
+	  
 	run;
 
 	*check duplicates;
@@ -347,6 +333,12 @@ else if owneraddress ne "" then do;
   else OWNER_ADD=upcase( left( compbl( trim( owneraddress ) || "; " || left( address3 ) ) ) );
 end;
 
+ label
+   units5plus_realprop = "Real property use code indicates 5+ units"
+   adj_unit_count = "Adjusted property unit count"
+   units5plus_flag = "Adjusted property unit count is 5+ units"
+   owner_add = "Full owner mailing address for matching";
+   
 	run;
 
 ** Check for owners of multiple properties by address **;
@@ -357,8 +349,8 @@ proc sql noprint;
   from rental_6_1 left join
   ( select 
     owner_add, 
-    count( owner_add ) as owner_add_count, 
-    sum( adj_unit_count ) as adj_unit_count_owner_add_sum 
+    count( owner_add ) as owner_add_count label="Number of properties for same owner address", 
+    sum( adj_unit_count ) as adj_unit_count_owner_add_sum label="Number of units for same owner address"
   from rental_6_1
   where owner_add ne ""
   group by owner_add ) as Owner_add_sum
@@ -366,6 +358,7 @@ proc sql noprint;
 ;
 quit;
 
+/*
 title2 '-- Multiple properties by owner address --';
 proc print data=rental_6_2 (obs=200);
   where owner_add_count > 1;
@@ -373,6 +366,7 @@ proc print data=rental_6_2 (obs=200);
   var ssl owner_add_count adj_unit_count_owner_add_sum;
 run;
 title2;
+*/
 
 ** Check for owners of multiple properties by name **;
 
@@ -382,8 +376,8 @@ proc sql noprint;
   from rental_6_2 left join
   ( select 
     ownername_full, 
-    count( ownername_full ) as Ownername_count, 
-    sum( adj_unit_count ) as adj_unit_count_ownername_sum 
+    count( ownername_full ) as Ownername_count label="Number of properties for same owner name", 
+    sum( adj_unit_count ) as adj_unit_count_ownername_sum label="Number of units for same owner name"
   from rental_6_1
   where ownername_full ne ""
   group by ownername_full ) as Ownername_sum
@@ -391,6 +385,7 @@ proc sql noprint;
 ;
 quit;
 
+/*
 title2 '-- Multiple properties by owner name --';
 proc print data=rental_6_3 (obs=200);
   where ownername_count > 1;
@@ -398,6 +393,7 @@ proc print data=rental_6_3 (obs=200);
   var ssl ownername_count adj_unit_count_ownername_sum;
 run;
 title2;
+*/
 
 ** Create owner exemption flags **;
 proc freq data=rental_6_3;
@@ -436,9 +432,15 @@ data rental_7;
 ** Assume OwnerDC=1 for government & quasi-gov. owners **;
   
   if OwnerCat in ( '040', '045', '050', '060', '070' ) then OwnerDC = 1;
-  label OwnerDC = 'DC-based owner';
 
-				run;
+  label 
+    owns5plus_assump_flag = "Ownership of 5+ units based on multiple parcels with same owner name or address"
+    Exempt_lt5units_ALL = "Fewer than 5 units exemption regardless of owner type"
+    Indiv = "Owner is an individual (legal person)"
+    Exempt_lt5units_Indiv = "Individual with fewer than 5 units exemption applies"
+    OwnerDC = 'DC-based owner';
+
+run;
 
 proc freq data=rental_7;
   tables Indiv * Exempt_lt5units_ALL * Exempt_lt5units_Indiv / list missing;
@@ -462,7 +464,14 @@ if ownercat="060" then Excluded_Foreign=1; else Excluded_Foreign=0;
 *flag if a trust;
 Trust1=find(OWNERNAME_full, "trust", "i");
 
-If trust1>0 then Trust_flag=1; else Trust_flag=0;
+if trust1>0 then Trust_flag=1; else Trust_flag=0;
+
+label 
+  Exempt_govowned = "Government-owned property exemption applies"
+  Excluded_Foreign = "Foreign property owner exclusion applies"
+  Trust_flag = "Property owner is a trust";
+
+drop Trust1;
 
 run;
 
@@ -516,9 +525,20 @@ then Rent_controlled=1; else Rent_controlled=0;
 if  Exempt_lt5units_Indiv=1
 or Exempt_built1978=1
 or Exempt_assisted=1
-or Exempt_govowned=1 then Receive_Exempt=1; else Receive_Exempt=0;
+or Exempt_govowned=1 then Exempt_any=1; else Exempt_any=0;
 
-format Rent_controlled dyesno.;
+label
+  Rent_controlled = "Property is subject to rent control (current estimate)"
+  Rent_controlled_2011 = "Property was subject to rent control in original 2011 estimate"
+  Exempt_any = "One or more property exemptions apply";
+
+format 
+  ayb_assumption ayb_missing Unit_count_pred_flag units5plus_realprop units5plus_flag 
+  owns5plus_assump_flag Indiv OwnerDC Trust_flag Exempt_: Excluded_: Rent_controlled: 
+  dyesno.;
+
+format ssl ;
+
 informat _all_ ;
 
 drop _type_ _freq_;
@@ -603,7 +623,7 @@ proc compare maxprint=(40,32000) out=compare1 outnoequal outbase outcomp outdif 
     compare=Parcels_Rent_Control 
       (where=(Rent_controlled and Rent_controlled_2011 = 0));
   id ssl;
-  var Rent_controlled exempt_: Indiv Unit_count_pred_flag Receive_Exempt Excluded_Foreign;
+  var Rent_controlled exempt_: Indiv Unit_count_pred_flag Excluded_Foreign;
 run;
 */
 
@@ -625,7 +645,7 @@ Export rent control data base
 
 %fdate( fmt=yymmddd10. )
 
-proc export data=Parcels_Rent_Control outfile="D:\DCData\Libraries\DHCD\Raw\Rent_Control_&fdate..csv"
+proc export data=Parcels_Rent_Control outfile="&_dcdata_default_path\DHCD\Raw\Rent_Control_&fdate..csv"
 dbms=csv
 replace;
 run;
