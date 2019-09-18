@@ -23,7 +23,7 @@
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
 
-%let revisions = New file.;
+%let revisions = Add properties with ui_proptype=19 to data set.;
 
 %Data_to_format(
   FmtLib=work,
@@ -70,7 +70,7 @@ data rental_1;
 	    (in=b
 	     keep=ssl ui_proptype in_last_ownerpt ownerpt_extractdat_first ownerpt_extractdat_last usecode premiseadd);
 	by ssl;  
-	if b and ui_proptype in ( "10", "11", "13" ) and ssl ne "" and in_last_ownerpt = 1; *Residential: Rental apartment building ;
+	if b and ui_proptype in ( "10", "11", "13", "19" ) and ssl ne "" and in_last_ownerpt = 1; *Residential: Rental apartment building ;
 
 	** Only keep SF homes and condos if certain that they are rental properties **;
     if ui_proptype in ( "10", "11" ) then do;
@@ -602,7 +602,7 @@ title2 '--Missing geography--';
 proc print data=Parcels_Rent_Control;
   where missing( Ward2012 ) and not missing( ui_proptype );
   id ssl; 
-  var premiseadd ui_proptype;
+  var premiseadd ui_proptype nlihc_id;
 run;
 title2;
 
