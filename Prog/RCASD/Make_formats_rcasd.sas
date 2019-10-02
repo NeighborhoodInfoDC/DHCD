@@ -109,6 +109,7 @@ proc format library=DHCD;
 
 	"WARRANTYSECURITYRELEASEREQUEST" = "245"
 	
+	"5+UNITSRIGHTOFFIRSTREFUSAL" = "246"
     
     other = " ";
 
@@ -149,6 +150,7 @@ proc format library=DHCD;
 	"243" = "SFD notice of transfer"
 	"244" = "Petition for reconsideration"
 	"245" = "Warranty Security Release Request"
+	"246"= " 5+ units right of first refusal"
     ;
 
 run;
