@@ -54,5 +54,9 @@
 	week of 8-5 to 8-9.csv
 	Week of August 12 - 16 2019.csv
 	Week of August 19 - 23 2019.csv
+	Week of August 26 - 30 2019.csv
+	Week of September 2 - 6 2019.csv
+	Week of September 9 - 13 2019.csv
+	Week of September 16 - 20 2019.csv
 	)
 
