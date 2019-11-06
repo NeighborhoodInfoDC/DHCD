@@ -58,5 +58,10 @@
 	Week of September 2 - 6 2019.csv
 	Week of September 9 - 13 2019.csv
 	Week of September 16 - 20 2019.csv
+	Week of September 23 - 27 2019.csv
+	Week of September 30 – October 4 2019.csv
+	Week of October 7 - 11 2019.csv
+	Week of October 14 - 18 2019.csv
+	Week of October 21 - 25 2019.csv
 	)
 
