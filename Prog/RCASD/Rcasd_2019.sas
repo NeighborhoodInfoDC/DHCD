@@ -63,5 +63,9 @@
 	Week of October 7 - 11 2019.csv
 	Week of October 14 - 18 2019.csv
 	Week of October 21 - 25 2019.csv
+	Week of October 28 - November 1 2019.csv
+	Week of November 4 – 8 2019.csv
+	Week of November 11 – 15 2019.csv
+	Week of November 18 – 22 2019.csv
 	)
 
