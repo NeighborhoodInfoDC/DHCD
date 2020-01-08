@@ -67,5 +67,9 @@
 	Week of November 4 – 8 2019.csv
 	Week of November 11 – 15 2019.csv
 	Week of November 18 – 22 2019.csv
+	Week of November 25 – 29 2019.csv
+	Week of December 2 - 6 2019.csv
+	Week of December 9 - 13 2019.csv
+	Week of  December 16 - 20.csv
 	)
 
