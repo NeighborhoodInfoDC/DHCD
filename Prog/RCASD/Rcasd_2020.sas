@@ -22,6 +22,7 @@
 %Rcasd_read_all_files( 
   year=2020, 
   infilelist=
+  	Week of Dec. 30 – Jan. 3 2019.csv
 	Week of January 6 - 10 2020.csv
 	Week of January 13 - 17 2020.csv
 	)

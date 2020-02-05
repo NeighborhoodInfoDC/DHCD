@@ -71,7 +71,7 @@
 	Week of December 2 - 6 2019.csv
 	Week of December 9 - 13 2019.csv
 	Week of  December 16 - 20.csv
-	Week of December 23 - 27 2019
-	Week of Dec. 30 – Jan. 3 2019
+	Week of December 23 - 27 2019.csv
+	Week of Dec. 30 – Jan. 3 2019.csv
 	)
 
