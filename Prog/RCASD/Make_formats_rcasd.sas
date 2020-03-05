@@ -111,6 +111,8 @@ proc format library=DHCD;
 	"WARRANTYSECURITYRELEASEREQUEST" = "245"
 	
 	"5+UNITSRIGHTOFFIRSTREFUSAL" = "246"
+
+	"WARRANTYSECURITY?LETTEROFCREDIT" = "247"
     
     other = " ";
 
@@ -152,6 +154,7 @@ proc format library=DHCD;
 	"244" = "Petition for reconsideration"
 	"245" = "Warranty Security Release Request"
 	"246"= "5+ units right of first refusal"
+	"247"= "Warranty Security ? Letter of Credit - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
     ;
 
 run;
