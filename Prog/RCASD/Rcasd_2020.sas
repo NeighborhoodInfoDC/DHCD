@@ -47,5 +47,9 @@
 	Week of June 8-12 2020.csv
 	Week of June 15-19 2020.csv
 	Week of June 22-26 2020.csv
+	Week of June 29- July 3 2020.csv
+	Week of July 6-10 2020.csv
+	Week of July 13 - 17 2020.csv
+	Week of July 20 - 24 2020.csv
 	)
 
