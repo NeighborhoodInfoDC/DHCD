@@ -51,5 +51,14 @@
 	Week of July 6-10 2020.csv
 	Week of July 13 - 17 2020.csv
 	Week of July 20 - 24 2020.csv
+	July 27 - 31.csv
+	Week of August 3 - 7 2020.csv
+	Week of August 10 - 14 2020.csv
+	August 17 - 21 2020.csv
+	Week of August 24 - 28 2020.csv
+	Week of August 31 – September 4 2020.csv
+	Week of September 7 - 11 2020.csv
+	Week of September 14 - 18 2020.csv
+	Week of September 21 - 25 2020.csv
 	)
 
