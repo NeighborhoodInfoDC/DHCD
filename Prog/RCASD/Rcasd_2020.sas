@@ -60,5 +60,9 @@
 	Week of September 7 - 11 2020.csv
 	Week of September 14 - 18 2020.csv
 	Week of September 21 - 25 2020.csv
+	Week of September 28 – October 2 2020.csv
+	Weekly Report October 5 - October 9 2020.csv
+	Week of October 12 - 16 2020.csv
+	Week of October 19 - 23 2020.csv
 	)
 
