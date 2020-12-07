@@ -32,7 +32,7 @@
 	Week of February 24-28 2020 edit.csv
 	Week of March 2 2020.csv
 	Weekly Report March 9 - 13.csv
-	Weekly Report March 16 - 20.csv
+	Weekly Report March 16 - 20 test.csv
 	Week of March 23 - 26 2020.csv
 	Week of March 30 - April 3 2020.csv
 	Week of April 6 - 8 2020.csv
@@ -64,5 +64,9 @@
 	Weekly Report October 5 - October 9 2020.csv
 	Week of October 12 - 16 2020.csv
 	Week of October 19 - 23 2020.csv
+	Week of October 26 - 30 2020.csv
+	Week of November 2 - 6 2020.csv
+	Week of November 9 - 13 2020.csv
+	Week of November 16 - 20 2020.csv
 	)
 
