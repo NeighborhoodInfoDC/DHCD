@@ -41,6 +41,8 @@ proc format library=DHCD;
     "HOUSINGASSISTANCEPAYMENTAPPLICATIONS" = "106"
     
     "PROPERTYTAXABATEMENTAPPLICATIONS","PROPERTYTAXABATEMENTAPPLICATION" = "107"
+
+	"WARRANTYCLAIMCORRESPONDENCE" = "108"
     
     "NOTICESOFTRANSFER" = "201"
     
@@ -127,6 +129,7 @@ proc format library=DHCD;
     "105" = "Tenant election application"
     "106" = "Housing assistance payment application"
     "107" = "Property tax abatement application"
+	"108" = "Warrant claim correspondence"
     "201" = "Notice of transfer"
     "202" = "Other filings"
     "203" = "Notice of foreclosure"
