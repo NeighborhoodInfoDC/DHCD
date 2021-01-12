@@ -38,10 +38,10 @@
 	Week of April 6 - 8 2020.csv
 	Week of April 13 - 16 2020.csv
 	Week of April 20 - 24 2020.csv
-	Week of April 27 – May 1 2020.csv
+	Week of April 27 â€“ May 1 2020.csv
 	Week of May 4 - 8 2020.csv
 	Week of May 11 - 15 2020.csv
-	Week of May 18 – 22 2020.csv
+	Week of May 18 â€“ 22 2020.csv
 	Week of May 25 - 29 2020.csv
 	Week of June 1-5 2020.csv
 	Week of June 8-12 2020.csv
@@ -56,11 +56,11 @@
 	Week of August 10 - 14 2020.csv
 	August 17 - 21 2020.csv
 	Week of August 24 - 28 2020.csv
-	Week of August 31 – September 4 2020.csv
+	Week of August 31 â€“ September 4 2020.csv
 	Week of September 7 - 11 2020.csv
 	Week of September 14 - 18 2020.csv
 	Week of September 21 - 25 2020.csv
-	Week of September 28 – October 2 2020.csv
+	Week of September 28 â€“ October 2 2020.csv
 	Weekly Report October 5 - October 9 2020.csv
 	Week of October 12 - 16 2020.csv
 	Week of October 19 - 23 2020.csv
@@ -68,5 +68,11 @@
 	Week of November 2 - 6 2020.csv
 	Week of November 9 - 13 2020.csv
 	Week of November 16 - 20 2020.csv
+	Week of November 23 â€“ 27 2020.csv
+	Week of Nov 30 â€“ Dec 4 2020.csv
+	Week of December 7 - 11 2020.csv
+	Week of December 14 - 18 2020.csv
+	Weekly Report December 21 - 25 2020.csv
+	Weekly Report December 28 2020 - January 1 2021.csv
 	)
 
