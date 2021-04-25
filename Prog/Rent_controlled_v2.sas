@@ -15,7 +15,7 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
@@ -23,7 +23,7 @@
 %DCData_lib( PresCat )
 %DCData_lib( MAR )
 
-%let revisions = Add properties with ui_proptype=19 to data set.;
+%let revisions = Update with latest parcel and address data.;
 
 %Data_to_format(
   FmtLib=work,
