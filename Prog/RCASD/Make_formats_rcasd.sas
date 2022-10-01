@@ -43,6 +43,10 @@ proc format library=DHCD;
     "PROPERTYTAXABATEMENTAPPLICATIONS","PROPERTYTAXABATEMENTAPPLICATION" = "107"
 
 	"WARRANTYCLAIMCORRESPONDENCE" = "108"
+	
+    "CONVERSIONELECTIONREQUEST/INFORMATION" = "109"
+    
+    "CONDOMINIUMEXEMPTIONREQUEST(VACANT)" = "110"
     
     "NOTICESOFTRANSFER" = "201"
     
@@ -61,11 +65,11 @@ proc format library=DHCD;
     "TENANTORGANIZATIONREGISTRATIONAPPLICATION",
 	"TENANTORGANIZATIONREGISTRATIONAPPLICATIONS","TENANTORGANIZATIONREGISTRATION" = "207"
     
-    "SINGLEFAMILYDWELLINGOFFERSOFSALE" = "208"
+    "OFFEROFSALENOTICES-SINGLEFAMILY", "SINGLEFAMILYDWELLINGOFFERSOFSALE" = "208"
     
-    "2-4RENTALUNITOFFERSOFSALE" = "209"
+    "OFFEROFSALENOTICES-2TO4UNITS", "2-4RENTALUNITOFFERSOFSALE" = "209"
     
-    "5+RENTALUNITOFFERSOFSALE" = "210"
+    "OFFEROFSALENOTICES-5+UNITS", "5+RENTALUNITOFFERSOFSALE" = "210"
     
     "RIGHTSOFFIRSTREFUSAL",
     "RIGHTOFFIRSTREFUSAL","SFDRIGHTOFFIRSTREFUSAL" = "211"
@@ -87,6 +91,8 @@ proc format library=DHCD;
     "TENANTSLETTERTOLANDLORD"= "216"
     "SFDCLAIMOFELDERLYORDISABLEDSTATUS",
     "TENANTSCLAIMOFELDERLY/DISABLEDSTATUS" = "217"
+    
+    "OFFEROFSALERESPONSE-TENANTS" = "218"
     
     "SINGLEFAMILYDWELLINGOFFERSOFSALEW/CONTRACT",
     "SFDOFFEROFSALEW/CONTRACT" = "220"
@@ -130,6 +136,8 @@ proc format library=DHCD;
     "106" = "Housing assistance payment application"
     "107" = "Property tax abatement application"
 	"108" = "Warrant claim correspondence - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
+    "109" = "Conversion election request / information"
+    "110" = "Condominium exemption request (vacant)"
     "201" = "Notice of transfer"
     "202" = "Other filings"
     "203" = "Notice of foreclosure"
@@ -147,6 +155,7 @@ proc format library=DHCD;
     "215" = "Single family notice of solicitation of offer & notice of intent to sell"
     "216" = "Tenant's notice to landlord"
     "217" = "Tenant's claim of elderly/disabled status"
+    "218" = "Tenant's offer of sale response"
     "220" = "Single family dwelling offer of sale with contract"
     "221" = "Single family dwelling offer of sale without contract"
     "224" = "2-4 units offer of sale with contract"
