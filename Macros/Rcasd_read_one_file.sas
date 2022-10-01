@@ -14,12 +14,13 @@
 
 %macro Rcasd_read_one_file( file=, path=, out= );
 
-  %local is_old_fmt is_v3_fmt input_count wrote_obs;
+  %local is_2006_fmt is_old_fmt is_v3_fmt input_count wrote_obs;
   
   filename inf  "&path\&file" lrecl=1000;
   
   ** Check input file version **;
 
+  %let is_2006_fmt = 0;
   %let is_old_fmt = 0;
   %let is_v3_fmt = 0;
   
@@ -29,7 +30,11 @@
     length inbuff $ 2000;  
     infile inf dsd missover obs=1;
     input inbuff;
-    if inbuff = "Department of Housing and Community Development" then do;
+    if inbuff = "Condominium and Cooperative Conversion and Sales Branch" then do;
+      ** 2006 file format **;
+      call symput( 'is_2006_fmt', '1' );
+    end;
+    else if inbuff = "Department of Housing and Community Development" then do;
       ** Old file format **;
       call symput( 'is_old_fmt', '1' );
     end;
@@ -43,7 +48,96 @@
   
   %let wrote_obs = 0;
 
-  %if &is_old_fmt %then %do;
+  %if &is_2006_fmt %then %do;
+  
+    **** 2006 file format ****;
+
+    data &out;
+
+      length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
+      
+      retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
+
+      infile inf dsd missover dlm='~' firstobs=4;
+      
+      input inbuff;
+      PUT _N_= inbuff=;
+      
+      if input( scan( inbuff, 2, ',' ), ??8. ) > 0 then do;
+        
+        Count = Count + input( scan( inbuff, 2, ',' ), 8. );
+        PUT COUNT=;
+        
+        call symput( 'input_count', put( Count, 12. ) );
+        
+        Notice_type = put( compress( upcase( scan( inbuff, 1, ',' ) ), ' .' ), $rcasd_text2type. );
+        PUT NOTICE_TYPE=;
+        
+        if Notice_type = "" then do;
+          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
+          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+        end;
+        
+        ***input Notice_date :mmddyy10. @; 
+        input inbuff;
+        PUT _N_= inbuff=;
+        
+        Notice_date = input( scan( inbuff, 2, ',', 'q' ), mmddyy10. );
+        
+        do while ( not missing( Notice_date ) );
+        
+          Orig_address = compress( scan( inbuff, 1, ',', 'q' ), '"' );
+          
+        /***
+          Num_units = .;
+          Sale_price = .;
+
+          input Orig_address inbuff inbuff2;
+          
+          if inbuff ~= "" then do;
+            if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff ) then do;
+              Num_units = input( scan( inbuff, 1, '/' ), 8. );
+              Sale_price = input( scan( inbuff, 2, '/' ), dollar16. );
+            end;
+            else do;
+              Notes = left( compbl( inbuff ) );
+            end;
+          end;
+          
+          if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff2 ) then do;
+            Num_units = input( scan( inbuff2, 1, '/' ), 8. );
+            Sale_price = input( scan( inbuff2, 2, '/' ), dollar16. );
+          end;
+          ***/
+          
+          output;
+          Notices + 1;
+          
+          input inbuff;
+          PUT _N_= inbuff=;
+        
+          Notice_date = input( scan( inbuff, 2, ',', 'q' ), mmddyy10. );
+          
+        end;
+        
+        /*input;*/
+        
+      end;
+      else do;
+        /*input;*/
+     end;
+     
+     call symput( 'wrote_obs', put( Notices, 12. ) );
+     
+     format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
+     
+     drop inbuff: count Notices;
+
+    run;
+    
+  %end;
+
+  %else %if &is_old_fmt %then %do;
   
     **** Old file format ****;
 
@@ -105,11 +199,11 @@
           
         end;
         
-        input;
+        /*input;*/
         
       end;
       else do;
-        input;
+        /*input;*/
      end;
      
      call symput( 'wrote_obs', put( Notices, 12. ) );

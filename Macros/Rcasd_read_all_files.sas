@@ -141,8 +141,12 @@
     sortby=Nidc_rcasd_id Addr_num,
     revisions=%str(&revisions),
     printobs=0,
-    freqvars=Notice_type ward2012 Notes
+    freqvars=Source_file Ward: Notes
   )  
+  
+  proc freq data=&out;
+    tables Notice_type / nocum nopercent;
+  run;
 
 %mend Rcasd_read_all_files;
 
