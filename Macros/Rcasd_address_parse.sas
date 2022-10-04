@@ -13,7 +13,7 @@ addresses.
  Modifications:
 **************************************************************************/
 
-%macro Rcasd_address_parse( data=, out=, id=, addr=, keepin=Source_file, debug=N );
+%macro Rcasd_address_parse( data=, out=, id=, addr=, keepin=Source_file, keepout=, debug=N );
 
   %local MAX_NUMBERS;
 
@@ -180,7 +180,7 @@ addresses.
       Address = 'Individual street address'
       Addr_num = 'Address number';
     
-    keep &id Address Addr_num;
+    keep &id Address Addr_num &keepout;
 
   run;
 
