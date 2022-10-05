@@ -16,7 +16,7 @@
 
   %local is_2006_fmt is_old_fmt is_v3_fmt input_count wrote_obs;
   
-  filename inf  "&path\&file" lrecl=1000;
+  filename inf  "&path\&file" lrecl=2000;
   
   ** Check input file version **;
 
@@ -24,6 +24,7 @@
   %let is_old_fmt = 0;
   %let is_v3_fmt = 0;
   
+  /*
   ** Identify input file version **;
   
   data _null_;
@@ -43,10 +44,47 @@
       call symput( 'is_v3_fmt', '1' );
     end;
   run;
+  */
   
   ** Read input data file **;
   
   %let wrote_obs = 0;
+  
+  data &out;
+  
+    length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
+    
+    retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
+
+    infile inf missover pad;
+    
+    input inbuff $2000.;
+
+    PUT _N_= inbuff=;
+ 
+    i = verify( inbuff, ', ' );
+    if i > 0 then inbuff = left( substr( inbuff, i ) );
+    else return;
+    
+    if input( scan( inbuff, 1, ',', 'q' ), ??8. ) then do;
+    
+      Count = Count + input( scan( inbuff, 1, ',', 'q' ), ??8. );
+      
+      Notice_type = put( compress( upcase( scan( inbuff, 2, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
+
+    end;
+    else if put( compress( upcase( scan( inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. ) ~= "" then do;
+    
+      Notice_type = put( compress( upcase( scan( inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
+
+      Count = Count + input( scan( inbuff, 2, ',', 'q' ), ??8. );
+      
+    end;
+
+    PUT COUNT= NOTICE_TYPE= /;
+      
+    
+  run;
 
   %if &is_2006_fmt %then %do;
   
