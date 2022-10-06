@@ -52,9 +52,10 @@
   
   data &out;
   
-    length Notice_type $ 3 Orig_address Notes _item $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
+    length Notice_type $ 3 Orig_address Notes _item $ 1000 Source_file $ 120 inbuff $ 2000;
     
     retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
+    retain _read_notice 0 _notice_count .;
 
     infile inf missover pad;
     
@@ -78,19 +79,29 @@
       
       if _item = "" then do;
       
-        ** Nothing **;
+        ** Blank entry, do nothing and go to next item **;
+        
+        continue;
       
       end;
       
-      else if lowcase( _item ) in: ( 'condominium and cooperative conversion', 'weekly report' ) then do;
+      else if lowcase( _item ) in: ( 
+          'condominium and cooperative conversion', 
+          'weekly report', 
+          'department of housing and community development',
+          'rental conversion and sale division',
+          'week ending'
+        ) then do;
       
-        ** Generic labels/headers, ignore **;
+        ** Generic labels/headers, ignore and skip to next row **;
+        
+        leave;
         
       end;
       
       else if input( _item, ??8. ) >= 0 then do;
       
-        _notice_count = input( _item, ??8. );
+        if missing( _notice_count ) then _notice_count = input( _item, ??8. );
         
         PUT _NOTICE_COUNT=;
         
@@ -122,6 +133,33 @@
       end;
       
     end;
+    
+    ***** CODE BELOW IS NOT YET WORKING PROPERLY *****;
+
+    if Notice_type ~= "" and _notice_count > 0 then _read_notice = 1;
+    
+    if _read_notice then do;
+    
+      if not( missing( Notice_date ) ) then do;
+        PUT 'THIS IS A NOTICE!';
+        if _notice_count > 0 then _notice_count = _notice_count - 1;
+        else PUT 'NOTICE COUNT DOES NOT MATCH # OF RECORDS ' source_file= notice_type= notice_date=;
+      end;
+      else if _notice_count = 0 then do;
+        _notice_count = .;
+        _read_notice = 0;
+        Notice_type = "";
+      end;
+      
+    end;
+      
+    else if not( missing( Notice_date ) ) then do;
+
+      if Notice_type = "" then put 'ERROR: Unknown or missing notice type. ' source_file= _n_= Notice_date=;
+
+    end;
+    
+    *************************************************;
 
     PUT ;
     
@@ -162,7 +200,7 @@
     PUT COUNT= NOTICE_TYPE= /;
 ***********/
 
-    format Notice_date mmddyy10.;
+    format Notice_date mmddyy10. Notice_type $rcasd_notice_type.;
     
   run;
 
