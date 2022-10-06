@@ -44,7 +44,8 @@
     %let v = %scan( &infilelist, &i, '|' );
 
   %end;
-
+  
+%MACRO SKIP;  *** TEMPORARY FOR TESTING ***;
   data _Rcasd_read_all_files;
 
     length Nidc_rcasd_id $ 12;
@@ -147,6 +148,7 @@
   proc freq data=&out;
     tables Notice_type / nocum nopercent;
   run;
+%MEND SKIP;
 
 %mend Rcasd_read_all_files;
 

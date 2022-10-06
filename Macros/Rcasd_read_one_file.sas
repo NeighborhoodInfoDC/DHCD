@@ -52,7 +52,7 @@
   
   data &out;
   
-    length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
+    length Notice_type $ 3 Orig_address Notes _item $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
     
     retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
 
@@ -61,10 +61,88 @@
     input inbuff $2000.;
 
     PUT _N_= inbuff=;
- 
+    
+    ** Remove multiple blanks **;
+    
+    inbuff = left( compbl( inbuff ) );
+    
+    _i = 1;
+    _size = countw( inbuff, ',', 'q' );
+    
+    PUT _SIZE=;
+    
+    do _i = 1 to _size;
+    
+      _item = dequote( scan( inbuff, _i, ',', 'q' ) );
+      PUT _ITEM= ;
+      
+      if _item = "" then do;
+      
+        ** Nothing **;
+      
+      end;
+      
+      else if lowcase( _item ) in: ( 'condominium and cooperative conversion', 'weekly report' ) then do;
+      
+        ** Generic labels/headers, ignore **;
+        
+      end;
+      
+      else if input( _item, ??8. ) >= 0 then do;
+      
+        _notice_count = input( _item, ??8. );
+        
+        PUT _NOTICE_COUNT=;
+        
+      end;
+      
+      else if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
+      
+        Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
+        
+        PUT NOTICE_TYPE=;
+        
+      end;
+      
+      else if input( _item, anydtdte40. ) >= '01jan2006'd then do;
+      
+        Notice_date = input( _item, anydtdte40. );
+        
+        PUT NOTICE_DATE=;
+      
+      end;
+
+      else if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', _item ) then do;
+      
+        Num_units = input( scan( _item, 1, '/' ), 8. );
+        Sale_price = input( scan( _item, 2, '/' ), dollar16. );
+        
+        PUT NUM_UNITS= SALE_PRICE=;
+      
+      end;
+      
+    end;
+
+    PUT ;
+    
+ /***********
+    ** Remove leading commas from input. Skip to next record if blank. **;
+    
     i = verify( inbuff, ', ' );
+    
     if i > 0 then inbuff = left( substr( inbuff, i ) );
     else return;
+    
+    ** Remove extra commas from input. **;
+    
+    do while ( find( inbuff, ',,' ) );
+    
+      inbuff = trim( substr( inbuff, 1, find( inbuff, ',,' ) - 1 ) ) ||
+               left( substr( inbuff, find( inbuff, ',,' ) + 1 ) );
+    
+    end;
+    
+    PUT INBUFF=;
     
     if input( scan( inbuff, 1, ',', 'q' ), ??8. ) then do;
     
@@ -82,7 +160,9 @@
     end;
 
     PUT COUNT= NOTICE_TYPE= /;
-      
+***********/
+
+    format Notice_date mmddyy10.;
     
   run;
 
