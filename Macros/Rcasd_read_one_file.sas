@@ -14,8 +14,51 @@
 
 %macro Rcasd_read_one_file( file=, path=, out= );
 
-  %local is_2006_fmt is_old_fmt is_v3_fmt input_count wrote_obs;
+  %local is_2006_fmt is_old_fmt is_v3_fmt input_count wrote_obs NOTICE_NAMES_BEGIN;
   
+  %** List of beginnings of notice names **;
+  
+  %let NOTICE_NAMES_BEGIN = 
+         '2-4 rental',
+         '5+ rental',
+         'assignment of',
+         'condominium',
+         'conversion -',
+         'conversion election',
+         'conversion exemption',
+         'cooperative conversion',
+         'd.c. opportunity to purchase',
+         'dopa notice',
+         'election correspondence',
+         'exemption from',
+         'foreclosure',
+         'housing assistance payment',
+         'low income equity',
+         'not-a-housing',
+         'not a housing',
+         'notice of',
+         'notices of',
+         'offer of sale',
+         'offers of sale',
+         'other filings',
+         'petitions for',
+         'property tax abatement',
+         'raze permit',
+         'right of first',
+         'sale and transfer -',
+         'sfd',
+         'single family dwelling',
+         'tax abatement',
+         'tenant association registration',
+         'tenant conversion',
+         'tenant election',
+         'tenant organization registration',
+         'topa complaint',
+         'topa letter',
+         'vacancy / coop exemption',
+         'vacancy exemption'
+       ;
+
   filename inf  "&path\&file" lrecl=2000;
   
   ** Check input file version **;
@@ -74,18 +117,10 @@
     
     do _i = 1 to _size;
     
-      _item = dequote( scan( inbuff, _i, ',', 'q' ) );
-      PUT _ITEM= ;
+      _item = left( dequote( scan( inbuff, _i, ',', 'q' ) ) );
+      PUT _I= _ITEM= ;
       
-      if _item = "" then do;
-      
-        ** Blank entry, do nothing and go to next item **;
-        
-        continue;
-      
-      end;
-      
-      else if lowcase( _item ) in: ( 
+      if lowcase( _item ) in: ( 
           'condominium and cooperative conversion', 
           'weekly report', 
           'department of housing and community development',
@@ -93,25 +128,35 @@
           'week ending'
         ) then do;
       
-        ** Generic labels/headers, ignore and skip to next row **;
+        PUT '** Generic labels/headers, ignore and skip to next row **';
         
         leave;
         
       end;
       
-      else if input( _item, ??8. ) >= 0 then do;
+      else if _item = "" then do;
       
-        if missing( _notice_count ) then _notice_count = input( _item, ??8. );
+        PUT '** Blank entry, do nothing and go to next item **';
         
-        PUT _NOTICE_COUNT=;
-        
+        continue;
+      
       end;
       
-      else if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
+      else if lowcase( _item ) in: ( &NOTICE_NAMES_BEGIN ) then do;
       
-        Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
+        PUT 'LOOKS LIKE A NOTICE!';
+      
+        if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
         
-        PUT NOTICE_TYPE=;
+          Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
+          
+          PUT NOTICE_TYPE=;
+          
+        end;
+        else do;
+          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= _item= )
+          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+        end;
         
       end;
       
@@ -122,6 +167,16 @@
         PUT NOTICE_DATE=;
       
       end;
+      
+      else if prxmatch( '/\bstreet|avenue|road|place|terrace|court|ave|rd|st|terr|ter|ct\b/i', _item ) then do;
+      
+        ** Contains an address key word **;
+      
+        Orig_address = _item;
+        
+        PUT ORIG_ADDRESS=;
+      
+      end;
 
       else if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', _item ) then do;
       
@@ -130,6 +185,26 @@
         
         PUT NUM_UNITS= SALE_PRICE=;
       
+      end;
+      
+      else if prxmatch( '/^\d+ *$/', _item ) then do;
+      
+        ** A plain number **;
+      
+        if missing( _notice_count ) then do;
+          _notice_count = input( _item, 8. );
+          PUT _NOTICE_COUNT=;
+        end;
+        else do;
+          PUT 'UNKNOWN NUMBER: ' _item=;
+        end;
+        
+      end;
+      
+      else do;
+      
+        PUT 'NO MATCH!';
+        
       end;
       
     end;
@@ -155,7 +230,7 @@
       
     else if not( missing( Notice_date ) ) then do;
 
-      if Notice_type = "" then put 'ERROR: Unknown or missing notice type. ' source_file= _n_= Notice_date=;
+      /**if Notice_type = "" then put 'ERROR: Unknown or missing notice type. ' source_file= _n_= Notice_date=;**/
 
     end;
     
