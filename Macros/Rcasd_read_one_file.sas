@@ -154,8 +154,12 @@
           
         end;
         else do;
+        
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= _item= )
           %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+          
+          Notice_type = "";
+        
         end;
         
       end;
@@ -209,31 +213,21 @@
       
     end;
     
-    ***** CODE BELOW IS NOT YET WORKING PROPERLY *****;
+    PUT NOTICE_TYPE= NOTICE_DATE= ORIG_ADDRESS=;
 
-    if Notice_type ~= "" and _notice_count > 0 then _read_notice = 1;
+    if not( missing( notice_type ) or missing( orig_address ) or missing( notice_date ) ) then do;
     
-    if _read_notice then do;
-    
-      if not( missing( Notice_date ) ) then do;
-        PUT 'THIS IS A NOTICE!';
-        if _notice_count > 0 then _notice_count = _notice_count - 1;
-        else PUT 'NOTICE COUNT DOES NOT MATCH # OF RECORDS ' source_file= notice_type= notice_date=;
-      end;
-      else if _notice_count = 0 then do;
-        _notice_count = .;
-        _read_notice = 0;
-        Notice_type = "";
-      end;
+      PUT 'WRITE NOTICE!';
+
+      output;
+      
+      if _notice_count > 0 then _notice_count = _notice_count - 1;
+      else PUT 'NOTICE COUNT DOES NOT MATCH # OF RECORDS ' source_file= _n_= notice_type= notice_date= orig_address=;
+      
+      Notices + 1;
       
     end;
-      
-    else if not( missing( Notice_date ) ) then do;
 
-      /**if Notice_type = "" then put 'ERROR: Unknown or missing notice type. ' source_file= _n_= Notice_date=;**/
-
-    end;
-    
     *************************************************;
 
     PUT ;
@@ -275,10 +269,14 @@
     PUT COUNT= NOTICE_TYPE= /;
 ***********/
 
+    call symput( 'wrote_obs', put( Notices, 12. ) );
+
     format Notice_date mmddyy10. Notice_type $rcasd_notice_type.;
     
   run;
 
+
+%MACRO SKIP;
   %if &is_2006_fmt %then %do;
   
     **** 2006 file format ****;
@@ -649,6 +647,8 @@
     run;
     
   %end;
+  
+  %MEND SKIP;
     
   filename inf clear;
   
@@ -664,11 +664,12 @@
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
   %end;
 
-  /*
+  /**/
   proc print data=&out;
-    var Notice_date Notice_type Orig_address Notes Source_file Num_units Sale_price;
+    by Source_file;
+    var Notice_date Notice_type Orig_address Notes Num_units Sale_price;
   run;
-  */
+  /**/
 
 %mend Rcasd_read_one_file;
 
