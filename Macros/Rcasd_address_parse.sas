@@ -33,6 +33,7 @@ addresses.
     _addresslist = prxchange( 's/\(.*\)//', -1, _addresslist );
 
     _addresslist = tranwrd( _addresslist, '&', ' & ' );
+    _addresslist = tranwrd( _addresslist, '–', '-' );    /** En dash **/
     _addresslist = tranwrd( _addresslist, ' -', '-' );
     _addresslist = tranwrd( _addresslist, '- ', '-' );
     _addresslist = tranwrd( _addresslist, '--', '-' );
@@ -43,6 +44,7 @@ addresses.
     _addresslist = tranwrd( _addresslist, '# ', '#' );
     _addresslist = tranwrd( _addresslist, ' ,', ',' );
     _addresslist = tranwrd( _addresslist, ',', ', ' );
+    _addresslist = tranwrd( _addresslist, ';', ' ; ' );
     
     _addresslist = left( compbl( _addresslist ) );
     
@@ -131,7 +133,7 @@ addresses.
           end;
           
         end;
-        else if upcase( _buff ) in ( 'AND', '&' ) then do;
+        else if upcase( _buff ) in ( 'AND', '&', ';', 'OR' ) then do;
           if _street_name ~= '' then leave;
         end;
         else if left( reverse( _buff ) ) =: ',' and not( missing( input( scan( scan( _addresslist, _addr_idx + 1, ' ' ), 1, ',-&' ), ??8. ) ) ) then do;
@@ -189,7 +191,7 @@ addresses.
 
 /******************** UNCOMMENT FOR TESTING ***********************************
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
@@ -200,6 +202,15 @@ data A;
   length Orig_address $ 120;
   
   retain Source_file ' ';
+  
+  Orig_address = '1709, 1715 or 1717 19th Street NW';
+  output;
+  
+  Orig_address = '7019 Georgia Avenue NW; 2504 & 2520 10th Street SE; 1418 & 1424 Somerset Place NW; 1417 & 1423 Sheridan Place NW';
+  output;
+  
+  Orig_address = '6220 – 6243 Clay Street; 6220-6242 Banks Place; 221-243 & 301-323 63rd Street NE';
+  output;
   
   Orig_address = '255 G Street SW #111 unit B';
   output;
