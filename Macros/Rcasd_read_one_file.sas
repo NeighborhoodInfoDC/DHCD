@@ -14,9 +14,9 @@
 
 %macro Rcasd_read_one_file( file=, path=, out= );
 
-  %local is_2006_fmt is_old_fmt is_v3_fmt input_count wrote_obs NOTICE_NAMES_BEGIN;
+  %local is_2006_fmt is_old_fmt is_v3_fmt notice_count_total wrote_obs NOTICE_NAMES_BEGIN;
   
-  %** List of beginnings of notice names **;
+  %** List of beginnings of notice names used to identify possible notices **;
   
   %let NOTICE_NAMES_BEGIN = 
          '2-4 rental',
@@ -91,20 +91,28 @@
   
   ** Read input data file **;
   
-  %let wrote_obs = 0;
+  %let notice_count_total = 0;
   
   data &out;
   
     length Notice_type $ 3 Orig_address Notes _item $ 1000 Source_file $ 120 inbuff $ 2000;
     
-    retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
-    retain _read_notice 0 _notice_count .;
+    retain Notice_type "" Notices 0 Source_file "%lowcase(&file)";
+    retain _read_notice 0 _notice_count _notice_count_total .;
 
     infile inf missover pad;
     
     input inbuff $2000.;
 
     PUT _N_= inbuff=;
+    
+    ** Initialize record specific vars **;
+    
+    Notice_date = .u;
+    Notes = "";
+    
+    _is_notice_rec = 0;
+    _first_number = .;
     
     ** Remove multiple blanks **;
     
@@ -139,24 +147,26 @@
         PUT '** Blank entry, do nothing and go to next item **';
         
         continue;
-      
+              
       end;
       
       else if lowcase( _item ) in: ( &NOTICE_NAMES_BEGIN ) then do;
       
         PUT 'LOOKS LIKE A NOTICE!';
-      
+        
+        _is_notice_rec = 1;
+     
         if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
         
           Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
           
           PUT NOTICE_TYPE=;
-          
+                              
         end;
         else do;
         
-          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= _item= )
-          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+          %err_put( macro=Rcasd_read_one_file, msg="Unrecognized notice type: file=&file " _n_= _item= )
+          %err_put( macro=Rcasd_read_one_file, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
           
           Notice_type = "";
         
@@ -194,10 +204,10 @@
       else if prxmatch( '/^\d+ *$/', _item ) then do;
       
         ** A plain number **;
-      
-        if missing( _notice_count ) then do;
-          _notice_count = input( _item, 8. );
-          PUT _NOTICE_COUNT=;
+        
+        if missing( _first_number ) then do;
+          _first_number = input( _item, 8. );
+          PUT _FIRST_NUMBER=;
         end;
         else do;
           PUT 'UNKNOWN NUMBER: ' _item=;
@@ -207,22 +217,53 @@
       
       else do;
       
-        PUT 'NO MATCH!';
+        PUT 'NO MATCH: ' _item=;
+        
+        Notes = left( trim( Notes ) || ' ' || left( _item ) );
         
       end;
       
     end;
     
-    PUT NOTICE_TYPE= NOTICE_DATE= ORIG_ADDRESS=;
+    if _is_notice_rec then do;
+    
+      if not( missing( _first_number ) ) then do;
+        if _notice_count > 0 then do;
+          %warn_put( 
+            macro=Rcasd_read_one_file, 
+            msg='Notice count does not match # of notices read (previous notice). ' source_file= _n_= 
+          )
+        end;
+        _notice_count = _first_number;
+        _notice_count_total = sum( _notice_count_total, _notice_count );
+        PUT _NOTICE_COUNT= _NOTICE_COUNT_TOTAL=;
+      end;
+      else do;
+        _notice_count = .;
+      end;
+      
+    end;
 
-    if not( missing( notice_type ) or missing( orig_address ) or missing( notice_date ) ) then do;
+    PUT NOTICE_TYPE= NOTICE_DATE= ORIG_ADDRESS=;
+    
+    ** If read both notice type and an address, write notice record **;
+
+    if not( missing( notice_type ) or missing( orig_address ) ) then do;
     
       PUT 'WRITE NOTICE!';
 
       output;
       
-      if _notice_count > 0 then _notice_count = _notice_count - 1;
-      else PUT 'NOTICE COUNT DOES NOT MATCH # OF RECORDS ' source_file= _n_= notice_type= notice_date= orig_address=;
+      if _notice_count > 0 then do;
+        _notice_count = _notice_count - 1;
+        PUT _NOTICE_COUNT=;
+      end;
+      else if _notice_count = 0 then do;
+        %warn_put( 
+          macro=Rcasd_read_one_file, 
+          msg='Notice count does not match # of notices read. ' source_file= _n_= notice_type= notice_date= orig_address=
+        )
+      end;
       
       Notices + 1;
       
@@ -230,7 +271,7 @@
 
     *************************************************;
 
-    PUT ;
+    PUT NOTICES= _NOTICE_COUNT_TOTAL= /;
     
  /***********
     ** Remove leading commas from input. Skip to next record if blank. **;
@@ -270,6 +311,7 @@
 ***********/
 
     call symput( 'wrote_obs', put( Notices, 12. ) );
+    call symput( 'notice_count_total', put( _notice_count_total, 12. ) );
 
     format Notice_date mmddyy10. Notice_type $rcasd_notice_type.;
     
@@ -652,12 +694,12 @@
     
   filename inf clear;
   
-  %** Check whether observations were written from file **;
+  %** Check whether observations were written to file and that number of notices matches counts provided (if any) **;
   
   %if &wrote_obs > 0 %then %do;
     %Note_mput( macro=Rcasd_read_one_file, msg=&wrote_obs notices read from &file.. )
-    %if &wrote_obs ~= &input_count %then %do;
-      %Warn_mput( macro=Rcasd_read_one_file, msg=Read notices not equal to input file count of &input_count.. )
+    %if &notice_count_total > 0 and &wrote_obs ~= &notice_count_total %then %do;
+      %Warn_mput( macro=Rcasd_read_one_file, msg=Read notices not equal to input file count of %left(&notice_count_total) notices. )
     %end;
   %end;
   %else %do;
