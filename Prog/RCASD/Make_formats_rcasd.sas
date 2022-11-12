@@ -48,7 +48,9 @@ proc format library=DHCD;
     
     "CONDOMINIUMEXEMPTIONREQUEST(VACANT)" = "110"
     
-    "NOTICEOFTRANSFER", "NOTICESOFTRANSFER" = "201"
+    "EXEMPTIONFROMTENANTELECTIONREQUEST(CONVERSIONFROMCOOPTOCONDO)" = "111"
+    
+    "NOTICEOFTRANSFER", "NOTICESOFTRANSFER",  = "201"
     
     "OTHERFILINGS" = "202"
     
@@ -65,11 +67,11 @@ proc format library=DHCD;
     "TENANTORGANIZATIONREGISTRATIONAPPLICATION",
 	"TENANTORGANIZATIONREGISTRATIONAPPLICATIONS","TENANTORGANIZATIONREGISTRATION" = "207"
     
-    "OFFEROFSALENOTICES-SINGLEFAMILY", "SINGLEFAMILYDWELLINGOFFERSOFSALE" = "208"
+    "OFFEROFSALENOTICES-SINGLEFAMILY", "SINGLEFAMILYDWELLINGOFFERSOFSALE", "OFFEROFSALE(SINGLEFAMILYRENTAL)" = "208"
     
-    "OFFEROFSALENOTICES-2TO4UNITS", "2-4RENTALUNITOFFERSOFSALE" = "209"
+    "OFFEROFSALENOTICES-2TO4UNITS", "2-4RENTALUNITOFFERSOFSALE", "OFFEROFSALE(2-4RENTALUNITS)" = "209"
     
-    "OFFEROFSALENOTICES-5+UNITS", "5+RENTALUNITOFFERSOFSALE" = "210"
+    "OFFEROFSALENOTICES-5+UNITS", "5+RENTALUNITOFFERSOFSALE", "OFFEROFSALE(5ORMORERENTAL)" = "210"
     
     "RIGHTSOFFIRSTREFUSAL",
     "RIGHTOFFIRSTREFUSAL","SFDRIGHTOFFIRSTREFUSAL" = "211"
@@ -94,6 +96,8 @@ proc format library=DHCD;
     
     "OFFEROFSALERESPONSE-TENANTS" = "218"
     
+    "NOTICEOFTRANSFER-EXEMPTIONFROMTOPARIGHTS" = "219"
+    
     "SINGLEFAMILYDWELLINGOFFERSOFSALEW/CONTRACT",
     "SFDOFFEROFSALEW/CONTRACT" = "220"
     
@@ -111,6 +115,8 @@ proc format library=DHCD;
     "5+UNITSOFFEROFSALEW/OCONTRACT" = "229"
     
     "5+UNITSNOTICEOFTRANSFER" = "230"
+    
+    "TENANTASSOCIATIONREGISTRATION(W/INTENTTOPURCHASE)" = "235"
     
     "2-4UNITSRIGHTOFFIRSTREFUSAL" = "242"
 
@@ -138,6 +144,7 @@ proc format library=DHCD;
 	"108" = "Warrant claim correspondence - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
     "109" = "Conversion election request / information"
     "110" = "Condominium exemption request (vacant)"
+    "111" = "Exemption from tenant election request (conversion from coop to condo)";
     "201" = "Notice of transfer"
     "202" = "Other filings"
     "203" = "Notice of foreclosure"
@@ -156,6 +163,7 @@ proc format library=DHCD;
     "216" = "Tenant's notice to landlord"
     "217" = "Tenant's claim of elderly/disabled status"
     "218" = "Tenant's offer of sale response"
+    "219" = "Notice of transfer (exemption from TOPA rights)"
     "220" = "Single family dwelling offer of sale with contract"
     "221" = "Single family dwelling offer of sale without contract"
     "224" = "2-4 units offer of sale with contract"
@@ -164,8 +172,9 @@ proc format library=DHCD;
     "228" = "5+ units offer of sale with contract"
     "229" = "5+ units offer of sale without contract"
     "230" = "5+ units notice of transfer"
+    "235" = "Tenant organzation registration (w/intent to purchase)"
     "242" = "2-4 units right of first refusal"
-	"243" = "SFD notice of transfer"
+	"243" = "Single family dwelling notice of transfer"
 	"244" = "Petition for reconsideration"
 	"245" = "Warranty Security Release Request"
 	"246"= "5+ units right of first refusal"
