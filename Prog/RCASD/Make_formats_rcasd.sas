@@ -22,7 +22,7 @@ proc format library=DHCD;
   value $rcasd_text2type 
     "CONDOMINIUMREGISTRATIONAPPLICATION",
     "CONDOMINIUMREGISTRATIONAPPLICATIONS",
-	"CONDOMINIUMREGISTRATIONAPPLICATION(AMENDED&RESTATED)",
+	'CONDOMINIUMREGISTRATIONAPPLICATION(AMENDED&RESTATED)',
 	"CONDOMINIUMREGISTRATIONAPPLICATIONCORRECTIONS" = "101"
     
     "NOT-A-HOUSINGACCOMMODATIONEXEMPTIONAPPLICATIONS",
@@ -50,7 +50,7 @@ proc format library=DHCD;
     
     "EXEMPTIONFROMTENANTELECTIONREQUEST(CONVERSIONFROMCOOPTOCONDO)" = "111"
     
-    "NOTICEOFTRANSFER", "NOTICESOFTRANSFER",  = "201"
+    "NOTICEOFTRANSFER", "NOTICESOFTRANSFER"  = "201"
     
     "OTHERFILINGS" = "202"
     
@@ -86,8 +86,8 @@ proc format library=DHCD;
     
     "TOPACOMPLAINT","TOPACOMPLAINTS", "TOPACOMPLIANT", "COMPLAINT" = "214"
     
-    "SFDNOTICEOFSOLICITATIONOFOFFER&NOTICEOFINTENTTOSELL",
-    "SINGLEFAMILYDWELLINGNOTICEOFSOLICITATIONOFOFFER&NOTICEOFINTENTTOSELL" = "215"
+    'SFDNOTICEOFSOLICITATIONOFOFFER&NOTICEOFINTENTTOSELL',
+    'SINGLEFAMILYDWELLINGNOTICEOFSOLICITATIONOFOFFER&NOTICEOFINTENTTOSELL' = "215"
     
     "SFDLETTERTOLANDLORD","TENANTSNOTICETOLANDLORD",
     "TENANTSLETTERTOLANDLORD"= "216"
@@ -144,7 +144,7 @@ proc format library=DHCD;
 	"108" = "Warrant claim correspondence - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
     "109" = "Conversion election request / information"
     "110" = "Condominium exemption request (vacant)"
-    "111" = "Exemption from tenant election request (conversion from coop to condo)";
+    "111" = "Exemption from tenant election request (conversion from coop to condo)"
     "201" = "Notice of transfer"
     "202" = "Other filings"
     "203" = "Notice of foreclosure"
