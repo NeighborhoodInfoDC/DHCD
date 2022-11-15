@@ -215,6 +215,13 @@
         
       end;
       
+      else if left( lowcase( _item ) ) =: '# received' then do;
+      
+        _first_number = input( substr( left( _item ), 12 ), 8. ); 
+        PUT _FIRST_NUMBER=;
+      
+      end;
+      
       else do;
       
         PUT 'NO MATCH: ' _item=;
