@@ -76,9 +76,7 @@ proc format library=DHCD;
     "OFFEROFSALENOTICES-5+UNITS", "5+RENTALUNITOFFERSOFSALE", "OFFEROFSALE(5ORMORERENTAL)" = "210"
     
     "RIGHTSOFFIRSTREFUSAL",
-    "RIGHTOFFIRSTREFUSAL",
-    "SFDRIGHTOFFIRSTREFUSAL",
-    "RIGHT OF FIRST REFUSAL (SFD)" = "211"
+    "RIGHTOFFIRSTREFUSAL" = "211"
     
     "TOPALETTEROFINTEREST",
     "LETTEROFINTERESTTOPA","LETTEROFINTEREST(TOPA)",
@@ -95,6 +93,7 @@ proc format library=DHCD;
     
     "SFDLETTERTOLANDLORD","TENANTSNOTICETOLANDLORD",
     "TENANTSLETTERTOLANDLORD"= "216"
+    
     "SFDCLAIMOFELDERLYORDISABLEDSTATUS",
     "TENANTSCLAIMOFELDERLY/DISABLEDSTATUS" = "217"
     
@@ -128,7 +127,11 @@ proc format library=DHCD;
     
     "TENANTASSOCIATIONREGISTRATION(W/INTENTTOPURCHASE)" = "235"
     
-    "2-4UNITSRIGHTOFFIRSTREFUSAL" = "242"
+    "RIGHTOFFIRSTREFUSAL(SFD)",
+    "SFDRIGHTOFFIRSTREFUSAL" = "241"
+    
+    "2-4UNITSRIGHTOFFIRSTREFUSAL",
+    "RIGHTOFFIRSTREFUSAL(2-4)" = "242"
 
 	"SFDNOTICEOFTRANSFER" = "243"
 
@@ -183,6 +186,7 @@ proc format library=DHCD;
     "229" = "5+ units offer of sale without contract"
     "230" = "5+ units notice of transfer"
     "235" = "Tenant organzation registration (w/intent to purchase)"
+    "241" = "Single family dwelling right of first refusal"
     "242" = "2-4 units right of first refusal"
 	"243" = "Single family dwelling notice of transfer"
 	"244" = "Petition for reconsideration"
