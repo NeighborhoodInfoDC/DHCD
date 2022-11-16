@@ -22,8 +22,9 @@ proc format library=DHCD;
   value $rcasd_text2type 
     "CONDOMINIUMREGISTRATIONAPPLICATION",
     "CONDOMINIUMREGISTRATIONAPPLICATIONS",
-	'CONDOMINIUMREGISTRATIONAPPLICATION(AMENDED&RESTATED)',
-	"CONDOMINIUMREGISTRATIONAPPLICATIONCORRECTIONS" = "101"
+    'CONDOMINIUMREGISTRATIONAPPLICATION(AMENDED&RESTATED)',
+    "CONDOMINIUMREGISTRATIONAPPLICATIONCORRECTIONS",
+    'CONDOMINIUMREGISTRATIONAPPLICATIONS&PUBLICOFFERINGSTATEMENTS' = "101"
     
     "NOT-A-HOUSINGACCOMMODATIONEXEMPTIONAPPLICATIONS",
     "NOTAHOUSINGACCOMODATIONAPPLICATION",
@@ -40,15 +41,17 @@ proc format library=DHCD;
     
     "HOUSINGASSISTANCEPAYMENTAPPLICATIONS" = "106"
     
-    "PROPERTYTAXABATEMENTAPPLICATIONS","PROPERTYTAXABATEMENTAPPLICATION" = "107"
+    "PROPERTYTAXABATEMENTAPPLICATIONS", "PROPERTYTAXABATEMENTAPPLICATION", "TAXABATEMENTREQUEST" = "107"
 
-	"WARRANTYCLAIMCORRESPONDENCE" = "108"
-	
+    "WARRANTYCLAIMCORRESPONDENCE" = "108"
+    
     "CONVERSIONELECTIONREQUEST/INFORMATION" = "109"
     
     "CONDOMINIUMEXEMPTIONREQUEST(VACANT)" = "110"
     
     "EXEMPTIONFROMTENANTELECTIONREQUEST(CONVERSIONFROMCOOPTOCONDO)" = "111"
+    
+    "TENANTCONVERSIONELECTIONAPPLICATIONS" = "115"
     
     "NOTICEOFTRANSFER", "NOTICESOFTRANSFER"  = "201"
     
@@ -67,7 +70,7 @@ proc format library=DHCD;
     "PETITIONSFORDECLARATORYRELIEF", "PETITIONFORDECLARATORYRELIEF" = "206"
     
     "TENANTORGANIZATIONREGISTRATIONAPPLICATION",
-	"TENANTORGANIZATIONREGISTRATIONAPPLICATIONS","TENANTORGANIZATIONREGISTRATION" = "207"
+    "TENANTORGANIZATIONREGISTRATIONAPPLICATIONS","TENANTORGANIZATIONREGISTRATION" = "207"
     
     "OFFEROFSALENOTICES-SINGLEFAMILY", "SINGLEFAMILYDWELLINGOFFERSOFSALE", "OFFEROFSALE(SINGLEFAMILYRENTAL)" = "208"
     
@@ -115,7 +118,7 @@ proc format library=DHCD;
     "2-4UNITSOFFEROFSALEW/OCONTRACT",
     "OFFEROFSALEW/OCONTRACT(2-4)" = "225"
 
-	"2-4UNITSNOTICEOFTRANSFER" = "227"
+    "2-4UNITSNOTICEOFTRANSFER" = "227"
     
     "5+UNITSOFFEROFSALEW/CONTRACT",
     "OFFEROFSALEW/CONTRACT(5+)" = "228"
@@ -133,16 +136,16 @@ proc format library=DHCD;
     "2-4UNITSRIGHTOFFIRSTREFUSAL",
     "RIGHTOFFIRSTREFUSAL(2-4)" = "242"
 
-	"SFDNOTICEOFTRANSFER" = "243"
+    "SFDNOTICEOFTRANSFER" = "243"
 
-	"PETITIONFORRECONSIDERATION" = "244"
+    "PETITIONFORRECONSIDERATION" = "244"
 
-	"WARRANTYSECURITYRELEASEREQUEST" = "245"
-	
-	"5+UNITSRIGHTOFFIRSTREFUSAL" = "246"
+    "WARRANTYSECURITYRELEASEREQUEST" = "245"
+    
+    "5+UNITSRIGHTOFFIRSTREFUSAL" = "246"
 
-	"WARRANTYSECURITYLETTEROFCREDIT", 
-	"WARRANTYSECURITY?LETTEROFCREDIT"  = "247"
+    "WARRANTYSECURITYLETTEROFCREDIT", 
+    "WARRANTYSECURITY?LETTEROFCREDIT"  = "247"
     
     other = " ";
 
@@ -154,10 +157,11 @@ proc format library=DHCD;
     "105" = "Tenant election application"
     "106" = "Housing assistance payment application"
     "107" = "Property tax abatement application"
-	"108" = "Warrant claim correspondence - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
+    "108" = "Warrant claim correspondence - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
     "109" = "Conversion election request / information"
     "110" = "Condominium exemption request (vacant)"
     "111" = "Exemption from tenant election request (conversion from coop to condo)"
+    "115" = "Tenant conversion election application" 
     "201" = "Notice of transfer"
     "202" = "Other filings"
     "203" = "Notice of foreclosure"
@@ -181,18 +185,18 @@ proc format library=DHCD;
     "221" = "Single family dwelling offer of sale without contract"
     "224" = "2-4 units offer of sale with contract"
     "225" = "2-4 units offer of sale without contract"
-	"227" = "2-4 units notice of transfer"
+    "227" = "2-4 units notice of transfer"
     "228" = "5+ units offer of sale with contract"
     "229" = "5+ units offer of sale without contract"
     "230" = "5+ units notice of transfer"
     "235" = "Tenant organzation registration (w/intent to purchase)"
     "241" = "Single family dwelling right of first refusal"
     "242" = "2-4 units right of first refusal"
-	"243" = "Single family dwelling notice of transfer"
-	"244" = "Petition for reconsideration"
-	"245" = "Warranty Security Release Request"
-	"246"= "5+ units right of first refusal"
-	"247"= "Warranty Security ? Letter of Credit - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
+    "243" = "Single family dwelling notice of transfer"
+    "244" = "Petition for reconsideration"
+    "245" = "Warranty Security Release Request"
+    "246"= "5+ units right of first refusal"
+    "247"= "Warranty Security ? Letter of Credit - SFD Notice of Solicitation of Offer & Notice of Intent to Sell"
     ;
 
 run;
