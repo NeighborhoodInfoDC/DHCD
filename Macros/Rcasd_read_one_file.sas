@@ -154,8 +154,8 @@
       
         PUT 'LOOKS LIKE A NOTICE!';
         
-        _is_notice_rec = 1;
-     
+        if not( Notice_type in ( '208', '209', '210', '220', '221', '224', '225', '228', '229' ) and lowcase( _item ) =: 'offer of sale w' ) then _is_notice_rec = 1;
+        
         if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
         
           Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
@@ -171,7 +171,7 @@
           Notice_type = "";
         
         end;
-        
+          
       end;
       
       else if input( _item, anydtdte40. ) >= '01jan2006'd then do;
@@ -182,7 +182,7 @@
       
       end;
       
-      else if prxmatch( '/\bstreet|avenue|road|place|terrace|court|ave|rd|st|terr|ter|ct\b/i', _item ) then do;
+      else if prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bterrace\b|\bcourt\b|\bave\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) then do;
       
         ** Contains an address key word **;
       
