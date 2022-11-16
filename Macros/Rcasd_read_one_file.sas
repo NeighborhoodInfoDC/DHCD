@@ -182,7 +182,7 @@
       
       end;
       
-      else if prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bterrace\b|\bcourt\b|\bave\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) then do;
+      else if prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) then do;
       
         ** Contains an address key word **;
       
