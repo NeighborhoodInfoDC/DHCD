@@ -156,7 +156,80 @@
         
         if not( Notice_type in ( '208', '209', '210', '220', '221', '224', '225', '228', '229' ) and lowcase( _item ) =: 'offer of sale w' ) then _is_notice_rec = 1;
         
-        if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
+        ** Check for offer of sale (OFS) notices **;
+        
+        if prxmatch( '/offer of sale|offers of sale/i', _item ) and not( prxmatch( '/response|correspondence|information/i', _item ) ) then do;
+        
+          PUT '** This is an offer of sale notice **';
+          
+          if prxmatch( '/w\/ contract/i', _item ) then do;
+          
+            ** OFS with a contract **;
+            
+            ** Check property size **;
+            
+            select;
+              when ( prxmatch( '/sfd|\bsf\b|single family/i', _item ) )
+                Notice_type = '220';
+              when ( prxmatch( '/2 to 4|2-4/i', _item ) )
+                Notice_type = '224';
+              when ( prxmatch( '/5 or more|5+/i', _item ) )
+                Notice_type = '228';
+              otherwise do;
+                ** No property size given **;
+                %err_put( macro=Rcasd_read_one_file, msg="Notice of sale without property size: file=&file " _n_= _item= )
+              end;
+            end;
+
+          end;
+          
+          else if prxmatch( '/w\/o contract/i', _item ) then do;
+          
+            ** OFS without a contract **;
+            
+            ** Check property size **;
+            
+            select;
+              when ( prxmatch( '/sfd|\bsf\b|single family/i', _item ) )
+                Notice_type = '221';
+              when ( prxmatch( '/2 to 4|2-4/i', _item ) )
+                Notice_type = '225';
+              when ( prxmatch( '/5 or more|5+/i', _item ) )
+                Notice_type = '229';
+              otherwise do;
+                ** No property size given **;
+                %err_put( macro=Rcasd_read_one_file, msg="Notice of sale without property size: file=&file " _n_= _item= )
+              end;
+            end;
+
+          end;
+          
+          else do;
+          
+            ** Contract status not given **;
+        
+            ** Check property size **;
+            
+            select;
+              when ( prxmatch( '/sfd|\bsf\b|single family/i', _item ) )
+                Notice_type = '208';
+              when ( prxmatch( '/2 to 4|2-4/i', _item ) )
+                Notice_type = '209';
+              when ( prxmatch( '/5 or more|5+/i', _item ) )
+                Notice_type = '210';
+              otherwise do;
+                ** No property size given **;
+                %err_put( macro=Rcasd_read_one_file, msg="Notice of sale without property size: file=&file " _n_= _item= )
+              end;
+            end;
+
+          end;
+        
+        end;
+        
+        else if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
+        
+          PUT '** Another notice type other than OFS **';
         
           Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
           
