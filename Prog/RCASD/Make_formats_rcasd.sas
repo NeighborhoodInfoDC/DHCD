@@ -180,6 +180,8 @@ proc format library=DHCD;
     
     "CONDOMINIUMCONVERSIONSVACANCYEXEMPTIONINSPECTIONSLISTING"= "280"
     
+    "CONVERSIONEXEMPTIONS(VACANT)" = "285"
+    
     "COOPERATIVECONVERSIONEXEMPTIONAPPLICATION" = "290"
     
     "EXEMPTIONREQUEST",
@@ -251,6 +253,7 @@ proc format library=DHCD;
     "270" = "Offer of sale notice correspondence"
     "275" = "Offer of sale (misc. information)"
     "280" = "Condominium conversions vacancy exemption inspections listing"
+    "285" = "Conversion exemptions (vacant)"
     "290" = "Cooperative conversion exemption application"
     "295" = "Exemption request"
     "300" = "Miscellaneous information"
