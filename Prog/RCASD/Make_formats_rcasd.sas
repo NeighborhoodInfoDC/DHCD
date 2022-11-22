@@ -74,6 +74,8 @@ proc format library=DHCD;
     
     "CONVERSIONEXEMPTIONREQUEST", "CONVERSIONEXEMPTIONS", "CONVERSIONEXEMPTIONAPPLICATION" = "125"
     
+    "ELECTIONREQUEST" = "130"
+    
     "NOTICEOFTRANSFER", "NOTICESOFTRANSFER", "NOTICEOFTRANSFER/CORRESPONDENCE", "NOTICEOFTRANSFERCORRESPONDENCE" = "201"
     
     "OTHERFILINGS" = "202"
@@ -159,14 +161,19 @@ proc format library=DHCD;
     
     "NOTICEOFTRANSFERCERTIFICATIONREQUEST" = "250"
     
-    "NOTICE OF INTENT TO CONVERT" = "260"
+    "NOTICEOFINTENTTOCONVERT" = "260"
     
     "NOTICEOFINTENTTOCONVERT(OFFERTOPURCHASECONDOMINIUMUNIT)" = "261"
     
     "NOTICEOFINTENTTOCONVERT(NOTICEAFTERCONVERSION)" = "262"
     
-    "OFFER OF SALE NOTICE CORRESPONDENCE",
-    "OFFEROFSALECORRESPONDENCE" = "270"
+    "CONVERSIONFEE/CORRESPONDENCE" = "265"
+    
+    "CONVERSIONFEEPAYMENT" = "267"
+    
+    "OFFEROFSALENOTICECORRESPONDENCE",
+    "OFFEROFSALECORRESPONDENCE",
+    "OTHEROFFEROFSALECORRESPONDENCE" = "270"
     
     "OFFEROFSALE(MISCINFORMATION)",
     "OFFEROFSALE(MISCELLANEOUSINFORMATION)" = "275"
@@ -174,6 +181,11 @@ proc format library=DHCD;
     "CONDOMINIUMCONVERSIONSVACANCYEXEMPTIONINSPECTIONSLISTING"= "280"
     
     "COOPERATIVECONVERSIONEXEMPTIONAPPLICATION" = "290"
+    
+    "EXEMPTIONREQUEST",
+    "EXEMPTIONREQUESTAPPLICATION" = "295"
+    
+    "MISCELLANEOUSINFORMATION" = "300"
     
     other = " ";
 
@@ -194,6 +206,7 @@ proc format library=DHCD;
     "117" = "Conversion election request (submitted by owner to tenants)"
     "120" = "Condominium exemption request (non-housing)"
     "125" = "Conversion exemption request"
+    "130" = "Election request"
     "201" = "Notice of transfer"
     "202" = "Other filings"
     "203" = "Notice of foreclosure"
@@ -233,10 +246,14 @@ proc format library=DHCD;
     "260" = "Notice of intent to convert"
     "261" = "Notice of intent to convert (offer to purchase condominium unit)"
     "262" = "Notice of intent to convert (notice after conversion)"
+    "265" = "Conversion fee / correspondence"
+    "267" = "Conversion fee payment"
     "270" = "Offer of sale notice correspondence"
     "275" = "Offer of sale (misc. information)"
     "280" = "Condominium conversions vacancy exemption inspections listing"
     "290" = "Cooperative conversion exemption application"
+    "295" = "Exemption request"
+    "300" = "Miscellaneous information"
     ;
 
 run;
