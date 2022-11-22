@@ -257,6 +257,7 @@ proc format library=DHCD;
     "290" = "Cooperative conversion exemption application"
     "295" = "Exemption request"
     "300" = "Miscellaneous information"
+    "900" = "Offer of sale (no property size given)"
     ;
 
 run;

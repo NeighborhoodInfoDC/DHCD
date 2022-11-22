@@ -25,13 +25,20 @@
   revisions=%str(New file.),
   year=Test, 
   infilelist=
+  /**/
     01-01_01-05-2007.csv
+    05-14_05-18-2007.csv
     10-29_11-02-2007_updated revised.csv
     05-16_05-20-2011.csv
-    06-07_06-11-2010.csv
+    06-07_06-11-2010 revised.csv
     2016-09-02 revised.csv
-    /*10-29_11-02-2007_updated - No counts.csv*/
-    /*10-29_11-02-2007_updated - Error count 1.csv*/
-    /*10-29_11-02-2007_updated - Error count 2.csv*/
+  /**/
+  /*
+    10-29_11-02-2007_updated - No counts.csv
+    10-29_11-02-2007_updated - Error count 1.csv
+    10-29_11-02-2007_updated - Error count 2.csv
+    2016-09-02 revised - Error count 1.csv
+    2016-09-02 revised - Error count 2.csv
+  */
 )
 

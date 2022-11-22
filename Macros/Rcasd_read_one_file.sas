@@ -26,21 +26,27 @@
          'conversion -',
          'conversion election',
          'conversion exemption',
+         'conversion fee',
          'cooperative conversion',
          'd.c. opportunity to purchase',
          'dopa notice',
          'election correspondence',
+         'election request',
          'exemption from',
+         'exemption request',
          'foreclosure',
          'housing assistance payment',
          'low income equity',
+         'miscellaneous information'
          'not-a-housing',
          'not a housing',
          'notice of',
          'notices of',
          'offer of sale',
          'offers of sale',
+         'ofs (',
          'other filings',
+         'other offer of sale',
          'petitions for',
          'property tax abatement',
          'raze permit',
@@ -130,7 +136,10 @@
       
       if lowcase( _item ) in: ( 
           'condominium and cooperative conversion', 
+          'conversion election report'
+          'created by'
           'weekly report', 
+          'updated weekly report',
           'department of housing and community development',
           'rental conversion and sale division',
           'week ending'
@@ -154,11 +163,11 @@
       
         PUT 'LOOKS LIKE A NOTICE!';
         
-        if not( Notice_type in ( '208', '209', '210', '220', '221', '224', '225', '228', '229' ) and lowcase( _item ) =: 'offer of sale w' ) then _is_notice_rec = 1;
+        if not( Notice_type in ( '208', '209', '210', '220', '221', '224', '225', '228', '229', '900' ) and lowcase( _item ) =: 'offer of sale w' ) then _is_notice_rec = 1;
         
         ** Check for offer of sale (OFS) notices **;
         
-        if prxmatch( '/offer of sale|offers of sale/i', _item ) and not( prxmatch( '/response|correspondence|information/i', _item ) ) then do;
+        if prxmatch( '/offer of sale|offers of sale|ofs \(/i', _item ) and not( prxmatch( '/response|correspondence|information|documents/i', _item ) ) then do;
         
           PUT '** This is an offer of sale notice **';
           
@@ -217,10 +226,8 @@
                 Notice_type = '209';
               when ( prxmatch( '/5 or more|5+/i', _item ) )
                 Notice_type = '210';
-              otherwise do;
-                ** No property size given **;
-                %err_put( macro=Rcasd_read_one_file, msg="Notice of sale without property size: file=&file " _n_= _item= )
-              end;
+              otherwise 
+                Notice_type = '900';
             end;
 
           end;
@@ -255,7 +262,9 @@
       
       end;
       
-      else if prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) then do;
+      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) or
+        prxmatch( '/\bbulk notices\b|\bapartments\b/i', _item ) ) and 
+        Orig_address = "" then do;
       
         ** Contains an address key word **;
       
