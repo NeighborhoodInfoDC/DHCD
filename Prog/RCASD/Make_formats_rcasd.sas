@@ -68,7 +68,8 @@ proc format library=DHCD;
     "EXEMPTIONFROMTENANTELECTIONREQUEST(CONVERSIONFROMCOOPTOCONDO)" = "111"
     
     "ELECTIONCORRESPONDENCE",
-    "TENANTELECTIONMATERIALS" = "112"
+    "TENANTELECTIONMATERIALS",
+    "ELECTIONCORRESPONDENCEANDMATERIALS" = "112"
     
     "TENANTCONVERSIONELECTIONAPPLICATIONS" = "115"
     
@@ -202,6 +203,8 @@ proc format library=DHCD;
     
     "COOPERATIVECONVERSIONEXEMPTIONAPPLICATION" = "290"
     
+    "VACANCY/COOPEXEMPTIONAPPLICATION" = "291"
+    
     "EXEMPTIONREQUEST",
     "EXEMPTIONREQUESTAPPLICATION",
     "EXEMPTIONAPPLICATIONS" = "295"
@@ -215,6 +218,8 @@ proc format library=DHCD;
     "SALESCONTRACT" = "320"
     
     "DISABILITYSURVEYFORTENANTELECTION" = "330"
+    
+    "INTENTTOFILEPETITION" = "335"
     
     other = " ";
 
@@ -286,12 +291,14 @@ proc format library=DHCD;
     "282" = "Vacancy / Not a housing accomodation exemption application"
     "285" = "Conversion exemptions (vacant)"
     "290" = "Cooperative conversion exemption application"
+    "291" = "Cooperative exemption application (vacant)"
     "295" = "Exemption request"
     "300" = "Miscellaneous information"
     "310" = "Termination of condominium"
     "312" = "Termination of sales contract"
     "320" = "Sales contract"
     "330" = "Disability survey for tenant election"
+    "335" = "Intent to file petition"
     "900" = "Offer of sale (no property size given)"
     ;
 
