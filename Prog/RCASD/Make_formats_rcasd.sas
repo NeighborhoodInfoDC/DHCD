@@ -36,7 +36,9 @@ proc format library=DHCD;
     "VACANCYEXEMPTIONAPPLICATIONS",
     "VACANCYEXEMPTIONAPPLICATION", 
     "VACANCYEXEMPTION",
-    "VACANCYEXEMPTIONCERTIFICATIONAPPLICATION" = "103"
+    "VACANCYEXEMPTIONCERTIFICATIONAPPLICATION",
+    "VE",
+    "VEAPPLICATION" = "103"
     
     "LOWINCOMEEQUITYSHARECOOPERATIVECONVERSIONAPPLICATIONS","LIMITEDEQUITYSHARECOOPERATIVECONVERSIONAPPLICATION" = "104"
     
@@ -73,6 +75,10 @@ proc format library=DHCD;
     "CONDOMINIUMEXEMPTIONREQUEST(NON-HOUSING)" = "120"
     
     "CONVERSIONEXEMPTIONREQUEST", "CONVERSIONEXEMPTIONS", "CONVERSIONEXEMPTIONAPPLICATION" = "125"
+    
+    "CONVERSIONEXEMPTIONINFORMATION" = "126"
+    
+    "ELECTIONREQUESTFORCONDOCONVERSION" = "127"
     
     "ELECTIONREQUEST" = "130"
     
@@ -125,7 +131,9 @@ proc format library=DHCD;
     "SFDCLAIMOFELDERLYORDISABLEDSTATUS",
     "TENANTSCLAIMOFELDERLY/DISABLEDSTATUS" = "217"
     
-    "OFFEROFSALERESPONSE-TENANTS" = "218"
+    "OFFEROFSALERESPONSE-TENANTS",
+    "TENANTRESPONSETOOFFEROFSALENOTICES",
+    "TENANTRESPONSETOOFFEROFSALENOTICE" = "218"
     
     "NOTICEOFTRANSFER-EXEMPTIONFROMTOPARIGHTS",
     "NOTICEOFTRANSFER-EXEMPTTRANSACTIONSFROMTOPARIGHTS" = "219"
@@ -138,7 +146,11 @@ proc format library=DHCD;
     "TENANTASSOCIATIONREGISTRATIONANDLETTEROFINTERESTTOPURCHASE",
     "TENANTASSOCIATIONREGISTRATION(RESPONSETOOFFEROFSALE)" 
     "TENANTASSOCIATIONREGISTRATION(RESPONSETOOFFEROFSALEBYOWNER)",
-    "TENANTASSOCIATIONREGISTRATION-OFS" = "235"
+    "TENANTASSOCIATIONREGISTRATION-OFS",
+    "TENANTASSOCIATIONREGISTRATION(RESPONSETOOFFEROFSALE)",
+    "TENANTASSOCIATIONREGISTRATION(RESPONSETOOFFEROFSALEBYOWNER)" = "235"
+    
+    "TENANTSTATEMENTOFINTERESTTOPURCHASE" = "237"
     
     "RIGHTOFFIRSTREFUSAL(SFD)",
     "SFDRIGHTOFFIRSTREFUSAL",
@@ -176,18 +188,29 @@ proc format library=DHCD;
     "OTHEROFFEROFSALECORRESPONDENCE" = "270"
     
     "OFFEROFSALE(MISCINFORMATION)",
-    "OFFEROFSALE(MISCELLANEOUSINFORMATION)" = "275"
+    "OFFEROFSALE(MISCELLANEOUSINFORMATION)",
+    "OFFEROFSALE-MISCDOCUMENTS" = "275"
     
-    "CONDOMINIUMCONVERSIONSVACANCYEXEMPTIONINSPECTIONSLISTING"= "280"
+    "CONDOMINIUMCONVERSIONSVACANCYEXEMPTIONINSPECTIONSLISTING" = "280"
     
-    "CONVERSIONEXEMPTIONS(VACANT)" = "285"
+    "VACANCY/NHAEXEMPTIONAPPLICATIONS" = "282"
+    
+    "CONVERSIONEXEMPTIONS(VACANT)",
+    "CONVERSIONEXEMPTIONREQUEST(VACANT)" = "285"
     
     "COOPERATIVECONVERSIONEXEMPTIONAPPLICATION" = "290"
     
     "EXEMPTIONREQUEST",
-    "EXEMPTIONREQUESTAPPLICATION" = "295"
+    "EXEMPTIONREQUESTAPPLICATION",
+    "EXEMPTIONAPPLICATIONS" = "295"
     
     "MISCELLANEOUSINFORMATION" = "300"
+    
+    "TERMINATIONOFCONDOMINIUM" = "310"
+    
+    "TERMINATIONOFSALESCONTRACT" = "312"
+    
+    "SALES CONTRACT" = "320"
     
     other = " ";
 
@@ -208,6 +231,8 @@ proc format library=DHCD;
     "117" = "Conversion election request (submitted by owner to tenants)"
     "120" = "Condominium exemption request (non-housing)"
     "125" = "Conversion exemption request"
+    "126" = "Conversion exemption information"
+    "127" = "Election request for condo conversion"
     "130" = "Election request"
     "201" = "Notice of transfer"
     "202" = "Other filings"
@@ -237,6 +262,7 @@ proc format library=DHCD;
     "229" = "5+ units offer of sale without contract"
     "230" = "5+ units notice of transfer"
     "235" = "Tenant organzation registration (w/intent to purchase)"
+    "237" = "Tenant statement of interest to purchase"
     "241" = "Single family dwelling right of first refusal"
     "242" = "2-4 units right of first refusal"
     "243" = "Single family dwelling notice of transfer"
@@ -253,10 +279,14 @@ proc format library=DHCD;
     "270" = "Offer of sale notice correspondence"
     "275" = "Offer of sale (misc. information)"
     "280" = "Condominium conversions vacancy exemption inspections listing"
+    "282" = "Vacancy / Not a housing accomodation exemption application"
     "285" = "Conversion exemptions (vacant)"
     "290" = "Cooperative conversion exemption application"
     "295" = "Exemption request"
     "300" = "Miscellaneous information"
+    "310" = "Termination of condominium"
+    "312" = "Termination of sales contract"
+    "320" = "Sales contract"
     "900" = "Offer of sale (no property size given)"
     ;
 
