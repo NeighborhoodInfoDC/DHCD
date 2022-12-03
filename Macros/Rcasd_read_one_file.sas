@@ -8,6 +8,14 @@
  Environment:  Local Windows session (desktop)
  
  Description:  Read one RCASD input CSV file into a SAS data set.
+ 
+ Special tags added to input data sets:
+   [SKIP] Add to start of row to skip processing that row entirely.
+   [NOTE] Add to start of an item to indicate that entry should be processed as a note.
+   [NO ADDRESS] Add to an item to indicate that it should be treated as an address entry,
+                even though no address was provided.
+   [END NOTICE] Add as a row after all notice entries have been processed.
+                (Clears previous notice info.)
 
  Modifications:
 **************************************************************************/
@@ -21,6 +29,7 @@
   %let NOTICE_NAMES_BEGIN = 
          '2-4 rental',
          '5+ rental',
+         'application for',
          'assignment of',
          'condominium',
          'conversion -',
@@ -29,15 +38,17 @@
          'conversion fee',
          'cooperative conversion',
          'd.c. opportunity to purchase',
+         'disability survey',
          'dopa notice',
          'election correspondence',
          'election request',
          'exemption from',
          'exemption request',
+         'exemption applications',
          'foreclosure',
          'housing assistance payment',
          'low income equity',
-         'miscellaneous information'
+         'miscellaneous information',
          'not-a-housing',
          'not a housing',
          'notice of',
@@ -52,6 +63,7 @@
          'raze permit',
          'right of first',
          'sale and transfer -',
+         'sales contract',
          'sfd',
          'single family dwelling',
          'tax abatement',
@@ -59,10 +71,16 @@
          'tenant conversion',
          'tenant election',
          'tenant organization registration',
+         'tenant response',
+         'tenant statement',
+         'termination',
          'topa complaint',
          'topa letter',
-         'vacancy / coop exemption',
-         'vacancy exemption'
+         'vacancy /',
+         'vacancy application',
+         'vacancy exemption',
+         've ',
+         'v.e.'
        ;
 
   filename inf  "&path\&file" lrecl=2000;
@@ -101,9 +119,10 @@
   
   data &out;
   
-    length Notice_type $ 3 Orig_address Notes _item $ 1000 Source_file $ 120 inbuff $ 2000;
+    length Notice_type $ 3 Orig_notice_desc $ 200 Orig_address Notes _item $ 1000 
+           Source_file $ 120 inbuff $ 2000;
     
-    retain Notice_type "" Notices 0 Source_file "%lowcase(&file)";
+    retain Notice_type "" Orig_notice_desc "" Notices 0 Source_file "%lowcase(&file)";
     retain _read_notice 0 _notice_count _notice_count_total .;
 
     infile inf missover pad;
@@ -137,15 +156,21 @@
       if lowcase( _item ) in: ( 
           'condominium and cooperative conversion', 
           'conversion election report'
-          'created by'
+          'created by',
+          'election report',
+          'exemption report',
           'weekly report', 
           'updated weekly report',
           'department of housing and community development',
           'rental conversion and sale division',
-          'week ending'
+          'week ending',
+          '[skip]'
         ) then do;
       
         PUT '** Generic labels/headers, ignore and skip to next row **';
+        
+        Notice_type = '';
+        Orig_notice_desc = '';
         
         leave;
         
@@ -159,11 +184,26 @@
               
       end;
       
+      else if lowcase( _item ) = '[end notice]' then do;
+      
+        PUT '** Stop reading current notice **';
+      
+        Notice_type = '';
+        Orig_notice_desc = '';
+        _notice_count = .;
+        
+      end;        
+      
       else if lowcase( _item ) in: ( &NOTICE_NAMES_BEGIN ) then do;
       
         PUT 'LOOKS LIKE A NOTICE!';
         
-        if not( Notice_type in ( '208', '209', '210', '220', '221', '224', '225', '228', '229', '900' ) and lowcase( _item ) =: 'offer of sale w' ) then _is_notice_rec = 1;
+        ** Do not flag as new notice record if an offer of sale notice with or without contract **;
+        
+        if not( Notice_type in ( '208', '209', '210', '220', '221', '224', '225', '228', '229', '900' ) and lowcase( _item ) =: 'offer of sale w' ) then do;
+          _is_notice_rec = 1;
+          Orig_notice_desc = _item;
+        end;
         
         ** Check for offer of sale (OFS) notices **;
         
@@ -208,6 +248,7 @@
               otherwise do;
                 ** No property size given **;
                 %err_put( macro=Rcasd_read_one_file, msg="Notice of sale without property size: file=&file " _n_= _item= )
+                Notice_type = '';
               end;
             end;
 
@@ -239,6 +280,7 @@
           PUT '** Another notice type other than OFS **';
         
           Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
+          Orig_notice_desc = _item;
           
           PUT NOTICE_TYPE=;
                               
@@ -262,8 +304,8 @@
       
       end;
       
-      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) or
-        prxmatch( '/\bbulk notices\b|\bapartments\b/i', _item ) ) and 
+      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) or
+        prxmatch( '/\bbulk notices\b|\bapartments\b|\[no address\]/i', _item ) ) and 
         Orig_address = "" then do;
       
         ** Contains an address key word **;
@@ -297,18 +339,26 @@
         
       end;
       
-      else if left( lowcase( _item ) ) =: '# received' then do;
+      else if lowcase( _item ) =: '# received' then do;
       
-        _first_number = input( substr( left( _item ), 12 ), 8. ); 
+        _first_number = input( substr( _item, 12 ), 8. ); 
         PUT _FIRST_NUMBER=;
       
+      end;
+      
+      else if lowcase( _item ) =: '[note]' then do;
+      
+        PUT '** Tagged as a note **';
+        
+        Notes = left( trim( Notes ) || ' ' || left( substr( _item, 7 ) ) );
+        
       end;
       
       else do;
       
         PUT 'NO MATCH: ' _item=;
         
-        Notes = left( trim( Notes ) || ' ' || left( _item ) );
+        Notes = left( trim( Notes ) || ' ' || _item );
         
       end;
       
@@ -798,7 +848,7 @@
   /**/
   proc print data=&out;
     by Source_file;
-    var Notice_date Notice_type Orig_address Notes Num_units Sale_price;
+    var Notice_date Notice_type Orig_notice_desc Orig_address Notes Num_units Sale_price;
   run;
   /**/
 
