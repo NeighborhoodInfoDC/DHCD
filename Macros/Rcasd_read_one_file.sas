@@ -47,6 +47,7 @@
          'exemption applications',
          'foreclosure',
          'housing assistance payment',
+         'intent to',
          'low income equity',
          'miscellaneous information',
          'not-a-housing',
@@ -58,6 +59,7 @@
          'ofs (',
          'other filings',
          'other offer of sale',
+         'petition for',
          'petitions for',
          'property tax abatement',
          'raze permit',
@@ -66,6 +68,8 @@
          'sales contract',
          'sfd',
          'single family dwelling',
+         'statement of',
+         'stmt of',
          'tax abatement',
          'tenant association registration',
          'tenant conversion',
@@ -164,6 +168,10 @@
           'department of housing and community development',
           'rental conversion and sale division',
           'week ending',
+          'conversion fee or exemption applications',
+          'election correspondence, materials and notices to vacate',
+          'offer of sale correspondence /',
+          'offer of sale, misc.',
           '[skip]'
         ) then do;
       

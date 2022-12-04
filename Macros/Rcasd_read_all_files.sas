@@ -26,6 +26,10 @@
   
   %let out = Rcasd_&year;
   
+  %** Create format for recoding notice descriptions to type **;
+  
+  %Rcasd_text2type_fmt(  )
+  
   %** Read individual input data sets **;
   
   %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .csv, .csv | ) );
