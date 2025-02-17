@@ -11,6 +11,16 @@
  subject to rent control.
 
  Version 2
+ 
+ Uses data sets:
+   - DHCD.rent_control_database_041511
+   - PresCat.Parcel
+   - PresCat.Project_category_view
+   - RealProp.Cama_building
+   - Realprop.Parcel_base
+   - Realprop.Parcel_base_who_owns
+   - Realprop.Parcel_geo
+   - RealProp.Parcel_units
 
  Modifications:
 **************************************************************************/
@@ -97,16 +107,10 @@ data rental_1;
 		2.1.2. Create flag for properties built after 1975 (1976, 1977) 
 **************************************************/;
 
-data cama;
-set RealProp.Cama_building;
-if ayb < 1800 or ayb > year( today() ) then ayb = .u;
-if eyb < 1800 or eyb > year( today() ) then eyb = .u;
-run;
-
 /*
 ** Double check that none of the duplicate SSLs are in our file **;
 
-proc summary data=cama n;
+proc summary data=RealProp.Cama_building n;
 by ssl;
 var ayb eyb;
 output out=test1 (where=(_freq_>1)) 
@@ -128,7 +132,7 @@ title2;
 */
 
 ** Use earliest AYB value for identifying possible rent controlled properties **;
-proc summary data=cama min;
+proc summary data=RealProp.Cama_building min;
 var ayb eyb;
 by ssl;
 output out=cama_min min= /autoname;
@@ -143,7 +147,7 @@ data rental_2;  * there are A LOT where the ayb=0;
   year_built_min = min( ayb_min, eyb_min );
 
 	/*2.1 Flag buildings built before 1978*/
-	if year_built_min < 1978 then Exempt_built1978=0; else Exempt_built1978=1; 
+	if 0 < year_built_min < 1978 then Exempt_built1978=0; else Exempt_built1978=1; 
 
 	/*2.2 create post 1975 flag*/
 	if year_built_min ge 1976 then AYB_assumption=1;	else AYB_assumption=0;
@@ -206,34 +210,34 @@ data rental_3;
 data rental_5;
 merge 
   rental_3 (in=a) 
-  realprop.parcel_geo (keep=ssl ANC2012 Ward2012 Cluster2017 geo2010 zip x_coord y_coord);
+  realprop.parcel_geo (keep=ssl ANC2012 Ward2022 Cluster2017 geo2020 zip x_coord y_coord);
 by ssl;
 if a=1;
 
   ** Fill in missing geos for selected properties **;
   select ( ssl );
     when ( '0158    0084' ) do;
-      ward2012 = '2';
+      Ward2022 = '2';
       cluster2017 = '06';
     end;
     when ( '0701    7040' ) do;
-      ward2012 = '6';
+      Ward2022 = '6';
       cluster2017 = '27';
     end;
     when ( '3117    0096' ) do;
-      ward2012 = '5';
+      Ward2022 = '5';
       cluster2017 = '21';
     end;
     when ( '4513    0082' ) do;
-      ward2012 = '6';
+      Ward2022 = '6';
       cluster2017 = '25';
     end;
     when ( '5622    0073' ) do;
-      ward2012 = '8';
+      Ward2022 = '8';
       cluster2017 = '34';
     end;
     when ( '5933    0114' ) do;
-      ward2012 = '8';
+      Ward2022 = '8';
       cluster2017 = '39';
     end;
     otherwise
@@ -242,7 +246,7 @@ if a=1;
 
 run;
 
-%File_info( data=rental_5, contents=n, printobs=0, freqvars=ward2012 cluster2017 )
+%File_info( data=rental_5, contents=n, printobs=0, freqvars=Ward2022 cluster2017 )
 
 
 /**************************************************
@@ -583,14 +587,14 @@ run;
 
 proc tabulate data=Parcels_Rent_Control format=comma12.0 noseps missing;
   where in_last_ownerpt;
-  class ui_proptype ward2012;
+  class ui_proptype Ward2022;
   class rent_controlled / preloadfmt order=data;
   var adj_unit_count;
   table 
     /** Pages **/
     ui_proptype=' ',
     /** Rows **/
-    all='DC' ward2012=' ',
+    all='DC' Ward2022=' ',
     /** Columns **/
     ( all='Total' rent_controlled=' ' ) *
     ( n='Properties' sum=' '*adj_unit_count='Units' )
@@ -600,7 +604,7 @@ run;
 
 title2 '--Missing geography--';
 proc print data=Parcels_Rent_Control;
-  where missing( Ward2012 ) and not missing( ui_proptype );
+  where missing( Ward2022 ) and not missing( ui_proptype );
   id ssl; 
   var premiseadd ui_proptype nlihc_id;
 run;
