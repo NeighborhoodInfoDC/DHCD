@@ -213,37 +213,6 @@ merge
   realprop.parcel_geo (keep=ssl ANC2012 Ward2022 Cluster2017 geo2020 zip x_coord y_coord);
 by ssl;
 if a=1;
-
-  ** Fill in missing geos for selected properties **;
-  select ( ssl );
-    when ( '0158    0084' ) do;
-      Ward2022 = '2';
-      cluster2017 = '06';
-    end;
-    when ( '0701    7040' ) do;
-      Ward2022 = '6';
-      cluster2017 = '27';
-    end;
-    when ( '3117    0096' ) do;
-      Ward2022 = '5';
-      cluster2017 = '21';
-    end;
-    when ( '4513    0082' ) do;
-      Ward2022 = '6';
-      cluster2017 = '25';
-    end;
-    when ( '5622    0073' ) do;
-      Ward2022 = '8';
-      cluster2017 = '34';
-    end;
-    when ( '5933    0114' ) do;
-      Ward2022 = '8';
-      cluster2017 = '39';
-    end;
-    otherwise
-      /** SKIP **/;
-  end;
-
 run;
 
 %File_info( data=rental_5, contents=n, printobs=0, freqvars=Ward2022 cluster2017 )
