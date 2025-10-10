@@ -90,7 +90,7 @@ data rental_1;
          premiseadd_std = '' or owneraddress_std = '' ) then delete;
 	end;
 
-	if MIX2TXTYPE = "TX" or MIX1TXTYPE = "TX" then Excluded_Nontaxable=0; else Excluded_Nontaxable=1;
+	if MIX2TXTYPE = "TX" or MIX1TXTYPE = "TX" or ( MIX2TXTYPE = '' and MIX1TXTYPE = '' ) then Excluded_Nontaxable=0; else Excluded_Nontaxable=1;
 
   if left( ownername_full ) =: "+ " then ownername_full = "";
   
@@ -300,10 +300,12 @@ data rental_6;
 		where Units_full in ( 0, ., .u );
 	run;
 
-	proc freq data=test5;
+    title2 'Parcels with missing unit counts by usecode';
+    proc freq data=test5;
 	  tables usecode;
 	  format usecode ;
 	run;
+	title2;
 
 
 /**************************************************
