@@ -26,6 +26,10 @@
   
   %let out = Rcasd_&year;
   
+  %** Create format for recoding notice descriptions to type **;
+  
+  %Rcasd_text2type_fmt(  )
+  
   %** Read individual input data sets **;
   
   %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .csv, .csv | ) );
@@ -44,7 +48,8 @@
     %let v = %scan( &infilelist, &i, '|' );
 
   %end;
-
+  
+%MACRO SKIP;  *** TEMPORARY FOR TESTING ***;
   data _Rcasd_read_all_files;
 
     length Nidc_rcasd_id $ 12;
@@ -141,8 +146,13 @@
     sortby=Nidc_rcasd_id Addr_num,
     revisions=%str(&revisions),
     printobs=0,
-    freqvars=Notice_type ward2012 Notes
+    freqvars=Source_file Ward: Notes
   )  
+  
+  proc freq data=&out;
+    tables Notice_type / nocum nopercent;
+  run;
+%MEND SKIP;
 
 %mend Rcasd_read_all_files;
 
