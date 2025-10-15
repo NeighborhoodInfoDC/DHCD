@@ -21,6 +21,7 @@
    - Realprop.Parcel_base_who_owns
    - Realprop.Parcel_geo
    - RealProp.Parcel_units
+   - Mar.Address_points_view
 
  Modifications:
 **************************************************************************/
@@ -34,6 +35,7 @@
 %DCData_lib( MAR )
 
 %let revisions = Update with latest parcel and address data.;
+%let revisions = Add Sfh_extra_unit variable.;
 
 %Data_to_format(
   FmtLib=work,
@@ -229,8 +231,14 @@ data rental_6;
 	  RealProp.Parcel_units (drop=ui_proptype rename=(total_res_units=units_mar));
 	by ssl;
 	if a=1;
-	if ui_proptype in ( '10', '11' ) then do;
-	  ** Single family homes and condo units **;
+	if ui_proptype in ( '10' ) then do;
+	  ** Single family homes, which can include an extra unit **;
+	  units_full = max( min( units_mar, 2 ), 1 );
+	  if missing( units_full ) or units_full = 0 then units_full = 1;
+	  predicted = 0;
+	end;
+	else if ui_proptype in ( '11' ) then do;
+	  ** Condo units **;
 	  units_full = 1;
 	  predicted = 0;
 	end;
@@ -478,13 +486,21 @@ proc sort data=DHCD.rent_control_database_041511 out=rent_control_database_04151
   by ssl;
 run;
 
+** Use MAR data to create sfh_extra_unit flag for single family houses with an extra unit **;
+
+proc sort data=Mar.Address_points_view out=Sfh_extra_unit (keep=ssl) nodupkey;
+  where active_res_occupancy_count = 2 and active_res_unit_count = 1;
+  by ssl;
+run;
+
 data Parcels_Rent_Control;
 merge 
   rental_7_1 
   rent_control_database_041511 
     (keep=ssl Rent_controlled
      rename=(Rent_controlled=Rent_controlled_2011)
-     in=b);
+     in=b)
+   Sfh_extra_unit (in=in_sfh);
 by ssl;
 
 if not b then Rent_controlled_2011 = .n;
@@ -504,14 +520,20 @@ or Exempt_built1978=1
 or Exempt_assisted=1
 or Exempt_govowned=1 then Exempt_any=1; else Exempt_any=0;
 
+Sfh_extra_unit = in_sfh;
+
+if Sfh_extra_unit and missing( units_full ) then units_full = 2;
+
 label
   Rent_controlled = "Property is subject to rent control (current estimate)"
   Rent_controlled_2011 = "Property was subject to rent control in original 2011 estimate"
-  Exempt_any = "One or more property exemptions apply";
+  Exempt_any = "One or more property exemptions apply"
+  Sfh_extra_unit = "Single-family house with an extra unit (eg, English basement)";
 
 format 
   ayb_assumption ayb_missing Unit_count_pred_flag units5plus_realprop units5plus_flag 
   owns5plus_assump_flag Indiv OwnerDC Trust_flag Exempt_: Excluded_: Rent_controlled: 
+  Sfh_extra_unit
   dyesno.;
 
 format ssl ;
