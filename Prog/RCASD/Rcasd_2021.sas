@@ -21,11 +21,14 @@
 %Rcasd_read_all_files( 
   year=2021, 
   infilelist=
+	/****
 	Weekly Report Jan 4 - 8 2021.csv
 	Week of Jan 11 - 15 2021.csv
 	Weekly Report Jan 18 - 24 2021.csv
       report_3.csv
+      ****/
       report_4.csv
+	/****
       report (4).csv
       report (1)_0.csv
       report (3).csv
@@ -40,4 +43,5 @@
       report (4)_0.csv
       report (5)_0.csv
       report (6).csv
+      ****/
 	)

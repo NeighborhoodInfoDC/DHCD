@@ -133,7 +133,7 @@
     
     input inbuff $2000.;
 
-    PUT _N_= inbuff=;
+    PUT _N_= INBUFF=;
     
     ** Initialize record specific vars **;
     
@@ -151,6 +151,8 @@
     _size = countw( inbuff, ',', 'q' );
     
     PUT _SIZE=;
+    
+    ** Process each item in inbuff **;
     
     do _i = 1 to _size;
     
@@ -206,12 +208,39 @@
       
         PUT 'LOOKS LIKE A NOTICE!';
         
+        ** Remove ' - (empty)' text from notice label **;
+        
+        _item = compbl( tranwrd( _item, ' - (empty)', '' ) );
+        PUT _ITEM= ;
+        
+        ** Remove 'Sale and Transfer -' from start of notice label **;
+        
+        if lowcase( _item ) =: 'sale and transfer -' then
+          _item = left( substr( _item, length( 'sale and transfer -' ) + 1 ) );
+        PUT _ITEM= ;
+        
+        ** Check for '(n Items)' in label **;
+        
+        _p = prxmatch( '/\(\d+ item(s|)\)/i', _item );
+        
+        if _p > 0 then do;
+        
+          _first_number = input( scan( substr( _item, _p + 1 ), 1 ), 8. );
+          PUT _FIRST_NUMBER= ;
+          
+          _item = substr( _item, 1, _p - 1 );
+          PUT _ITEM= ;
+        
+        end;
+        
         ** Do not flag as new notice record if an offer of sale notice with or without contract **;
         
         if not( Notice_type in ( '208', '209', '210', '220', '221', '224', '225', '228', '229', '900' ) and lowcase( _item ) =: 'offer of sale w' ) then do;
           _is_notice_rec = 1;
           Orig_notice_desc = _item;
         end;
+        
+        PUT _IS_NOTICE_REC=;
         
         ** Check for offer of sale (OFS) notices **;
         
@@ -296,7 +325,7 @@
         else do;
         
           %err_put( macro=Rcasd_read_one_file, msg="Unrecognized notice type: file=&file " _n_= _item= )
-          %err_put( macro=Rcasd_read_one_file, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+          %err_put( macro=Rcasd_read_one_file, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
           
           Notice_type = "";
         
@@ -312,7 +341,7 @@
       
       end;
       
-      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b/i', _item ) or
+      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\bcircle\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bparkway\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b|\bpl\b/i', _item ) or
         prxmatch( '/\bbulk notices\b|\bapartments\b|\[no address\]/i', _item ) ) and 
         Orig_address = "" then do;
       
@@ -326,6 +355,8 @@
 
       else if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', _item ) then do;
       
+        ** Combined "Units / Price" item **;
+      
         Num_units = input( scan( _item, 1, '/' ), 8. );
         Sale_price = input( scan( _item, 2, '/' ), dollar16. );
         
@@ -333,16 +364,58 @@
       
       end;
       
+      else if prxmatch( '/($|)[\d,]+,\d\d\d/', _item ) then do;
+      
+        ** Sales price **;
+        
+        Sale_price = input( _item, dollar16. );
+        
+        PUT SALE_PRICE=;
+        
+      end;
+      
       else if prxmatch( '/^\d+ *$/', _item ) then do;
       
         ** A plain number **;
         
-        if missing( _first_number ) then do;
-          _first_number = input( _item, 8. );
-          PUT _FIRST_NUMBER=;
+        _number = input( _item, 8. );
+        PUT _NUMBER=;
+        
+        if _is_notice_rec then do;
+        
+          if missing( _first_number ) then do;
+            _first_number = _number;
+            PUT _FIRST_NUMBER=;
+          end;
+          else do;
+            PUT 'UNKNOWN NUMBER: ' _item=;
+          end;
+          
         end;
         else do;
-          PUT 'UNKNOWN NUMBER: ' _item=;
+        
+          select;
+          
+            when ( '1feb2019'd <= notice_date ) do;
+             
+              if missing( Address_id ) then Address_id = _number;
+              else if missing( num_units ) then num_units = _number;
+              else do;
+                PUT 'UNKNOWN NUMBER: ' _item=;
+              end;
+            
+            end;
+            
+            otherwise do;
+            
+              %err_put( macro=Rcasd_read_one_file, msg="Invalid notice date " _n_= notice_date= inbuff= );
+              
+            end;
+            
+          end;
+          
+          PUT ADDRESS_ID= NUM_UNITS=;
+          
         end;
         
       end;
@@ -493,7 +566,7 @@
         
         if Notice_type = "" then do;
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
         end;
         
         ***input Notice_date :mmddyy10. @; 
@@ -583,7 +656,7 @@
         
         if Notice_type = "" then do;
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
         end;
         
         input Notice_date :mmddyy10. @; 
@@ -678,7 +751,7 @@
         
         if Notice_type = "" then do;
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff2= )
-          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
         end;
         
         Notice_date = .;
@@ -782,7 +855,7 @@
         
         if Notice_type = "" then do;
           %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="Update Prog\RCASD\Make_formats_rcasd.sas to add this notice to RCASD formats." )
+          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
         end;
         
         input inbuff @;
@@ -853,10 +926,10 @@
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
   %end;
 
-  /**/
+  /*TESTING CODE*/
   proc print data=&out;
     by Source_file;
-    var Notice_date Notice_type Orig_notice_desc Orig_address Notes Num_units Sale_price;
+    var Notice_date Notice_type Orig_notice_desc Orig_address Address_id Notes Num_units Sale_price;
   run;
   /**/
 

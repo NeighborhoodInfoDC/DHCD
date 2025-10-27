@@ -17,6 +17,9 @@ library(rvest)
 library(httr)
 library(stringr)
 library(tidyverse)
+# install.packages('pdftools', repos = c('https://ropensci.r-universe.dev', 'https://cloud.r-project.org'))
+library(pdftools)
+
 
 main_url <- "https://dhcd.dc.gov/page/weekly-report-tenant-opportunity-purchase-act-topa-filings"
 output_root_folder <- "c:/temp/TOPA_PDFs"
@@ -60,6 +63,10 @@ download_pdf <- function(url) {
     dest_path <- str_replace_all( file.path(output_folder, file_name), "%20", " ")
     download.file(urls_pdf[1], destfile = dest_path, mode = "wb")
   }
+  # Write PDF contents to text file
+  dest_path_txt = str_replace(dest_path,"\\.pdf$",".txt")
+  text <- pdf_text(dest_path)
+  writeLines(text,con=dest_path_txt)
 }
 
 # Create unique list of report years
