@@ -22,7 +22,11 @@
 
 %macro Rcasd_read_one_file( file=, path=, out= );
 
-  %local is_2006_fmt is_old_fmt is_v3_fmt notice_count_total wrote_obs NOTICE_NAMES_BEGIN;
+  %local is_2006_fmt is_old_fmt is_v3_fmt notice_count_total wrote_obs NOTICE_NAMES_BEGIN file_type;
+  
+  %let file_type = %lowcase( %scan( &file, -1, . ) );
+  
+  %PUT FILE_TYPE=&FILE_TYPE;
   
   %** List of beginnings of notice names used to identify possible notices **;
   
@@ -143,6 +147,26 @@
     _is_notice_rec = 0;
     _first_number = .;
     
+    %if &file_type = txt %then %do;
+    
+      ** Add comma delimiters for TXT file type **;
+
+      ** Remove existing commas **;
+      
+      inbuff = trim( compress( inbuff, ',' ) ); 
+    
+      ** Replace sequences of 3 blanks or more with a comma (,) **;
+      
+      inbuff = prxchange( 's/\s\s\s+/,/', -1, inbuff );
+      
+      ** Add comma between address ID and number of units **;
+      
+      inbuff = prxchange( 's/,(\d+)\s+(\d+),/,$1,$2,/', 1, inbuff );
+      
+      ***PUT INBUFF=;
+      
+    %end;
+    
     ** Remove multiple blanks **;
     
     inbuff = left( compbl( inbuff ) );
@@ -221,7 +245,7 @@
         
         ** Check for '(n Items)' in label **;
         
-        _p = prxmatch( '/\(\d+ item(s|)\)/i', _item );
+        _p = prxmatch( '/\(\d+ item(s|)( record(s|)|)\)/i', _item );
         
         if _p > 0 then do;
         
@@ -376,9 +400,9 @@
       
       else if prxmatch( '/^\d+ *$/', _item ) then do;
       
-        ** A plain number **;
+        ** A plain number, which could be Address_id, Num_units, or Sale_price, depending on file format **;
         
-        _number = input( _item, 8. );
+        _number = input( _item, 16. );
         PUT _NUMBER=;
         
         if _is_notice_rec then do;
@@ -400,6 +424,7 @@
              
               if missing( Address_id ) then Address_id = _number;
               else if missing( num_units ) then num_units = _number;
+              else if missing( sale_price ) then sale_price = _number;
               else do;
                 PUT 'UNKNOWN NUMBER: ' _item=;
               end;
@@ -414,7 +439,7 @@
             
           end;
           
-          PUT ADDRESS_ID= NUM_UNITS=;
+          PUT ADDRESS_ID= NUM_UNITS= SALE_PRICE=;
           
         end;
         
@@ -534,7 +559,7 @@
     call symput( 'notice_count_total', put( _notice_count_total, 12. ) );
 
     format Notice_date mmddyy10. Notice_type $rcasd_notice_type.;
-    
+  
   run;
 
 
