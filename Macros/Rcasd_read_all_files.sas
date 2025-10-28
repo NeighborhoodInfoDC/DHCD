@@ -33,6 +33,7 @@
   %** Read individual input data sets **;
   
   %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .csv, .csv | ) );
+  %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .txt, .txt | ) );
 
   %let i = 1;
   %let v = %scan( &infilelist, &i, '|' );

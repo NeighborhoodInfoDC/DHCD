@@ -128,7 +128,7 @@
   data &out;
   
     length Notice_type $ 3 Orig_notice_desc $ 200 Orig_address Notes _item $ 1000 
-           Source_file $ 120 inbuff $ 2000;
+           Source_file $ 120 inbuff inbuff2 $ 2000;
     
     retain Notice_type "" Orig_notice_desc "" Notices 0 Source_file "%lowcase(&file)";
     retain _read_notice 0 _notice_count _notice_count_total .;
@@ -151,19 +151,31 @@
     
       ** Add comma delimiters for TXT file type **;
 
-      ** Remove existing commas **;
+      ** Replace sequences of 3 blanks or more with a tilde (~) **;
       
-      inbuff = trim( compress( inbuff, ',' ) ); 
-    
-      ** Replace sequences of 3 blanks or more with a comma (,) **;
+      inbuff2 = prxchange( 's/\s\s\s+/~/', -1, inbuff );
+      inbuff = "";
       
-      inbuff = prxchange( 's/\s\s\s+/,/', -1, inbuff );
+      PUT INBUFF2=;
       
-      ** Add comma between address ID and number of units **;
+      ** Clean up items and create new comma-delimited list **;
       
-      inbuff = prxchange( 's/,(\d+)\s+(\d+),/,$1,$2,/', 1, inbuff );
+      _i = 1;
+      _item = scan( inbuff2, _i, '~' );
       
-      ***PUT INBUFF=;
+      do while ( not( missing( _item ) ) );
+      
+        if indexc( _item, ',' ) then _item = quote( trim( _item ) );
+        else _item = prxchange( 's/^(\d+)\s+(\d+)\s*$/$1,$2/', 1, _item );
+
+        if _item ~= "" then inbuff = catx( ',', inbuff, _item );
+        
+        _i = _i + 1;
+        _item = scan( inbuff2, _i, '~' );
+      
+      end;
+
+      PUT INBUFF=;
       
     %end;
     
@@ -365,7 +377,7 @@
       
       end;
       
-      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\bcircle\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bparkway\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b|\bpl\b/i', _item ) or
+      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\bboulevard\b|\bcircle\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bparkway\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b|\bpl\b/i', _item ) or
         prxmatch( '/\bbulk notices\b|\bapartments\b|\[no address\]/i', _item ) ) and 
         Orig_address = "" then do;
       
@@ -382,7 +394,7 @@
         ** Combined "Units / Price" item **;
       
         Num_units = input( scan( _item, 1, '/' ), 8. );
-        Sale_price = input( scan( _item, 2, '/' ), dollar16. );
+        Sale_price = input( scan( _item, 2, '/' ), dollar20. );
         
         PUT NUM_UNITS= SALE_PRICE=;
       
@@ -392,7 +404,7 @@
       
         ** Sales price **;
         
-        Sale_price = input( _item, dollar16. );
+        Sale_price = input( _item, dollar20. );
         
         PUT SALE_PRICE=;
         
