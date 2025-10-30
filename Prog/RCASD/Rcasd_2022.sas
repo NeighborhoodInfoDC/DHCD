@@ -21,10 +21,6 @@
 %Rcasd_read_all_files( 
   year=2022, 
   infilelist=
-
-    Weekly TOPA Report October 10-14.txt
-
-/***
     Weekly TOPA Report October 3-7.txt
     Weekly TOPA Report October 10-14.txt
     report_11.txt
@@ -38,5 +34,4 @@
     Weekly TOPA Report December 12-16.txt
     Weekly TOPA Report December 19-23.txt
     Weekly TOPA Report December 26-30.txt	
-***/
 )

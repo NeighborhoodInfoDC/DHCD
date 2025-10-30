@@ -128,16 +128,28 @@
   data &out;
   
     length Notice_type $ 3 Orig_notice_desc $ 200 Orig_address Notes _item $ 1000 
-           Source_file $ 120 inbuff inbuff2 $ 2000;
+           Source_file $ 120 inbuff inbuff2 address_key_words $ 2000;
     
     retain Notice_type "" Orig_notice_desc "" Notices 0 Source_file "%lowcase(&file)";
     retain _read_notice 0 _notice_count _notice_count_total .;
+
+    address_key_words = cats(
+      '/',
+      '\balley\b|\bstreet\b|\bavenue\b|\bboulevard\b|\bcircle\b|\broad\b|\bplace\b|',
+      '\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bparkway\b|\bwalk\b|\bway\b|',
+      '\bave\b|\bblvd\b|\bdr\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b|\bpl\b',
+      '/i'
+    );
 
     infile inf missover pad;
     
     input inbuff $2000.;
 
     PUT _N_= INBUFF=;
+    
+    ** Remove funky characters **;
+    
+    inbuff = left( compress( inbuff, '–?' ) );
     
     ** Initialize record specific vars **;
     
@@ -148,6 +160,10 @@
     _first_number = .;
     
     %if &file_type = txt %then %do;
+    
+      ** Filter out time stamps in notice dates (eg, 10-09-2023 08:00 PM) **;
+      
+      inbuff = prxchange( 's/^(\d\d-\d\d-\d\d\d\d)\s+\d\d:\d\d (AM|PM)/$1    /i', 1, inbuff );
     
       ** Add comma delimiters for TXT file type **;
 
@@ -176,6 +192,11 @@
       end;
 
       PUT INBUFF=;
+      
+    %end;
+    %else %do;
+    
+      inbuff2 = "";
       
     %end;
     
@@ -284,7 +305,7 @@
         
           PUT '** This is an offer of sale notice **';
           
-          if prxmatch( '/w\/ contract/i', _item ) then do;
+          if prxmatch( '/w\/( |)contract/i', _item ) then do;
           
             ** OFS with a contract **;
             
@@ -377,7 +398,7 @@
       
       end;
       
-      else if ( prxmatch( '/\bstreet\b|\bavenue\b|\bboulevard\b|\bcircle\b|\broad\b|\bplace\b|\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bparkway\b|\bave\b|\bblvd\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b|\bpl\b/i', _item ) or
+      else if ( prxmatch( address_key_words, _item ) or
         prxmatch( '/\bbulk notices\b|\bapartments\b|\[no address\]/i', _item ) ) and 
         Orig_address = "" then do;
       
@@ -412,7 +433,7 @@
       
       else if prxmatch( '/^\d+ *$/', _item ) then do;
       
-        ** A plain number, which could be Address_id, Num_units, or Sale_price, depending on file format **;
+        ** A plain number, which could be Source_address_id, Num_units, or Sale_price, depending on file format **;
         
         _number = input( _item, 16. );
         PUT _NUMBER=;
@@ -432,9 +453,11 @@
         
           select;
           
+            when ( missing( notice_date ) ) /** Do nothing **/;
+          
             when ( '1feb2019'd <= notice_date ) do;
              
-              if missing( Address_id ) then Address_id = _number;
+              if missing( Source_address_id ) then Source_address_id = _number;
               else if missing( num_units ) then num_units = _number;
               else if missing( sale_price ) then sale_price = _number;
               else do;
@@ -445,13 +468,13 @@
             
             otherwise do;
             
-              %err_put( macro=Rcasd_read_one_file, msg="Invalid notice date " _n_= notice_date= inbuff= );
+              %err_put( macro=Rcasd_read_one_file, msg="Invalid notice date " source_file= _n_= notice_date= inbuff= );
               
             end;
             
           end;
           
-          PUT ADDRESS_ID= NUM_UNITS= SALE_PRICE=;
+          PUT Source_address_id= NUM_UNITS= SALE_PRICE=;
           
         end;
         
@@ -964,9 +987,14 @@
   %end;
 
   /*TESTING CODE*/
-  proc print data=&out;
-    by Source_file;
-    var Notice_date Notice_type Orig_notice_desc Orig_address Address_id Notes Num_units Sale_price;
+  proc sort data=&out;
+    by Notice_type Notice_date;
+  run;
+  
+  title2 "Source=&file";
+  proc print data=&out n;
+    by Notice_type;
+    var Notice_date Orig_address Source_address_id Num_units Sale_price Notes;
   run;
   /**/
 
