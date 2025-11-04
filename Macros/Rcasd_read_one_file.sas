@@ -200,6 +200,10 @@
       
     %end;
     
+    ** Separate parenthetical notes **;
+    
+    inbuff = prxchange( 's/\(Note: +(.*)\)/,$1/i', 1, inbuff );
+    
     ** Remove multiple blanks **;
     
     inbuff = left( compbl( inbuff ) );
@@ -312,9 +316,9 @@
             ** Check property size **;
             
             select;
-              when ( prxmatch( '/sfd|\bsf\b|single family/i', _item ) )
+              when ( prxmatch( '/sfd|\bsf\b|\bsdf\b|single family/i', _item ) )
                 Notice_type = '220';
-              when ( prxmatch( '/2 to 4|2-4/i', _item ) )
+              when ( prxmatch( '/2 to 4|2-4|\(2\+4\)/i', _item ) )
                 Notice_type = '224';
               when ( prxmatch( '/5 or more|5+/i', _item ) )
                 Notice_type = '228';
