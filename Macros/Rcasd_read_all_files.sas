@@ -50,7 +50,7 @@
 
   %end;
   
-%MACRO SKIP;  *** TEMPORARY FOR TESTING ***;
+/* %MACRO SKIP;  *** TEMPORARY FOR TESTING ***; */
   data _Rcasd_read_all_files;
 
     length Nidc_rcasd_id $ 12;
@@ -94,9 +94,20 @@
     staddr=address,
     zip=,
     id=Nidc_rcasd_id addr_num Source_file Orig_address,
-    listunmatched=Y,
+    listunmatched=N,
     streetalt_file=&_dcdata_default_path\DHCD\Prog\RCASD\StreetAlt.txt
   )
+  
+  title2 "**** Addresses without exact geo match ****";
+
+  proc print data=&out;
+    where not M_EXACTMATCH;
+    by Source_file notsorted;
+    id Nidc_rcasd_id Addr_num;
+    var Address M_ADDR _SCORE_;
+  run;
+  
+  title2;
   
   proc datasets library=work memtype=(data) nolist;
     modify &out;
@@ -153,7 +164,7 @@
   proc freq data=&out;
     tables Notice_type / nocum nopercent;
   run;
-%MEND SKIP;
+/* %MEND SKIP; */
 
 %mend Rcasd_read_all_files;
 

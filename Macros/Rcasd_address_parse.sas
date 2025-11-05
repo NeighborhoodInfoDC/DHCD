@@ -46,6 +46,11 @@ addresses.
     _addresslist = tranwrd( _addresslist, ',', ', ' );
     _addresslist = tranwrd( _addresslist, ';', ' ; ' );
     
+    _addresslist = prxchange( 's/\bnorthwest\b/ NW /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\bnortheast\b/ NE /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\bsouthwest\b/ SW /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\b(southeast|souteast)\b/ SE /i', -1, _addresslist );
+
     _addresslist = left( compbl( _addresslist ) );
     
     if indexw( upcase( _addresslist ), 'NW' ) then _def_quad = 'NW';
@@ -202,6 +207,9 @@ data A;
   length Orig_address $ 120;
   
   retain Source_file ' ';
+  
+  Orig_address = '4337-4347 Martin Luther King Jr Avenue, 4353-4363 Martin Luther King Jr Avenue & 200-211 Elmira Street Southwest';
+  output;
   
   Orig_address = '1709, 1715 or 1717 19th Street NW';
   output;

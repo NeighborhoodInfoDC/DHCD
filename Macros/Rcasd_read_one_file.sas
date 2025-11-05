@@ -128,12 +128,12 @@
   data &out;
   
     length Notice_type $ 3 Orig_notice_desc $ 200 Orig_address Notes _item $ 1000 
-           Source_file $ 120 inbuff inbuff2 address_key_words $ 2000;
+           Source_file $ 120 _inbuff _inbuff2 _address_key_words $ 2000;
     
-    retain Notice_type "" Orig_notice_desc "" Notices 0 Source_file "%lowcase(&file)";
+    retain Notice_type "" Orig_notice_desc "" _notices 0 Source_file "%lowcase(&file)";
     retain _read_notice 0 _notice_count _notice_count_total .;
 
-    address_key_words = cats(
+    _address_key_words = cats(
       '/',
       '\balley\b|\bstreet\b|\bavenue\b|\bboulevard\b|\bcircle\b|\broad\b|\bplace\b|',
       '\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bparkway\b|\bwalk\b|\bway\b|',
@@ -143,13 +143,13 @@
 
     infile inf missover pad;
     
-    input inbuff $2000.;
+    input _inbuff $2000.;
 
-    PUT _N_= INBUFF=;
+    PUT _N_= _inbuff=;
     
     ** Remove funky characters **;
     
-    inbuff = left( compress( inbuff, '–?' ) );
+    _inbuff = left( compress( _inbuff, '–?' ) );
     
     ** Initialize record specific vars **;
     
@@ -163,61 +163,61 @@
     
       ** Filter out time stamps in notice dates (eg, 10-09-2023 08:00 PM) **;
       
-      inbuff = prxchange( 's/^(\d\d-\d\d-\d\d\d\d)\s+\d\d:\d\d (AM|PM)/$1    /i', 1, inbuff );
+      _inbuff = prxchange( 's/^(\d\d-\d\d-\d\d\d\d)\s+\d\d:\d\d (AM|PM)/$1    /i', 1, _inbuff );
     
       ** Add comma delimiters for TXT file type **;
 
       ** Replace sequences of 3 blanks or more with a tilde (~) **;
       
-      inbuff2 = prxchange( 's/\s\s\s+/~/', -1, inbuff );
-      inbuff = "";
+      _inbuff2 = prxchange( 's/\s\s\s+/~/', -1, _inbuff );
+      _inbuff = "";
       
-      PUT INBUFF2=;
+      PUT _inbuff2=;
       
       ** Clean up items and create new comma-delimited list **;
       
       _i = 1;
-      _item = scan( inbuff2, _i, '~' );
+      _item = scan( _inbuff2, _i, '~' );
       
       do while ( not( missing( _item ) ) );
       
         if indexc( _item, ',' ) then _item = quote( trim( _item ) );
         else _item = prxchange( 's/^(\d+)\s+(\d+)\s*$/$1,$2/', 1, _item );
 
-        if _item ~= "" then inbuff = catx( ',', inbuff, _item );
+        if _item ~= "" then _inbuff = catx( ',', _inbuff, _item );
         
         _i = _i + 1;
-        _item = scan( inbuff2, _i, '~' );
+        _item = scan( _inbuff2, _i, '~' );
       
       end;
 
-      PUT INBUFF=;
+      PUT _inbuff=;
       
     %end;
     %else %do;
     
-      inbuff2 = "";
+      _inbuff2 = "";
       
     %end;
     
     ** Separate parenthetical notes **;
     
-    inbuff = prxchange( 's/\(Note: +(.*)\)/,$1/i', 1, inbuff );
+    _inbuff = prxchange( 's/\(Note: +(.*)\)/,$1/i', 1, _inbuff );
     
     ** Remove multiple blanks **;
     
-    inbuff = left( compbl( inbuff ) );
+    _inbuff = left( compbl( _inbuff ) );
     
     _i = 1;
-    _size = countw( inbuff, ',', 'q' );
+    _size = countw( _inbuff, ',', 'q' );
     
     PUT _SIZE=;
     
-    ** Process each item in inbuff **;
+    ** Process each item in _inbuff **;
     
     do _i = 1 to _size;
     
-      _item = left( dequote( scan( inbuff, _i, ',', 'q' ) ) );
+      _item = left( dequote( scan( _inbuff, _i, ',', 'q' ) ) );
       PUT _I= _ITEM= ;
       
       if lowcase( _item ) in: ( 
@@ -402,7 +402,7 @@
       
       end;
       
-      else if ( prxmatch( address_key_words, _item ) or
+      else if ( prxmatch( _address_key_words, _item ) or
         prxmatch( '/\bbulk notices\b|\bapartments\b|\[no address\]/i', _item ) ) and 
         Orig_address = "" then do;
       
@@ -472,7 +472,7 @@
             
             otherwise do;
             
-              %err_put( macro=Rcasd_read_one_file, msg="Invalid notice date " source_file= _n_= notice_date= inbuff= );
+              %err_put( macro=Rcasd_read_one_file, msg="Invalid notice date " source_file= _n_= notice_date= _inbuff= );
               
             end;
             
@@ -549,55 +549,61 @@
         )
       end;
       
-      Notices + 1;
+      _notices + 1;
       
     end;
 
     *************************************************;
 
-    PUT NOTICES= _NOTICE_COUNT_TOTAL= /;
+    PUT _notices= _NOTICE_COUNT_TOTAL= /;
     
  /***********
     ** Remove leading commas from input. Skip to next record if blank. **;
     
-    i = verify( inbuff, ', ' );
+    i = verify( _inbuff, ', ' );
     
-    if i > 0 then inbuff = left( substr( inbuff, i ) );
+    if i > 0 then _inbuff = left( substr( _inbuff, i ) );
     else return;
     
     ** Remove extra commas from input. **;
     
-    do while ( find( inbuff, ',,' ) );
+    do while ( find( _inbuff, ',,' ) );
     
-      inbuff = trim( substr( inbuff, 1, find( inbuff, ',,' ) - 1 ) ) ||
-               left( substr( inbuff, find( inbuff, ',,' ) + 1 ) );
+      _inbuff = trim( substr( _inbuff, 1, find( _inbuff, ',,' ) - 1 ) ) ||
+               left( substr( _inbuff, find( _inbuff, ',,' ) + 1 ) );
     
     end;
     
-    PUT INBUFF=;
+    PUT _inbuff=;
     
-    if input( scan( inbuff, 1, ',', 'q' ), ??8. ) then do;
+    if input( scan( _inbuff, 1, ',', 'q' ), ??8. ) then do;
     
-      Count = Count + input( scan( inbuff, 1, ',', 'q' ), ??8. );
+      Count = Count + input( scan( _inbuff, 1, ',', 'q' ), ??8. );
       
-      Notice_type = put( compress( upcase( scan( inbuff, 2, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
+      Notice_type = put( compress( upcase( scan( _inbuff, 2, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
 
     end;
-    else if put( compress( upcase( scan( inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. ) ~= "" then do;
+    else if put( compress( upcase( scan( _inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. ) ~= "" then do;
     
-      Notice_type = put( compress( upcase( scan( inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
+      Notice_type = put( compress( upcase( scan( _inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
 
-      Count = Count + input( scan( inbuff, 2, ',', 'q' ), ??8. );
+      Count = Count + input( scan( _inbuff, 2, ',', 'q' ), ??8. );
       
     end;
 
     PUT COUNT= NOTICE_TYPE= /;
 ***********/
 
-    call symput( 'wrote_obs', put( Notices, 12. ) );
+    call symput( 'wrote_obs', put( _notices, 12. ) );
     call symput( 'notice_count_total', put( _notice_count_total, 12. ) );
+    
+    label
+      Orig_notice_desc = "Original notice description from source file"
+      Source_address_id = "MAR address ID from source file (2019 or later only)";
 
     format Notice_date mmddyy10. Notice_type $rcasd_notice_type.;
+    
+    drop _: ;
   
   run;
 
@@ -990,7 +996,7 @@
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
   %end;
 
-  /*TESTING CODE*/
+  /*TESTING CODE**
   proc sort data=&out;
     by Notice_type Notice_date;
   run;
