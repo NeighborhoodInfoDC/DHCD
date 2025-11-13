@@ -68,9 +68,13 @@
          'property tax abatement',
          'raze permit',
          'right of first',
+         'rights of first',
          'sale and transfer -',
          'sales contract',
-         'sfd',
+         'sfd claim',
+         'sfd letter',
+         'sfd notice',
+         'sfd right',
          'single family dwelling',
          'statement of',
          'stmt of',
@@ -82,6 +86,7 @@
          'tenant response',
          'tenant statement',
          'termination',
+         'topa assignment',
          'topa complaint',
          'topa letter',
          'vacancy /',
@@ -149,7 +154,7 @@
     
     ** Remove funky characters **;
     
-    _inbuff = left( compress( _inbuff, '–?' ) );
+    _inbuff = left( compress( _inbuff, '?' ) );
     
     ** Initialize record specific vars **;
     
@@ -552,6 +557,7 @@
       _notices + 1;
       
     end;
+ 
 
     *************************************************;
 
@@ -996,7 +1002,7 @@
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
   %end;
 
-  /*TESTING CODE**
+  /*TESTING CODE**/
   proc sort data=&out;
     by Notice_type Notice_date;
   run;

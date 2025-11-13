@@ -12,7 +12,7 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
@@ -20,7 +20,7 @@
 
 
 %Rcasd_read_all_files( 
-  revisions=%str(Add Cluster2017, Bridgepk, Stantoncommons vars. Update geocoding.),
+  revisions=%str(Recreate data with updated code.),
   year=2017, 
   infilelist=
 	2017-01-06.csv
