@@ -12,7 +12,7 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
@@ -20,8 +20,10 @@
 
 
 %Rcasd_read_all_files( 
+  revisions=%str(Recreate data with updated code.),
   year=2018, 
   infilelist=
+  /*
 	2018-01-05.csv
 	2018-01-12.csv
 	2018-01-19.csv
@@ -61,7 +63,8 @@
 	2018-09-14.csv
 	2018-09-28.csv
 	2018-10-26.csv
-	2018-11-02.csv
+	*/
+	2018-11-02_edited.csv
 	2018-11-09.csv
 	2018-11-16.csv
 	2018-11-23.csv

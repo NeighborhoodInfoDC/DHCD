@@ -85,6 +85,7 @@
          'tenant organization registration',
          'tenant response',
          'tenant statement',
+         'tenants notice',
          'termination',
          'topa assignment',
          'topa complaint',
@@ -141,7 +142,7 @@
     _address_key_words = cats(
       '/',
       '\balley\b|\bstreet\b|\bavenue\b|\bboulevard\b|\bcircle\b|\broad\b|\bplace\b|',
-      '\bsquare\b|\bterrace\b|\bcourt\b|\bdrive\b|\blane\b|\bparkway\b|\bwalk\b|\bway\b|',
+      '\bsquare\b|\bterrace\b|\bcourt\b|\bcrescent\b|\bdrive\b|\blane\b|\bparkway\b|\bwalk\b|\bway\b|',
       '\bave\b|\bblvd\b|\bdr\b|\brd\b|\bst\b|\bterr\b|\bter\b|\bct\b|\bpl\b',
       '/i'
     );
@@ -154,7 +155,7 @@
     
     ** Remove funky characters **;
     
-    _inbuff = left( compress( _inbuff, '?' ) );
+    _inbuff = left( compress( _inbuff, "'?" ) );
     
     ** Initialize record specific vars **;
     
@@ -1002,7 +1003,7 @@
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
   %end;
 
-  /*TESTING CODE**
+  /*TESTING CODE**/
   proc sort data=&out;
     by Notice_type Notice_date;
   run;
