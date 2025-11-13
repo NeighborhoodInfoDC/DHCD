@@ -83,6 +83,10 @@
       _Rcasd_read_all_files_addr;
     by Nidc_rcasd_id;
     
+    ** Remove apartment numbers from addresses before geocoding **;
+    
+    address = prxchange( 's/(#|\bapt\b|\bunit\b).*$//i', 1, address );
+    
   run;
   
   ** Run addresses through geocoder **;

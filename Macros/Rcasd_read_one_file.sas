@@ -1002,7 +1002,7 @@
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
   %end;
 
-  /*TESTING CODE**/
+  /*TESTING CODE**
   proc sort data=&out;
     by Notice_type Notice_date;
   run;
