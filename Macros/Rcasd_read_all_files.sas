@@ -50,7 +50,9 @@
 
   %end;
   
-/* %MACRO SKIP;  *** TEMPORARY FOR TESTING ***; */
+/* 
+%MACRO SKIP;  *** TEMPORARY FOR TESTING ***; 
+*/
   data _Rcasd_read_all_files;
 
     length Nidc_rcasd_id $ 12;
@@ -102,10 +104,10 @@
     streetalt_file=&_dcdata_default_path\DHCD\Prog\RCASD\StreetAlt.txt
   )
   
-  title2 "**** Addresses without exact geo match ****";
+  title2 "**** Addresses match score < 65 (possible address data entry error) ****";
 
   proc print data=&out;
-    where not M_EXACTMATCH;
+    where _SCORE_ < 65;
     by Source_file notsorted;
     id Nidc_rcasd_id Addr_num;
     var Address M_ADDR _SCORE_;
@@ -168,7 +170,9 @@
   proc freq data=&out;
     tables Notice_type / nocum nopercent;
   run;
-/* %MEND SKIP; */
+/* 
+%MEND SKIP; 
+*/
 
 %mend Rcasd_read_all_files;
 
