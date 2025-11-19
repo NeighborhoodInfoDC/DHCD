@@ -6,7 +6,7 @@
  Created:  01/09/16
  Version:  SAS 9.2
  Environment:  Local Windows session (desktop)
- 
+
  Description:  Read one RCASD input CSV file into a SAS data set.
  
  Special tags added to input data sets:
@@ -32,9 +32,12 @@
   
   %let NOTICE_NAMES_BEGIN = 
          '2-4 rental',
+         '2-4 units',
          '5+ rental',
+         '5+ units',
          'application for',
          'assignment of',
+         'complaint',
          'condominium',
          'conversion -',
          'conversion election',
@@ -42,6 +45,7 @@
          'conversion fee',
          'cooperative conversion',
          'd.c. opportunity to purchase',
+         'dc opportunity to purchase',
          'disability survey',
          'dopa notice',
          'election correspondence',
@@ -52,6 +56,7 @@
          'foreclosure',
          'housing assistance payment',
          'intent to',
+         'letter of',
          'low income equity',
          'miscellaneous information',
          'not-a-housing',
@@ -74,6 +79,7 @@
          'sfd claim',
          'sfd letter',
          'sfd notice',
+         'sfd offer',
          'sfd right',
          'single family dwelling',
          'statement of',
@@ -226,6 +232,15 @@
       _item = left( dequote( scan( _inbuff, _i, ',', 'q' ) ) );
       PUT _I= _ITEM= ;
       
+      ** Remove 'Sale and Transfer -' from start of notice label **;
+      _item = left( prxchange( 's/^sale and transfer -/ /i', 1, _item ) );
+      PUT _ITEM= ;
+        
+      ** Remove ' - (empty)' text from notice label **;
+      _item = left( compbl ( prxchange( 's/(- |)\(empty\)( -|)/ /i', -1, _item ) ) );
+      ***_item = compbl( tranwrd( _item, '- (empty)', '' ) );
+      PUT _ITEM= ;
+        
       if lowcase( _item ) in: ( 
           'condominium and cooperative conversion', 
           'conversion election report'
@@ -274,17 +289,6 @@
       else if lowcase( _item ) in: ( &NOTICE_NAMES_BEGIN ) then do;
       
         PUT 'LOOKS LIKE A NOTICE!';
-        
-        ** Remove ' - (empty)' text from notice label **;
-        
-        _item = compbl( tranwrd( _item, ' - (empty)', '' ) );
-        PUT _ITEM= ;
-        
-        ** Remove 'Sale and Transfer -' from start of notice label **;
-        
-        if lowcase( _item ) =: 'sale and transfer -' then
-          _item = left( substr( _item, length( 'sale and transfer -' ) + 1 ) );
-        PUT _ITEM= ;
         
         ** Check for '(n Items)' in label **;
         

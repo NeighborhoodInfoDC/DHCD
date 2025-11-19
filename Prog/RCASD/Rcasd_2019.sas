@@ -12,16 +12,18 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
-%DCData_lib( MAR )
+%DCData_lib( MAR, local=n )
 
 
 %Rcasd_read_all_files( 
+  revisions=%str(Recreate data with updated code.),
   year=2019, 
   infilelist=
+  	/*
 	2019-01-04.csv
 	2019-1-11 Revised.csv
 	Weekly Report January 14-18 2019.csv
@@ -44,7 +46,9 @@
 	Weekly Report February 25- March 1 2019.csv
 	2.11. to 2.15. 2019 report revised.csv
 	topa report 2.8 to 22.19.csv
+	*/
 	2.4 - 2.8. 2019 report.csv
+	/*
 	TOPA-Related Filings  Weekly Report January 21-25 2019.csv
 	TOPA Week of July 1 – 5 2019.csv
 	Week of July 8 – 12 2019.csv
@@ -73,5 +77,6 @@
 	Week of  December 16 - 20.csv
 	Week of December 23 - 27 2019.csv
 	Week of Dec. 30 – Jan. 3 2019.csv
+	*/
 	)
 
