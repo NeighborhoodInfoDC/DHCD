@@ -35,7 +35,7 @@
 %DCData_lib( MAR )
 
 %let revisions = Update with latest parcel and address data.;
-%let revisions = Add Sfh_extra_unit variable.;
+%let revisions = Update with revised Realprop.Parcel_base_who_owns data.;
 
 %Data_to_format(
   FmtLib=work,
@@ -87,9 +87,9 @@ data rental_1;
 	** Only keep SF homes and condos if certain that they are rental properties **;
     if ui_proptype in ( "10", "11" ) then do;
 	  if owner_occ_sale then delete;
-      if ui_proptype = '11' and ( scan( premiseadd_std, 1, '#' ) = scan( owneraddress_std, 1, '#' ) or 
-	     trim( owneraddress_std ) =: trim( premiseadd_std ) or
-         premiseadd_std = '' or owneraddress_std = '' ) then delete;
+      if ui_proptype = '11' and ( scan( premiseadd_str_std, 1, '#' ) = scan( owneraddress_std, 1, '#' ) or 
+	     trim( owneraddress_std ) =: trim( premiseadd_str_std ) or
+         premiseadd_str_std = '' or owneraddress_std = '' ) then delete;
 	end;
 
 	if MIX2TXTYPE = "TX" or MIX1TXTYPE = "TX" or ( MIX2TXTYPE = '' and MIX1TXTYPE = '' ) then Excluded_Nontaxable=0; else Excluded_Nontaxable=1;
@@ -568,7 +568,7 @@ Output and diagnostics
 %Dup_check(
   data=Parcels_Rent_Control,
   by=ssl,
-  id=premiseadd,
+  id=premiseadd_str,
   listdups=Y
 )
 
@@ -599,7 +599,7 @@ title2 '--Missing geography--';
 proc print data=Parcels_Rent_Control;
   where missing( Ward2022 ) and not missing( ui_proptype );
   id ssl; 
-  var premiseadd ui_proptype nlihc_id;
+  var premiseadd_str ui_proptype nlihc_id;
 run;
 title2;
 
@@ -608,7 +608,7 @@ proc freq data=Parcels_Rent_Control;
 run;
 
 /*
-proc compare base=Dhcd.Parcels_rent_control compare=Parcels_rent_control maxprint=(40,32000);
+proc compare base=Dhcd.Parcels_rent_control compare=Parcels_rent_control maxprint=(40,32000) listvar;
   id ssl;
 run;
 */
