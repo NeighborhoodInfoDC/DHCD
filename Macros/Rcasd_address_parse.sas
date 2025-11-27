@@ -46,6 +46,11 @@ addresses.
     _addresslist = tranwrd( _addresslist, ',', ', ' );
     _addresslist = tranwrd( _addresslist, ';', ' ; ' );
     
+    _addresslist = prxchange( 's/\bnorthwest\b/ NW /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\bnortheast\b/ NE /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\bsouthwest\b/ SW /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\b(southeast|souteast)\b/ SE /i', -1, _addresslist );
+
     _addresslist = left( compbl( _addresslist ) );
     
     if indexw( upcase( _addresslist ), 'NW' ) then _def_quad = 'NW';
@@ -111,6 +116,17 @@ addresses.
         
           _r1 = input( scan( _buff, 1, '-' ), ??8. );
           _r2 = input( scan( _buff, 2, '-' ), ??8. );
+          
+          ** Check for abbreviated range (eg, "1461-65 Hollbrook Avenue NE") **;
+          
+          if 0 < _r2 < _r1 then do;
+          
+            if 0 <= _r2 <= 99 and mod( _r1, 2 ) = mod( _r2, 2 ) then do;
+              if _r1 > 999 then _r2 = _r2 + ( 100 * floor( _r1 / 100 ) );
+              else if _r1 > 99 then _r2 = _r2 + ( 10 * floor( _r1 / 10 ) );
+            end;
+          
+          end;
           
           if missing( _r1 ) or missing( _r2 ) then do;
             ** Not a number range, process pieces separately **;
@@ -202,6 +218,12 @@ data A;
   length Orig_address $ 120;
   
   retain Source_file ' ';
+  
+  Orig_address = '1461-65 Hollbrook Avenue NE; 141-5 Uhland Terrace NE';
+  output;
+  
+  Orig_address = '4337-4347 Martin Luther King Jr Avenue, 4353-4363 Martin Luther King Jr Avenue & 200-211 Elmira Street Southwest';
+  output;
   
   Orig_address = '1709, 1715 or 1717 19th Street NW';
   output;
