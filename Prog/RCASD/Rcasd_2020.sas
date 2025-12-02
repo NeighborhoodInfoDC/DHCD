@@ -24,9 +24,9 @@
   infilelist=
   	Week of January 6 - 10 2020.csv
 	Week of January 13 - 17 2020.csv
-	Week of January 20 - 24 2020.csv
+	Week of January 20 - 24 2020_edited.csv
 	Week of January 27 - 31 2020.csv
-	Week of February 3 - 7 2020.csv
+	Week of February 3 - 7 2020_edited.csv
 	Week of February 10 - 14 2020 revised.csv
 	Week of February 17 - 23 2020.csv
 	Week of February 24-28 2020 edit.csv
@@ -61,7 +61,7 @@
 	Week of September 14 - 18 2020.csv
 	Week of September 21 - 25 2020.csv
 	Week of September 28 - October 2 2020.csv
-	Weekly Report October 5 - October 9 2020.csv
+	Weekly Report October 5 - October 9 2020_edited.csv
 	Week of October 12 - 16 2020 edited.csv
 	Week of October 19 - 23 2020.csv
 	Week of October 26 - 30 2020.csv
@@ -73,6 +73,6 @@
 	Week of December 7 - 11 2020.csv
 	Week of December 14 - 18 2020.csv
 	Weekly Report December 21 - 25 2020.csv
-	Weekly Report December 28 2020 - January 1 2021.csv
+	Weekly Report December 28 2020 - January 1 2021_edited.csv
 	)
 
