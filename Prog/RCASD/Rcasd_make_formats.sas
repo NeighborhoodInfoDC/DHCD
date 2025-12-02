@@ -58,6 +58,7 @@ proc format library=DHCD;
     "153" = 'Conversion - Warranty Claim Correspondence - SFD Notice of Solicitation of Offer & Notice of Intent to Sell'
     "160" = "Letter of credit amendment - Letter of interest (TOPA)"
     "161" = "Not a housing accommodation exemption application - SFD notice of solicitation of offer & notice of intent to sell"
+    "162" = "Not a Housing Accommodation Exemption Application - Raze Permit Application"
     "201" = "Notice of transfer"
     "202" = "Other filings"
     "203" = "Notice of foreclosure"

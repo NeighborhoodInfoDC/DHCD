@@ -32,9 +32,13 @@
   
   %let NOTICE_NAMES_BEGIN = 
          '2-4 rental',
-         '2-4 units',
+         '2-4 units notice',
+         '2-4 units offer',
+         '2-4 units right',
          '5+ rental',
-         '5+ units',
+         '5+ units notice',
+         '5+ units offer',
+         '5+ units right',
          'application for',
          'assignment of',
          'complaint',
@@ -57,6 +61,7 @@
          'housing assistance payment',
          'intent to',
          'letter of',
+         'limited equity share cooperative conversion',
          'low income equity',
          'miscellaneous information',
          'not-a-housing',
@@ -100,7 +105,8 @@
          'vacancy application',
          'vacancy exemption',
          've ',
-         'v.e.'
+         'v.e.',
+         'warranty security release'
        ;
 
   filename inf  "&path\&file" lrecl=2000;
@@ -480,9 +486,19 @@
             
             end;
             
+            when ( '1jan2019'd <= notice_date ) do;
+             
+              if missing( num_units ) then num_units = _number;
+              else if missing( sale_price ) then sale_price = _number;
+              else do;
+                PUT 'UNKNOWN NUMBER: ' _item=;
+              end;
+            
+            end;
+            
             otherwise do;
             
-              %err_put( macro=Rcasd_read_one_file, msg="Invalid notice date " source_file= _n_= notice_date= _inbuff= );
+              %err_put( macro=Rcasd_read_one_file, msg="Notice date not coded for number handling. " source_file= _n_= notice_date= _inbuff= );
               
             end;
             
@@ -547,6 +563,14 @@
       PUT 'WRITE NOTICE!';
 
       output;
+      
+      if missing( notice_date ) then do;
+          %warn_put( 
+          macro=Rcasd_read_one_file, 
+          msg='Notice missing date. ' source_file= _n_= notice_type= orig_address=
+        )
+      end;
+      
       
       if _notice_count > 0 then do;
         _notice_count = _notice_count - 1;
@@ -1007,7 +1031,7 @@
     %Err_mput( macro=Rcasd_read_one_file, msg=No notices read from &file.. )
   %end;
 
-  /*TESTING CODE**/
+  /*TESTING CODE**
   proc sort data=&out;
     by Notice_type Notice_date;
   run;

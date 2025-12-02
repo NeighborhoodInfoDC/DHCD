@@ -50,7 +50,7 @@
 
   %end;
   
-/**/
+/**
 %MACRO SKIP;  *** TEMPORARY FOR TESTING ***; 
 /**/
   data _Rcasd_read_all_files;
@@ -170,7 +170,7 @@
   proc freq data=&out;
     tables Notice_type / nocum nopercent;
   run;
-/**/ 
+/**
 %MEND SKIP; 
 /**/
 
