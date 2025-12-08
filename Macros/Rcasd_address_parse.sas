@@ -84,7 +84,20 @@ addresses.
           PUT _buff= _street_name=;
         %end;
         
-        if input( compress( _buff, ',' ), ??8. ) > 0 then do;
+        if _buff = '9' and _num_idx > 1 then do;
+          ** Check for 9 1/2 Street (special exception) **;
+          if scan( _addresslist, _addr_idx + 1, ' ' ) = '1/2' and 
+             put( upcase( scan( _addresslist, _addr_idx + 2, ' ' ) ), $maraltsttyp. ) in ( 'STREET' ) then do;
+               _street_name = '9 1/2 Street';
+               _addr_idx = _addr_idx + 2;
+          end;
+          else do;
+            ** Number is a street address number **;
+            _number{_num_idx} = compress( _buff, ',' );
+            _num_idx = _num_idx + 1;
+          end;            
+        end;
+        else if input( compress( _buff, ',' ), ??8. ) > 0 then do;
           %if %mparam_is_yes( &debug ) %then %do;
             PUT "PLAIN NUMBER";
           %end;
@@ -240,6 +253,15 @@ data A;
   
   retain Source_file ' ';
   
+  Orig_address = '1999 9 1/2 Street Northwest';
+  output;
+  
+  Orig_address = '9 1/2 Street Northwest';
+  output;
+  
+  Orig_address = '7, 9, 11, 13 A Street SE';
+  output;
+
   Orig_address = '1813 16th Street Northwest, #4A';
   output;
 

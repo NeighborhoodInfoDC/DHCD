@@ -109,8 +109,7 @@
   proc print data=&out;
     where _SCORE_ < 65;
     by Source_file notsorted;
-    id Nidc_rcasd_id Addr_num;
-    var Notice_date Orig_address Address M_ADDR _SCORE_;
+    var Nidc_rcasd_id Addr_num Orig_address Address M_ADDR _SCORE_;
   run;
   
   title2;

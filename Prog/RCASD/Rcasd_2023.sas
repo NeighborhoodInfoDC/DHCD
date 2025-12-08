@@ -37,25 +37,25 @@
     Weekly TOPA Report April 3-7.txt
     Weekly TOPA Report April 10-14.txt
     Weekly TOPA Report April 17-21.txt
-    Weekly TOPA Report April 24-28.txt
+    Weekly TOPA Report April 24-28_edited.txt
     Weekly TOPA Report May 1-5.txt
     Weekly TOPA Report May 8-12.txt
     Weekly TOPA Report May 15-19.txt
     Weekly TOPA Report May 22-26.txt
-    Weekly TOPA Report May 29-June 2 revised.txt
+    Weekly TOPA Report May 29-June 2 revised_edited.txt
     Weekly TOPA Report June 5-9.txt
     Weekly TOPA Report June 12-16.txt
     Weekly TOPA Report June 19-23.txt
-    Weekly TOPA Report June 26-30.txt
+    Weekly TOPA Report June 26-30_edited.txt
     Weekly TOPA Report July 3-7.txt
     Weekly TOPA Report July 10-14.txt
     Weekly TOPA Report July 17-21.txt
     Weekly TOPA Report July 24-28.txt
-    Weekly TOPA Report July 31-August 4.txt
+    Weekly TOPA Report July 31-August 4_edited.txt
     Weekly TOPA Report August 7-11.txt
     Weekly TOPA Report August 14-18.txt
     Weekly TOPA Report August 21-25.txt
-    Weekly TOPA Report August 28-September 1.txt
+    Weekly TOPA Report August 28-September 1_edited.txt
     Weekly TOPA Report September 4-8.txt
     Weekly TOPA Report September 11-15.txt
     Weekly TOPA Report September 18-22.txt
@@ -63,14 +63,14 @@
     Weekly TOPA Report October 2-6.txt
     Weekly TOPA Report October 9-13.txt
     Weekly TOPA Report October 16-20_0.txt
-    Weekly TOPA Report October 23-27.txt
-    Weekly TOPA Report October 30 - November 3.txt
+    Weekly TOPA Report October 23-27_edited.txt
+    Weekly TOPA Report October 30 - November 3_edited.txt
     Weekly TOPA Report November 6-10.txt
     Weekly -OPA-Report-November-13-17.txt
     Weekly TOPA Report November 20-24.txt
     Weekly_TOPA_Report_November_27-December 1.txt
     Weekly TOPA Report December 4 - December 8.txt
     Weekly TOPA Report December 11 - December 15.txt
-    Weekly_TOPA_Report_December_18-December_22.txt
+    Weekly_TOPA_Report_December_18-December_22_edited.txt
     Weekly TOPA Report December 25-29.txt
 )
