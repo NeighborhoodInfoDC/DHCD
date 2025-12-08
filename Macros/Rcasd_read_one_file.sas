@@ -167,7 +167,7 @@
     
     ** Remove funky characters **;
     
-    _inbuff = left( compress( _inbuff, "'?" ) );
+    _inbuff = left( compress( _inbuff, "'?–" ) );
     
     ** Initialize record specific vars **;
     

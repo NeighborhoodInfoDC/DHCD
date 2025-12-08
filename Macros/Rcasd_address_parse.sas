@@ -85,6 +85,9 @@ addresses.
         %end;
         
         if input( compress( _buff, ',' ), ??8. ) > 0 then do;
+          %if %mparam_is_yes( &debug ) %then %do;
+            PUT "PLAIN NUMBER";
+          %end;
           /** NOTE: Can't include TERRACE in the list that follows because TERRACE is also a street name. **/
           if put( upcase( scan( _addresslist, _addr_idx + 1, ' ' ) ), $maraltsttyp. ) in ( 'STREET', 'PLACE', 'AVENUE', 'COURT' ) then do;
             ** Next word is street type, so number is a street name **;
@@ -96,7 +99,18 @@ addresses.
             _num_idx = _num_idx + 1;
           end;            
         end;
+        else if prxmatch( '/^\d+[A-Z]\b/i', _buff ) > 0 then do;
+          %if %mparam_is_yes( &debug ) %then %do;
+            PUT "NUMBER WITH LETTER SUFFIX";
+          %end;
+          ** Street address number with a suffix **;
+          _number{_num_idx} = _buff;
+          _num_idx = _num_idx + 1;        
+        end;
         else if substr( _buff, 1, 1 ) = '#' then do;
+          %if %mparam_is_yes( &debug ) %then %do;
+            PUT "# SIGN";
+          %end;
           _unit = compress( _buff, ',' );
           %if %mparam_is_yes( &debug ) %then %do;
             PUT _UNIT=;
@@ -104,6 +118,9 @@ addresses.
           leave;
         end;
         else if upcase( compress( _buff, ',' ) ) in ( 'UNIT', 'APT' ) then do;
+          %if %mparam_is_yes( &debug ) %then %do;
+            PUT "'UNIT' or 'APT' LABEL";
+          %end;
           _addr_idx = _addr_idx + 1;
           _buff = left( scan( _addresslist, _addr_idx, ' ' ) );
           _unit = '#' || compress( _buff, ',#' );
@@ -114,6 +131,10 @@ addresses.
         end;
         else if indexc( _buff, '-' ) then do;
         
+          %if %mparam_is_yes( &debug ) %then %do;
+            PUT "NUMBER RANGE";
+          %end;
+
           _r1 = input( scan( _buff, 1, '-' ), ??8. );
           _r2 = input( scan( _buff, 2, '-' ), ??8. );
           
@@ -219,6 +240,15 @@ data A;
   
   retain Source_file ' ';
   
+  Orig_address = '1813 16th Street Northwest, #4A';
+  output;
+
+  Orig_address = '761 19th Street Northeast';
+  output;
+
+  Orig_address = '625A Chesapeake Street Southeast';
+  output;
+  
   Orig_address = '1461-65 Hollbrook Avenue NE; 141-5 Uhland Terrace NE';
   output;
   
@@ -283,9 +313,11 @@ run;
 
 %Rcasd_address_parse( data=A, out=B, id=, addr=Orig_address, debug=y );
 
+title2 'Input Data';
 proc print data=A;
 run;
 
+title2 'Output Data';
 proc print data=B;
 run;
 
