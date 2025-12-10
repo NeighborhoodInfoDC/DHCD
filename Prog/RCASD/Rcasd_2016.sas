@@ -12,7 +12,7 @@
  Modifications:
 **************************************************************************/
 
-%include "L:\SAS\Inc\StdLocal.sas";
+%include "\\sas1\DCdata\SAS\Inc\StdLocal.sas";
 
 ** Define libraries **;
 %DCData_lib( DHCD )
@@ -20,7 +20,7 @@
 
 
 %Rcasd_read_all_files( 
-  revisions=%str(Add Cluster2017, Bridgepk, Stantoncommons vars. Update geocoding.),
+  revisions=%str(Recreate data with updated code.),
   year=2016, 
   infilelist=
     2016-01-08.csv
@@ -36,16 +36,16 @@
     2016-03-18.csv
     2016-03-25.csv
     2016-04-01.csv
-    2016-04-08.csv
+    2016-04-08_edited.csv
     2016-04-15.csv
     2016-04-22_Revised.csv
     2016-04-29.csv
-    2016-05-06.csv
+    2016-05-06_edited.csv
     2016-05-13_Revised.csv
     2016-05-20.csv
     2016-05-27.csv
     2016-06-03.csv
-    2016-06-10.csv
+    2016-06-10_edited.csv
     2016-06-17_Revised.csv
     2016-06-24.csv
     2016-07-01.csv
@@ -54,24 +54,24 @@
     2016-07-22.csv
     2016-07-29.csv
     2016-08-19.csv
-    2016-08-26.csv
+    2016-08-26_edited.csv
     2016-09-02_Revised.csv
     2016-09-09-.csv
-    2016-09-16_Revised_02.csv
+    2016-09-16_Revised_02_edited.csv
     2016-09-23.csv
     2016-09-30.csv
-    2016-10-07_Revised.csv
-    2016-10-14.csv
+    2016-10-07_Revised_edited.csv
+    2016-10-14_edited.csv
     2016-10-21_Revised.csv
-    2016-10-28.csv
-    2016-11-04.csv
+    2016-10-28_edited.csv
+    2016-11-04_edited.csv
 	2016-11-11.csv
 	2016-11-18.csv
 	2016-11-25.csv
 	2016-12-02.csv
 	2016-12-09.csv
-	2016-12-16_Revised.csv
-	2016-12-23.csv
+	2016-12-16_Revised_edited.csv
+	2016-12-23_edited.csv
 	2016-12-30.csv
 )
 

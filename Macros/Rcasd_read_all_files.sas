@@ -26,9 +26,14 @@
   
   %let out = Rcasd_&year;
   
+  %** Create format for recoding notice descriptions to type **;
+  
+  %Rcasd_text2type_fmt(  )
+  
   %** Read individual input data sets **;
   
   %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .csv, .csv | ) );
+  %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .txt, .txt | ) );
 
   %let i = 1;
   %let v = %scan( &infilelist, &i, '|' );
@@ -44,7 +49,7 @@
     %let v = %scan( &infilelist, &i, '|' );
 
   %end;
-
+  
   data _Rcasd_read_all_files;
 
     length Nidc_rcasd_id $ 12;
@@ -53,14 +58,10 @@
     
     set &outlist;
     
-    if year( Notice_date ) ~= &year then do;
-      %Warn_put( macro=Rcasd_read_all, msg="Notice not from &year. Will be dropped. " Notice_date= Source_file= )
-      delete;
-    end;
-    else do;
-      Nidc_rcasd_id = "&year-" || left( put( doc_num, z5. ) );
-      doc_num + 1;
-    end;
+    ** Add unique notice ID **;
+    
+    Nidc_rcasd_id = "&year-" || left( put( doc_num, z5. ) );
+    doc_num + 1;
 
     drop doc_num;
 
@@ -77,6 +78,10 @@
       _Rcasd_read_all_files_addr;
     by Nidc_rcasd_id;
     
+    ** Remove apartment numbers from addresses before geocoding **;
+    
+    address = prxchange( 's/(#|\bapt\b|\bunit\b).*$//i', 1, address );
+    
   run;
   
   ** Run addresses through geocoder **;
@@ -88,9 +93,22 @@
     staddr=address,
     zip=,
     id=Nidc_rcasd_id addr_num Source_file Orig_address,
-    listunmatched=Y,
+    listunmatched=N,
     streetalt_file=&_dcdata_default_path\DHCD\Prog\RCASD\StreetAlt.txt
   )
+  
+  ** _SCORE_ >= 35 includes matches where street type or quadrant may not match input address.;
+  ** These are likely data entry errors;
+  
+  title2 "**** Addresses match score < 35 (possible address data entry error) ****";
+
+  proc print data=&out;
+    where _SCORE_ < 35;
+    by Source_file notsorted;
+    var Nidc_rcasd_id Addr_num Orig_address Address M_ADDR _SCORE_;
+  run;
+  
+  title2;
   
   proc datasets library=work memtype=(data) nolist;
     modify &out;
@@ -141,8 +159,12 @@
     sortby=Nidc_rcasd_id Addr_num,
     revisions=%str(&revisions),
     printobs=0,
-    freqvars=Notice_type ward2012 Notes
+    freqvars=Source_file Ward: Notes
   )  
+  
+  proc freq data=&out;
+    tables Notice_type / nocum nopercent;
+  run;
 
 %mend Rcasd_read_all_files;
 
