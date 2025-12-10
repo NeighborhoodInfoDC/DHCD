@@ -19,6 +19,7 @@
 %DCData_lib( MAR )
 
 %Rcasd_read_all_files( 
+  revisions=%str(New file.),
   year=2024,
   infilelist=
     Weekly TOPA Report January 1-5.txt

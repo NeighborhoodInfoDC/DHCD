@@ -19,6 +19,7 @@
 %DCData_lib( MAR )
 
 %Rcasd_read_all_files( 
+  revisions=%str(Recreate data with updated code.),
   year=2021, 
   infilelist=
   

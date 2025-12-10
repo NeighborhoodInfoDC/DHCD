@@ -1,5 +1,5 @@
 #**************************************************************************
-# Program:  Download_TOPA_PDFs.R
+# Program:  Download_TOPA_PDFs_all.R
 # Library:  DHCD
 # Project:  Urban-Greater DC
 # Author:   P. Tatian
@@ -9,9 +9,7 @@
 # GitHub issue:  132
 # 
 # Description:  Code to download PDF Weekly TOPA reports from DHCD website.
-#               Download selected PDFs from a list.
-#
-#               Update file_list values for files that you want to download.
+#               Downloads all PDFs linked to from main page.
 #
 # Modifications:
 #**************************************************************************/
@@ -23,17 +21,6 @@ library(tidyverse)
 # install.packages('pdftools', repos = c('https://ropensci.r-universe.dev', 'https://cloud.r-project.org'))
 library(pdftools)
 
-# Update with labels of specific files to download
-file_list <- c(
-  "November 24-28, 2025",
-  "November 17-21, 2025",
-  "November 10-14, 2025",
-  "November 3-7, 2025",
-  "October 27-31, 2025",
-  "October 20-24, 2025",
-  "October 13-17, 2025",
-  "October 6-10, 2025"
-)
 
 main_url <- "https://dhcd.dc.gov/page/weekly-report-tenant-opportunity-purchase-act-topa-filings"
 output_root_folder <- "c:/temp/TOPA_PDFs"
@@ -50,12 +37,10 @@ link_texts <- links %>% html_text(trim = TRUE)
 link_years <- link_texts %>% str_extract( "\\b\\d{4}$\\b" )
 
 # Combine into a data frame
-link_df <- 
-  data.frame(url = link_urls, text = link_texts, report_year = link_years, stringsAsFactors = FALSE) %>%
-  filter(text %in% file_list)
+link_df <- data.frame(url = link_urls, text = link_texts, report_year = link_years, stringsAsFactors = FALSE)
 
 # Manual fix for missing year in link text
-# link_df$report_year[link_df$text=="February 27 - March 3" & is.na(link_df$report_year)] <- "2023"
+link_df$report_year[link_df$text=="February 27 - March 3" & is.na(link_df$report_year)] <- "2023"
 
 # Function to extract and download PDF from a report page
 download_pdf <- function(url) {
@@ -86,7 +71,7 @@ download_pdf <- function(url) {
 }
 
 # Create unique list of report years
-link_years_unique <- link_df$report_year %>%
+link_years_unique <- link_years %>%
   unique() %>%
   na.omit()
 

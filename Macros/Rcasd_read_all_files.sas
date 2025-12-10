@@ -50,9 +50,6 @@
 
   %end;
   
-/**
-%MACRO SKIP;  *** TEMPORARY FOR TESTING ***; 
-/**/
   data _Rcasd_read_all_files;
 
     length Nidc_rcasd_id $ 12;
@@ -61,14 +58,10 @@
     
     set &outlist;
     
-    if year( Notice_date ) ~= &year then do;
-      %Warn_put( macro=Rcasd_read_all, msg="Notice not from &year. Will be dropped. " Notice_date= Source_file= )
-      delete;
-    end;
-    else do;
-      Nidc_rcasd_id = "&year-" || left( put( doc_num, z5. ) );
-      doc_num + 1;
-    end;
+    ** Add unique notice ID **;
+    
+    Nidc_rcasd_id = "&year-" || left( put( doc_num, z5. ) );
+    doc_num + 1;
 
     drop doc_num;
 
@@ -104,10 +97,13 @@
     streetalt_file=&_dcdata_default_path\DHCD\Prog\RCASD\StreetAlt.txt
   )
   
-  title2 "**** Addresses match score < 65 (possible address data entry error) ****";
+  ** _SCORE_ >= 35 includes matches where street type or quadrant may not match input address.;
+  ** These are likely data entry errors;
+  
+  title2 "**** Addresses match score < 35 (possible address data entry error) ****";
 
   proc print data=&out;
-    where _SCORE_ < 65;
+    where _SCORE_ < 35;
     by Source_file notsorted;
     var Nidc_rcasd_id Addr_num Orig_address Address M_ADDR _SCORE_;
   run;
@@ -169,9 +165,6 @@
   proc freq data=&out;
     tables Notice_type / nocum nopercent;
   run;
-/**
-%MEND SKIP; 
-/**/
 
 %mend Rcasd_read_all_files;
 

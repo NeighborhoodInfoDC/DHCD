@@ -22,11 +22,9 @@
 
 %macro Rcasd_read_one_file( file=, path=, out= );
 
-  %local is_2006_fmt is_old_fmt is_v3_fmt notice_count_total wrote_obs NOTICE_NAMES_BEGIN file_type;
+  %local notice_count_total wrote_obs NOTICE_NAMES_BEGIN file_type;
   
   %let file_type = %lowcase( %scan( &file, -1, . ) );
-  
-  %PUT FILE_TYPE=&FILE_TYPE;
   
   %** List of beginnings of notice names used to identify possible notices **;
   
@@ -111,34 +109,6 @@
 
   filename inf  "&path\&file" lrecl=2000;
   
-  ** Check input file version **;
-
-  %let is_2006_fmt = 0;
-  %let is_old_fmt = 0;
-  %let is_v3_fmt = 0;
-  
-  /*
-  ** Identify input file version **;
-  
-  data _null_;
-    length inbuff $ 2000;  
-    infile inf dsd missover obs=1;
-    input inbuff;
-    if inbuff = "Condominium and Cooperative Conversion and Sales Branch" then do;
-      ** 2006 file format **;
-      call symput( 'is_2006_fmt', '1' );
-    end;
-    else if inbuff = "Department of Housing and Community Development" then do;
-      ** Old file format **;
-      call symput( 'is_old_fmt', '1' );
-    end;
-    else if inbuff =: "DHCD CASD Mail Log" then do;
-      ** Version 3 format, Jan 14, 2019 or later **;
-      call symput( 'is_v3_fmt', '1' );
-    end;
-  run;
-  */
-  
   ** Read input data file **;
   
   %let notice_count_total = 0;
@@ -163,7 +133,7 @@
     
     input _inbuff $2000.;
 
-    PUT _N_= _inbuff=;
+    /**PUT _N_= _inbuff=;**/
     
     ** Remove funky characters **;
     
@@ -190,7 +160,7 @@
       _inbuff2 = prxchange( 's/\s\s\s+/~/', -1, _inbuff );
       _inbuff = "";
       
-      PUT _inbuff2=;
+      /**PUT _inbuff2=;**/
       
       ** Clean up items and create new comma-delimited list **;
       
@@ -209,7 +179,7 @@
       
       end;
 
-      PUT _inbuff=;
+      /**PUT _inbuff=;**/
       
     %end;
     %else %do;
@@ -229,23 +199,23 @@
     _i = 1;
     _size = countw( _inbuff, ',', 'q' );
     
-    PUT _SIZE=;
+    /**PUT _SIZE=;**/
     
     ** Process each item in _inbuff **;
     
     do _i = 1 to _size;
     
       _item = left( dequote( scan( _inbuff, _i, ',', 'q' ) ) );
-      PUT _I= _ITEM= ;
+      /**PUT _I= _ITEM= ;**/
       
       ** Remove 'Sale and Transfer -' from start of notice label **;
       _item = left( prxchange( 's/^sale and transfer -/ /i', 1, _item ) );
-      PUT _ITEM= ;
+      /**PUT _ITEM= ;**/
         
       ** Remove ' - (empty)' text from notice label **;
       _item = left( compbl ( prxchange( 's/(- |)\(empty\)( -|)/ /i', -1, _item ) ) );
       ***_item = compbl( tranwrd( _item, '- (empty)', '' ) );
-      PUT _ITEM= ;
+      /**PUT _ITEM= ;**/
         
       if lowcase( _item ) in: ( 
           'condominium and cooperative conversion', 
@@ -265,7 +235,7 @@
           '[skip]'
         ) then do;
       
-        PUT '** Generic labels/headers, ignore and skip to next row **';
+        /**PUT '** Generic labels/headers, ignore and skip to next row **';**/
         
         Notice_type = '';
         Orig_notice_desc = '';
@@ -276,7 +246,7 @@
       
       else if _item = "" then do;
       
-        PUT '** Blank entry, do nothing and go to next item **';
+        /**PUT '** Blank entry, do nothing and go to next item **';**/
         
         continue;
               
@@ -284,7 +254,7 @@
       
       else if lowcase( _item ) = '[end notice]' then do;
       
-        PUT '** Stop reading current notice **';
+        /**PUT '** Stop reading current notice **';**/
       
         Notice_type = '';
         Orig_notice_desc = '';
@@ -292,9 +262,17 @@
         
       end;        
       
+      else if lowcase( _item ) =: '[note]' then do;
+      
+        /**PUT '** Tagged as a note **';**/
+        
+        Notes = left( trim( Notes ) || ' ' || left( substr( _item, 7 ) ) );
+        
+      end;
+      
       else if lowcase( _item ) in: ( &NOTICE_NAMES_BEGIN ) then do;
       
-        PUT 'LOOKS LIKE A NOTICE!';
+        /**PUT 'LOOKS LIKE A NOTICE!';**/
         
         ** Check for '(n Items)' in label **;
         
@@ -303,10 +281,10 @@
         if _p > 0 then do;
         
           _first_number = input( scan( substr( _item, _p + 1 ), 1 ), 8. );
-          PUT _FIRST_NUMBER= ;
+          /**PUT _FIRST_NUMBER= ;**/
           
           _item = substr( _item, 1, _p - 1 );
-          PUT _ITEM= ;
+          /**PUT _ITEM= ;**/
         
         end;
         
@@ -317,13 +295,13 @@
           Orig_notice_desc = _item;
         end;
         
-        PUT _IS_NOTICE_REC=;
+        /**PUT _IS_NOTICE_REC=;**/
         
         ** Check for offer of sale (OFS) notices **;
         
         if prxmatch( '/offer of sale|offers of sale|ofs \(/i', _item ) and not( prxmatch( '/response|correspondence|information|documents/i', _item ) ) then do;
         
-          PUT '** This is an offer of sale notice **';
+          /**PUT '** This is an offer of sale notice **';**/
           
           if prxmatch( '/w\/( |)contract/i', _item ) then do;
           
@@ -391,12 +369,12 @@
         
         else if put( compress( upcase( _item ), ' .' ), $rcasd_text2type. ) ~= "" then do;
         
-          PUT '** Another notice type other than OFS **';
+          /**PUT '** Another notice type other than OFS **';**/
         
           Notice_type = put( compress( upcase( _item ), ' .' ), $rcasd_text2type. );
           Orig_notice_desc = _item;
           
-          PUT NOTICE_TYPE=;
+          /**PUT NOTICE_TYPE=;**/
                               
         end;
         else do;
@@ -414,7 +392,7 @@
       
         Notice_date = input( _item, anydtdte40. );
         
-        PUT NOTICE_DATE=;
+        /**PUT NOTICE_DATE=;**/
       
       end;
       
@@ -426,7 +404,7 @@
       
         Orig_address = _item;
         
-        PUT ORIG_ADDRESS=;
+        /**PUT ORIG_ADDRESS=;**/
       
       end;
 
@@ -437,7 +415,7 @@
         Num_units = input( scan( _item, 1, '/' ), 8. );
         Sale_price = input( scan( _item, 2, '/' ), dollar20. );
         
-        PUT NUM_UNITS= SALE_PRICE=;
+        /**PUT NUM_UNITS= SALE_PRICE=;**/
       
       end;
       
@@ -447,7 +425,7 @@
         
         Sale_price = input( _item, dollar20. );
         
-        PUT SALE_PRICE=;
+        /**PUT SALE_PRICE=;**/
         
       end;
       
@@ -456,16 +434,16 @@
         ** A plain number, which could be Source_address_id, Num_units, or Sale_price, depending on file format **;
         
         _number = input( _item, 16. );
-        PUT _NUMBER=;
+        /**PUT _NUMBER=;**/
         
         if _is_notice_rec then do;
         
           if missing( _first_number ) then do;
             _first_number = _number;
-            PUT _FIRST_NUMBER=;
+            /**PUT _FIRST_NUMBER=;**/
           end;
           else do;
-            PUT 'UNKNOWN NUMBER: ' _item=;
+            /**PUT 'UNKNOWN NUMBER: ' _item=;**/
           end;
           
         end;
@@ -481,7 +459,7 @@
               else if missing( num_units ) then num_units = _number;
               else if missing( sale_price ) then sale_price = _number;
               else do;
-                PUT 'UNKNOWN NUMBER: ' _item=;
+                /**PUT 'UNKNOWN NUMBER: ' _item=;**/
               end;
             
             end;
@@ -491,7 +469,7 @@
               if missing( num_units ) then num_units = _number;
               else if missing( sale_price ) then sale_price = _number;
               else do;
-                PUT 'UNKNOWN NUMBER: ' _item=;
+                /**PUT 'UNKNOWN NUMBER: ' _item=;**/
               end;
             
             end;
@@ -504,7 +482,7 @@
             
           end;
           
-          PUT Source_address_id= NUM_UNITS= SALE_PRICE=;
+          /**PUT Source_address_id= NUM_UNITS= SALE_PRICE=;**/
           
         end;
         
@@ -513,21 +491,13 @@
       else if lowcase( _item ) =: '# received' then do;
       
         _first_number = input( substr( _item, 12 ), 8. ); 
-        PUT _FIRST_NUMBER=;
+        /**PUT _FIRST_NUMBER=;**/
       
-      end;
-      
-      else if lowcase( _item ) =: '[note]' then do;
-      
-        PUT '** Tagged as a note **';
-        
-        Notes = left( trim( Notes ) || ' ' || left( substr( _item, 7 ) ) );
-        
       end;
       
       else do;
       
-        PUT 'NO MATCH: ' _item=;
+        /**PUT 'NO MATCH: ' _item=;**/
         
         Notes = left( trim( Notes ) || ' ' || _item );
         
@@ -546,7 +516,7 @@
         end;
         _notice_count = _first_number;
         _notice_count_total = sum( _notice_count_total, _notice_count );
-        PUT _NOTICE_COUNT= _NOTICE_COUNT_TOTAL=;
+        /**PUT _NOTICE_COUNT= _NOTICE_COUNT_TOTAL=;**/
       end;
       else do;
         _notice_count = .;
@@ -554,13 +524,13 @@
       
     end;
 
-    PUT NOTICE_TYPE= NOTICE_DATE= ORIG_ADDRESS=;
+    /**PUT NOTICE_TYPE= NOTICE_DATE= ORIG_ADDRESS=;**/
     
     ** If read both notice type and an address, write notice record **;
 
     if not( missing( notice_type ) or missing( orig_address ) ) then do;
     
-      PUT 'WRITE NOTICE!';
+      /**PUT 'WRITE NOTICE!';**/
 
       output;
       
@@ -574,7 +544,7 @@
       
       if _notice_count > 0 then do;
         _notice_count = _notice_count - 1;
-        PUT _NOTICE_COUNT=;
+        /**PUT _NOTICE_COUNT=;**/
       end;
       else if _notice_count = 0 then do;
         %warn_put( 
@@ -588,47 +558,10 @@
     end;
  
 
-    *************************************************;
-
-    PUT _notices= _NOTICE_COUNT_TOTAL= /;
+    /**PUT _notices= _NOTICE_COUNT_TOTAL= /;**/
     
- /***********
-    ** Remove leading commas from input. Skip to next record if blank. **;
+    ** Create macro variables with count of wrote obs and total notice entries **;
     
-    i = verify( _inbuff, ', ' );
-    
-    if i > 0 then _inbuff = left( substr( _inbuff, i ) );
-    else return;
-    
-    ** Remove extra commas from input. **;
-    
-    do while ( find( _inbuff, ',,' ) );
-    
-      _inbuff = trim( substr( _inbuff, 1, find( _inbuff, ',,' ) - 1 ) ) ||
-               left( substr( _inbuff, find( _inbuff, ',,' ) + 1 ) );
-    
-    end;
-    
-    PUT _inbuff=;
-    
-    if input( scan( _inbuff, 1, ',', 'q' ), ??8. ) then do;
-    
-      Count = Count + input( scan( _inbuff, 1, ',', 'q' ), ??8. );
-      
-      Notice_type = put( compress( upcase( scan( _inbuff, 2, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
-
-    end;
-    else if put( compress( upcase( scan( _inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. ) ~= "" then do;
-    
-      Notice_type = put( compress( upcase( scan( _inbuff, 1, ',', 'q' ) ), ' .' ), $rcasd_text2type. );
-
-      Count = Count + input( scan( _inbuff, 2, ',', 'q' ), ??8. );
-      
-    end;
-
-    PUT COUNT= NOTICE_TYPE= /;
-***********/
-
     call symput( 'wrote_obs', put( _notices, 12. ) );
     call symput( 'notice_count_total', put( _notice_count_total, 12. ) );
     
@@ -643,380 +576,6 @@
   run;
 
 
-%MACRO SKIP;
-  %if &is_2006_fmt %then %do;
-  
-    **** 2006 file format ****;
-
-    data &out;
-
-      length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
-      
-      retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
-
-      infile inf dsd missover dlm='~' firstobs=4;
-      
-      input inbuff;
-      PUT _N_= inbuff=;
-      
-      if input( scan( inbuff, 2, ',' ), ??8. ) > 0 then do;
-        
-        Count = Count + input( scan( inbuff, 2, ',' ), 8. );
-        PUT COUNT=;
-        
-        call symput( 'input_count', put( Count, 12. ) );
-        
-        Notice_type = put( compress( upcase( scan( inbuff, 1, ',' ) ), ' .' ), $rcasd_text2type. );
-        PUT NOTICE_TYPE=;
-        
-        if Notice_type = "" then do;
-          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
-        end;
-        
-        ***input Notice_date :mmddyy10. @; 
-        input inbuff;
-        PUT _N_= inbuff=;
-        
-        Notice_date = input( scan( inbuff, 2, ',', 'q' ), mmddyy10. );
-        
-        do while ( not missing( Notice_date ) );
-        
-          Orig_address = compress( scan( inbuff, 1, ',', 'q' ), '"' );
-          
-        /***
-          Num_units = .;
-          Sale_price = .;
-
-          input Orig_address inbuff inbuff2;
-          
-          if inbuff ~= "" then do;
-            if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff ) then do;
-              Num_units = input( scan( inbuff, 1, '/' ), 8. );
-              Sale_price = input( scan( inbuff, 2, '/' ), dollar16. );
-            end;
-            else do;
-              Notes = left( compbl( inbuff ) );
-            end;
-          end;
-          
-          if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff2 ) then do;
-            Num_units = input( scan( inbuff2, 1, '/' ), 8. );
-            Sale_price = input( scan( inbuff2, 2, '/' ), dollar16. );
-          end;
-          ***/
-          
-          output;
-          Notices + 1;
-          
-          input inbuff;
-          PUT _N_= inbuff=;
-        
-          Notice_date = input( scan( inbuff, 2, ',', 'q' ), mmddyy10. );
-          
-        end;
-        
-        /*input;*/
-        
-      end;
-      else do;
-        /*input;*/
-     end;
-     
-     call symput( 'wrote_obs', put( Notices, 12. ) );
-     
-     format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
-     
-     drop inbuff: count Notices;
-
-    run;
-    
-  %end;
-
-  %else %if &is_old_fmt %then %do;
-  
-    **** Old file format ****;
-
-    data &out;
-
-      length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
-      
-      retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
-
-      infile inf dsd missover firstobs=6;
-      
-      input inbuff @;
-      /*put _n_= inbuff=;*/
-      
-      if input( inbuff, ??8. ) > 0 then do;
-        
-        Count = Count + input( inbuff, 8. );
-        
-        call symput( 'input_count', put( Count, 12. ) );
-        
-        input inbuff;
-        /*put _n_= count= inbuff=;*/
-        
-        Notice_type = put( compress( upcase( inbuff ), ' .' ), $rcasd_text2type. );
-        
-        if Notice_type = "" then do;
-          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
-        end;
-        
-        input Notice_date :mmddyy10. @; 
-          
-        do while ( not missing( Notice_date ) );
-        
-          Num_units = .;
-          Sale_price = .;
-
-          input Orig_address inbuff inbuff2;
-          
-          if inbuff ~= "" then do;
-            if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff ) then do;
-              Num_units = input( scan( inbuff, 1, '/' ), 8. );
-              Sale_price = input( scan( inbuff, 2, '/' ), dollar16. );
-            end;
-            else do;
-              Notes = left( compbl( inbuff ) );
-            end;
-          end;
-          
-          if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff2 ) then do;
-            Num_units = input( scan( inbuff2, 1, '/' ), 8. );
-            Sale_price = input( scan( inbuff2, 2, '/' ), dollar16. );
-          end;
-          
-          output;
-          Notices + 1;
-          
-          input Notice_date :mmddyy10. @; 
-          
-        end;
-        
-        /*input;*/
-        
-      end;
-      else do;
-        /*input;*/
-     end;
-     
-     call symput( 'wrote_obs', put( Notices, 12. ) );
-     
-     format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
-     
-     drop inbuff: count Notices;
-
-    run;
-    
-  %end;
-
-  %else %if &is_v3_fmt %then %do;
-  
-    **** Version 3 file format (Jan 14, 2019 or later) ****;
-    
-    data &out;
-
-      length Notice_type $ 3 Orig_address Notes $ 1000 Related_address Source_file $ 120 inbuff inbuff2 $ 2000;
-      
-      retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
-      
-      Notes = "";
-
-      infile inf dsd missover firstobs=5;
-      
-      input @1 inbuff @;
-      
-      do while ( left( upcase( inbuff ) ) in: ( 'CONVERSION', 'SALE AND TRANSFER' ) );
-      
-        inbuff = left( tranwrd( compbl( upcase( inbuff ) ), ' - ', ' | ' ) );
-
-        i = index( inbuff, 'ITEM' );
-        
-        if i > 0 then do;
-          j = index( reverse( substr( inbuff, 1, i - 1 ) ), '(' ) - 1;
-          Count = Count + input( substr( inbuff, i - j, j ), 8. );
-        end;
-        else do;
-          Count = .;
-        end;
-        
-        call symput( 'input_count', put( Count, 12. ) );
-        
-        inbuff2 = left( scan( inbuff, 2, '|' ) );
-        
-        if inbuff2 = '(EMPTY)' then do;
-          inbuff2 = left( scan( inbuff, 3, '|' ) );
-          i = index( inbuff2, '(' );
-          if i > 0 then inbuff2 = substr( inbuff2, 1, i - 1 );
-        end;
-      
-        Notice_type = put( compress( left( inbuff2 ), " '.()" ), $rcasd_text2type. );
-        
-        if Notice_type = "" then do;
-          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff2= )
-          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
-        end;
-        
-        Notice_date = .;
-        
-        ** Advance to first nonblank notice record **;
-        
-        do while( missing( Notice_date ) );
-        
-          input inbuff;
-          
-          input inbuff @;
-          input Notice_date :mmddyy10. @; 
-        
-        end;          
-
-        do while ( not missing( Notice_date ) );
-        
-          Num_units = .;
-          Sale_price = .;
-        
-          input Orig_address Related_address @;
-          input inbuff @;
-          input inbuff @;
-          input inbuff2;
-          
-          if inbuff ~= "" then do;
-            Num_units = input( inbuff, 8. );
-          end;
-          
-          if inbuff2 ~= "" then do;
-            Sale_price = input( inbuff2, dollar16. );
-          end;
-          
-          output;
-          
-          Notices + 1;
-
-          call symput( 'wrote_obs', put( Notices, 12. ) );
-          
-          ** Advance to next record **;
-          
-          do while ( 1 );
-          
-            input inbuff @;
-            
-            Notice_date = .;
-            
-            if left( upcase( inbuff ) ) in: ( 'CONVERSION', 'SALE AND TRANSFER' ) then leave;
-
-            input Notice_date :mmddyy10. @; 
-            
-            if not( missing( Notice_date ) ) then leave;
-            else input;
-            
-          end;
-          
-        end;
-        
-        ***input;
-        
-      end;
-
-      label Related_address = "Related address numbers";
-      
-      format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
-      
-      drop inbuff: count Notices i j;
-
-    run;
-    
-  %end;
-    
-  %else %do;
-  
-    **** New file format (before Jan 14, 2019) ****;
-    
-    data &out;
-
-      length Notice_type $ 3 Orig_address Notes $ 1000 Source_file $ 120 inbuff inbuff2 $ 2000;
-      
-      retain Notice_type "" Count Notices 0 Source_file "%lowcase(&file)";
-
-      infile inf dsd missover firstobs=7;
-      
-      input inbuff @;
-      input inbuff @;
-      /*put _n_= inbuff=;*/
-      
-      if inbuff =: '# Received:' or input( inbuff, ??8. ) > 0 then do;
-      
-        if input( inbuff, ??8. ) > 0 then Count = Count + input( inbuff, 8. );
-        else Count = Count + input( substr( inbuff, 12 ), 8. );
-      
-        call symput( 'input_count', put( Count, 12. ) );
-        
-        input inbuff @;
-        input inbuff;
-        /*put _n_= count= inbuff=;*/
-        
-        Notice_type = put( compress( upcase( inbuff ), " '.()" ), $rcasd_text2type. );
-        
-        if Notice_type = "" then do;
-          %err_put( macro=, msg="Unrecognized notice type: file=&file " _n_= inbuff= )
-          %err_put( macro=, msg="Update Macros\Rcasd_text2type_fmt.sas to add this notice to RCASD formats." )
-        end;
-        
-        input inbuff @;
-        input inbuff @;
-        input Notice_date :mmddyy10. @; 
-        
-        do while ( not missing( Notice_date ) );
-        
-          Num_units = .;
-          Sale_price = .;
-        
-          input Orig_address inbuff inbuff2;
-          
-          if inbuff ~= "" then do;
-            if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff ) then do;
-              Num_units = input( scan( inbuff, 1, '/' ), 8. );
-              Sale_price = input( scan( inbuff, 2, '/' ), dollar16. );
-            end;
-            else do;
-              Notes = left( compbl( inbuff ) );
-            end;
-          end;
-          
-          if prxmatch( '/\d+\s*\/\s*\$?[0-9,\.]+/', inbuff2 ) then do;
-            Num_units = input( scan( inbuff2, 1, '/' ), 8. );
-            Sale_price = input( scan( inbuff2, 2, '/' ), dollar16. );
-          end;
-          
-          output;
-          Notices + 1;
-          
-          input inbuff @;
-          input inbuff @;
-          input Notice_date :mmddyy10. @; 
-          
-        end;
-        
-        input;
-        
-      end;
-      else do;
-        input;
-     end;
-     
-     call symput( 'wrote_obs', put( Notices, 12. ) );
-     
-     format Notice_type $rcasd_notice_type. Notice_date mmddyy10.;
-     
-     drop inbuff: count Notices;
-
-    run;
-    
-  %end;
-  
-  %MEND SKIP;
-    
   filename inf clear;
   
   %** Check whether observations were written to file and that number of notices matches counts provided (if any) **;

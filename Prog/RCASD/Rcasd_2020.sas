@@ -20,6 +20,7 @@
 
 
 %Rcasd_read_all_files( 
+  revisions=%str(Recreate data with updated code.),
   year=2020, 
   infilelist=
   	Week of January 6 - 10 2020.csv
@@ -67,7 +68,7 @@
 	Week of October 26 - 30 2020.csv
 	Week of November 2 - 6 2020.csv
 	Week of November 9 - 13 2020.csv
-	Week of November 16 - 20 2020.csv
+	Week of November 16 - 20 2020_edited.csv
 	Week of November 23 - 27 2020.csv
 	Week of Nov 30 - Dec 4 2020.csv
 	Week of December 7 - 11 2020.csv
