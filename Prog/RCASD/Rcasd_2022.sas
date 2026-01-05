@@ -19,7 +19,7 @@
 %DCData_lib( MAR )
 
 %Rcasd_read_all_files( 
-  revisions=%str(New file.),
+  revisions=%str(Rerun with updated geocoding macro.),
   year=2022, 
   infilelist=
 

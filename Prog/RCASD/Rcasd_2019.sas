@@ -20,7 +20,7 @@
 
 
 %Rcasd_read_all_files( 
-  revisions=%str(Recreate data with updated code.),
+  revisions=%str(Rerun with updated geocoding macro.),
   year=2019, 
   infilelist=
 	2019-01-04.csv
