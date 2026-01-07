@@ -1,5 +1,5 @@
 /**************************************************************************
- Program:  Rcasd_2024.sas
+ Program:  Rcasd_2025.sas
  Library:  DHCD
  Project:  NeighborhoodInfo DC
  Author:   P. Tatian
@@ -19,7 +19,7 @@
 %DCData_lib( MAR )
 
 %Rcasd_read_all_files( 
-  revisions=%str(Rerun with updated geocoding macro.),
+  revisions=%str(Rerun with updated geocoding macro. Add notices for Dec 1 to Dec 26.),
   year=2025,
   infilelist=
   
@@ -71,5 +71,8 @@
     Weekly TOPA Report November 10-14.txt
     Weekly TOPA Report November 17-21.txt
     Weekly TOPA Report November 24-28_edited.txt
-
+    Weekly TOPA Report December 1-5.txt
+    Weekly TOPA Report December 8-12.txt
+    Weekly TOPA Report December 15-19.txt
+    Weekly TOPA Report December 22-26.txt
 )
