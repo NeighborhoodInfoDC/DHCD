@@ -25,18 +25,15 @@ library(pdftools)
 
 # Update with labels of specific files to download
 file_list <- c(
-  "November 24-28, 2025",
-  "November 17-21, 2025",
-  "November 10-14, 2025",
-  "November 3-7, 2025",
-  "October 27-31, 2025",
-  "October 20-24, 2025",
-  "October 13-17, 2025",
-  "October 6-10, 2025"
+  "December 22-26, 2025",
+  "December 15-19, 2025",
+  "December 8-12, 2025",
+  "December 1-5, 2025"
 )
 
+output_root_folder <- "C:/DCData/Libraries/DHCD/Raw/RCASD"
+
 main_url <- "https://dhcd.dc.gov/page/weekly-report-tenant-opportunity-purchase-act-topa-filings"
-output_root_folder <- "c:/temp/TOPA_PDFs"
 date_pattern <- "\\b(January|February|March|April|May|June|July|August|September|October|November|December)\\b"
 
 main_page <- read_html(main_url)

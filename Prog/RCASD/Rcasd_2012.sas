@@ -19,7 +19,7 @@
 %DCData_lib( MAR )
 
 %Rcasd_read_all_files( 
-  revisions=%str(New file.),
+  revisions=%str(Rerun with updated geocoding macro.),
   year=2012,
   infilelist=
     01-02_01-06-2012.csv
@@ -47,7 +47,7 @@
     06-18_06-22-2012.csv
     06-25_06-29-2012.csv
     07-02_07-06-2012.csv
-    07-09_07-13-2012.csv
+    07-09_07-13-2012_edited.csv
     07-16_07-20-2012.csv
     07-23_07-27-2012.csv
     07-30_08-03-2012_edited.csv
