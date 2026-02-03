@@ -474,6 +474,12 @@
             
             end;
             
+            when ( ( '1jan2007'd <= notice_date <= '31dec2008'd ) and _number = 1) do;
+            
+              /** Extra 1's included in these notices as part of notice counts. Ignore. **/
+              
+            end;
+            
             otherwise do;
             
               %warn_put( macro=Rcasd_read_one_file, msg="Unknown number on notice record. " source_file= _n_= notice_date= _number= _inbuff= );

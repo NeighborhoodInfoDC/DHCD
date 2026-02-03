@@ -30,6 +30,10 @@
   
   %Rcasd_text2type_fmt(  )
   
+  %** Create $maraltsttyp format used by %Rcasd_address_parse() **;
+  
+  %F_maraltsttyp(  )
+  
   %** Read individual input data sets **;
   
   %let infilelist = %sysfunc( tranwrd( %lowcase( &infilelist ), .csv, .csv | ) );
