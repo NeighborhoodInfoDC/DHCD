@@ -443,7 +443,7 @@
             /**PUT _FIRST_NUMBER=;**/
           end;
           else do;
-            /**PUT 'UNKNOWN NUMBER: ' _item=;**/
+            %warn_put( macro=Rcasd_read_one_file, msg="Unknown number on notice record. " source_file= _n_= notice_date= _number= _inbuff= );
           end;
           
         end;
@@ -459,24 +459,24 @@
               else if missing( num_units ) then num_units = _number;
               else if missing( sale_price ) then sale_price = _number;
               else do;
-                /**PUT 'UNKNOWN NUMBER: ' _item=;**/
+                %warn_put( macro=Rcasd_read_one_file, msg="Unknown number on notice record. " source_file= _n_= notice_date= _number= _inbuff= );
               end;
             
             end;
             
-            when ( '1jan2019'd <= notice_date ) do;
+            when ( '1apr2013'd <= notice_date ) do;
              
               if missing( num_units ) then num_units = _number;
               else if missing( sale_price ) then sale_price = _number;
               else do;
-                /**PUT 'UNKNOWN NUMBER: ' _item=;**/
+                %warn_put( macro=Rcasd_read_one_file, msg="Unknown number on notice record. " source_file= _n_= notice_date= _number= _inbuff= );
               end;
             
             end;
             
             otherwise do;
             
-              %err_put( macro=Rcasd_read_one_file, msg="Notice date not coded for number handling. " source_file= _n_= notice_date= _inbuff= );
+              %warn_put( macro=Rcasd_read_one_file, msg="Unknown number on notice record. " source_file= _n_= notice_date= _number= _inbuff= );
               
             end;
             

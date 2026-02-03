@@ -25,10 +25,10 @@ library(pdftools)
 
 # Update with labels of specific files to download
 file_list <- c(
-  "December 22-26, 2025",
-  "December 15-19, 2025",
-  "December 8-12, 2025",
-  "December 1-5, 2025"
+  "January 19-23, 2026",
+  "January 12-16, 2026",
+  "January 5-9, 2026",
+  "December 29, 2025 - January 2, 2026"
 )
 
 output_root_folder <- "C:/DCData/Libraries/DHCD/Raw/RCASD"
