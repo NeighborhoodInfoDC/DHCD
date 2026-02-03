@@ -18,7 +18,7 @@
 ** Define libraries **;
 %DCData_lib( DHCD )
 
-data DHCD.Rcasd_all (label="Rental Conversion and Sale Division, TOPA-related filings, 2012-2025") / view=DHCD.Rcasd_all;
+data DHCD.Rcasd_all (label="Rental Conversion and Sale Division, TOPA-related filings, 2012-2026") / view=DHCD.Rcasd_all;
 
   set
     DHCD.Rcasd_2012
@@ -35,6 +35,7 @@ data DHCD.Rcasd_all (label="Rental Conversion and Sale Division, TOPA-related fi
     DHCD.Rcasd_2023
     DHCD.Rcasd_2024
     DHCD.Rcasd_2025
+    DHCD.Rcasd_2026
   ;
   by nidc_rcasd_id addr_num;
 
@@ -42,10 +43,15 @@ run;
 
 %File_info( data=DHCD.Rcasd_all )
 
+proc freq data=DHCD.Rcasd_all;
+  tables Notice_date;
+  format Notice_date year4.;
+run;
+
 %Dc_update_meta_file(
   ds_lib=DHCD,
   ds_name=Rcasd_all,
   creator_process=Rcasd_all.sas,
   restrictions=None,
-  revisions=%str(New file.)
+  revisions=%str(Add 2026.)
 )
