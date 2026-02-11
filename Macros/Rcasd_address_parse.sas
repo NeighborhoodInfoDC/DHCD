@@ -32,6 +32,12 @@ addresses.
     ** Remove parenthetical info (...) **;
     _addresslist = prxchange( 's/\(.*\)//', -1, _addresslist );
 
+    ** Convert N.W., N.E., ... to NW, NE, ... **;
+    _addresslist = prxchange( 's/\bn\.w\./ NW /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\bn\.e\./ NE /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\bs\.w\./ SW /i', -1, _addresslist );
+    _addresslist = prxchange( 's/\bs\.e\./ SE /i', -1, _addresslist );
+    
     _addresslist = tranwrd( _addresslist, '&', ' & ' );
     _addresslist = tranwrd( _addresslist, '–', '-' );    /** En dash **/
     _addresslist = tranwrd( _addresslist, ' -', '-' );
