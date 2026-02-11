@@ -47,6 +47,11 @@ run;
 
 %File_info( data=DHCD.Rcasd_all )
 
+proc freq data=DHCD.Rcasd_all;
+  tables Notice_date;
+  format Notice_date year4.;
+run;
+
 %Dc_update_meta_file(
   ds_lib=DHCD,
   ds_name=Rcasd_all,
