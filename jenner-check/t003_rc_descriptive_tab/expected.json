@@ -1,0 +1,19 @@
+{
+  "_captured_at": "2026-06-17T13:07:26.898378Z",
+  "_captured_run_id": "r_019ed5ab5a9b7fa397ebd1e77ba53a3c",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "Wrote rent_control_database (14 rows, 3 columns).",
+    "FORMAT $ward defined (9 ranges).",
+    "PROC TABULATE"
+  ],
+  "log_does_not_contain": [
+    "ERROR:",
+    "[JENNER-ERROR"
+  ],
+  "diagnostics": {
+    "parse_warnings": [],
+    "runtime_warnings": []
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "bundle": "t002_nsp_forecl_prop_type",
+  "source_file": "Prog/NSP_forecl_prop_type.sas",
+  "source_blob_sha": "0e32a96b9b282b099544ddff4f749a44d430748e",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "DATA-step proptype recode (if/then, usecode in-list) + PROC TABULATE crosstab verbatim; external HsngMon.Foreclosures_qtr_2009_2 replaced by inline NSP_input sample with the columns read; $nbrhd quoted-key format and WHERE put() filter intact."
+}

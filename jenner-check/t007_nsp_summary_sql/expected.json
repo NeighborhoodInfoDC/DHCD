@@ -1,0 +1,19 @@
+{
+  "_captured_at": "2026-06-17T13:07:26.970308Z",
+  "_captured_run_id": "r_019ed5af706f7fb193e9332121d8c87f",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "Wrote Foreclosures_year_2009_2 (6 rows, 7 columns).",
+    "Output dataset Neighborhoods has 9 observations and 9 variables.",
+    "PROC SQL statement used."
+  ],
+  "log_does_not_contain": [
+    "ERROR:",
+    "[JENNER-ERROR"
+  ],
+  "diagnostics": {
+    "parse_warnings": [],
+    "runtime_warnings": []
+  }
+}

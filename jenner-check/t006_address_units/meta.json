@@ -1,0 +1,8 @@
+{
+  "bundle": "t006_address_units",
+  "source_file": "Prog/RC_Address_units.sas",
+  "source_blob_sha": "804d0a7003e3b10fb252f04bba5cee0a8fbaacd6",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "PROC FREQ + PROC SORT + PROC SUMMARY(sum by ssl) + MERGE with in= match flags + closing PROC FREQ/MEANS verbatim; external mar.addresspt and realprop.who_owns replaced by inline samples (ssl, active_res; ssl, ui_proptype)."
+}

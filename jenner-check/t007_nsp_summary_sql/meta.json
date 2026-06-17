@@ -1,0 +1,8 @@
+{
+  "bundle": "t007_nsp_summary_sql",
+  "source_file": "Prog/NSP_foreclosures.sas",
+  "source_blob_sha": "d3a079111bc38ee3406171458a2ce361cfeb3444",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "PROC SUMMARY chartype (_TYPE_ rollups) + PROC SQL left join + SELECT(year(report_dt))/WHEN unit-assignment DATA step + per-1000-unit rates verbatim; external HsngMon/RealProp datasets replaced by inline samples; colon name-prefix VAR list (units_sf_:) written out as explicit columns; ODS RTF local-path report omitted."
+}

@@ -1,0 +1,18 @@
+                                                   The FREQ Procedure
+
+                                        Cumulative    Cumulative
+active_res    Frequency    Percent     Frequency      Percent
+-------------------------------------------------------------------
+                                                   The FREQ Procedure
+
+                                        Cumulative    Cumulative
+active_res    Frequency    Percent     Frequency      Percent
+-------------------------------------------------------------------
+1                     9    100.00            9       100.00
+                                                  The MEANS Procedure
+
+ Variable          N           Mean        Std Dev        Minimum        Maximum
+ -------------------------------------------------------------------------------
+ active_res        4      1.7500000      0.9574271      1.0000000      3.0000000
+ -------------------------------------------------------------------------------
+

@@ -1,0 +1,19 @@
+{
+  "_captured_at": "2026-06-17T13:07:26.933236Z",
+  "_captured_run_id": "r_019ed5acb4107a4297958207d7bb1a86",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "Wrote reg1 (12 rows, 13 columns).",
+    "PROC REG data=reg1",
+    "PROC MEANS statement used."
+  ],
+  "log_does_not_contain": [
+    "ERROR:",
+    "[JENNER-ERROR"
+  ],
+  "diagnostics": {
+    "parse_warnings": [],
+    "runtime_warnings": []
+  }
+}

@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------------------------------------
+|All Households, 2008                                      | Current %  | Current Number | Sample obs. |
+|----------------------------------------------------------+------------+----------------+-------------|
+|Non-Hisp. black               Number of households        |       40.00|             390|          390|
+|                              Any housing problems        |       40.00|             390|          390|
+|                              Cost burden > 30%           |       40.00|             260|          390|
+|                              Cost burden > 50%           |       40.00|               0|          390|
+|Non-Hisp. white               Number of households        |       20.00|             245|          245|
+|                              Any housing problems        |       20.00|              95|          245|
+|                              Cost burden > 30%           |       20.00|               0|          245|
+|                              Cost burden > 50%           |       20.00|               0|          245|
+|Hispanic/Latino               Number of households        |       20.00|             230|          230|
+|                              Any housing problems        |       20.00|              90|          230|
+|                              Cost burden > 30%           |       20.00|             230|          230|
+|                              Cost burden > 50%           |       20.00|             230|          230|
+|Non-Hisp. Asian               Number of households        |       10.00|             110|          110|
+|                              Any housing problems        |       10.00|             110|          110|
+|                              Cost burden > 30%           |       10.00|             110|          110|
+|                              Cost burden > 50%           |       10.00|             110|          110|
+|Non-Hisp. other race          Number of households        |       10.00|              70|           70|
+|                              Any housing problems        |       10.00|               0|           70|
+|                              Cost burden > 30%           |       10.00|              70|           70|
+|                              Cost burden > 50%           |       10.00|               0|           70|
+--------------------------------------------------------------------------------------------------------
+

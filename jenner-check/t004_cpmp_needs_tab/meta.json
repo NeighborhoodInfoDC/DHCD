@@ -1,0 +1,8 @@
+{
+  "bundle": "t004_cpmp_needs_tab",
+  "source_file": "Prog/CPMP_2008_needs_tbl2.sas",
+  "source_blob_sha": "30234b2328a5b0e51975a228b90c8865662356ba",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "Weighted PROC TABULATE (race/ethnicity needs table) with WEIGHT hhwt, preloadfmt/order=data, numeric classification formats, verbatim; external DHCD.CPMP_2008 replaced by inline ACS-shaped sample; ODS HTML local-path wrapper omitted; %fdate stubbed deterministically in autoexec."
+}
