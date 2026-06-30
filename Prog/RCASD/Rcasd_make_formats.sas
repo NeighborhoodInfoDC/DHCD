@@ -123,6 +123,9 @@ proc format library=DHCD;
     "320" = "Sales contract"
     "330" = "Disability survey for tenant election"
     "335" = "Intent to file petition"
+    "340" = "Single family dwelling notice of potential sale"
+    "341" = "2-4 units notice of potential sale"
+    "342" = "5+ units notice of potential sale"
     "900" = "Offer of sale (no property size given)"
     ;
 

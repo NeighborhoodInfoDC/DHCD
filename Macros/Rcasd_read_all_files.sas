@@ -21,7 +21,7 @@
  
   %local i v out outlib outlist;
   
-  %if &_remote_batch_submit %then %let outlib = DHCD;
+  %if &_final_batch_submit %then %let outlib = DHCD;
   %else %let outlib = Work;
   
   %let out = Rcasd_&year;
