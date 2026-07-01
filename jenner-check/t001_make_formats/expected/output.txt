@@ -1,0 +1,10 @@
+                                    DHCD parcel recodes via $nspnbhd. and $newptyp.                                     
+
+    geo2000  neighborhood  proptype  property_type
+11001007503  Anacostia     10        10
+11001007803  Deanwood      13        13
+11001007901  Trinidad      14        14
+11001008500  Trinidad      15        15
+11001009904  Deanwood      11        11
+99999999999                12        12
+

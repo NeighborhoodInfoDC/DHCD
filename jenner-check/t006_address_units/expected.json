@@ -1,0 +1,19 @@
+{
+  "_captured_at": "2026-06-17T13:07:26.952523Z",
+  "_captured_run_id": "r_019ed5ad3ffb7e01be4b337a48606077",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "Wrote addresspt (10 rows, 2 columns).",
+    "PROC FREQ statement used.",
+    "PROC MEANS statement used."
+  ],
+  "log_does_not_contain": [
+    "ERROR:",
+    "[JENNER-ERROR"
+  ],
+  "diagnostics": {
+    "parse_warnings": [],
+    "runtime_warnings": []
+  }
+}

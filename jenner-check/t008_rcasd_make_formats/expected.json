@@ -1,0 +1,19 @@
+{
+  "_captured_at": "2026-06-17T13:07:26.990208Z",
+  "_captured_run_id": "r_019ed5aff941718097e224ee33ca296b",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "FORMAT $rcasd_notice_type defined (12 ranges).",
+    "Wrote rcasd_notices (14 rows, 2 columns).",
+    "PROC FREQ statement used."
+  ],
+  "log_does_not_contain": [
+    "ERROR:",
+    "[JENNER-ERROR"
+  ],
+  "diagnostics": {
+    "parse_warnings": [],
+    "runtime_warnings": []
+  }
+}

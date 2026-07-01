@@ -1,0 +1,8 @@
+{
+  "bundle": "t001_make_formats",
+  "source_file": "Prog/Make_formats.sas",
+  "source_blob_sha": "0ab21b0b938693442b4d85b04124cc7deb760542",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "PROC FORMAT VALUE statements ($nspnbhd, $newptyp, $newptyb) verbatim from source; library=DHCD dropped so formats build in WORK; recodes shown via PUT() in a DATA step + PROC PRINT (same PUT pattern the repo uses in NSP_forecl_address.sas)."
+}

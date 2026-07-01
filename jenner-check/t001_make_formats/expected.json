@@ -1,0 +1,19 @@
+{
+  "_captured_at": "2026-06-17T13:07:26.863017Z",
+  "_captured_run_id": "r_019ed5a6c0cb72c18aeb740c0957845a",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "FORMAT $nspnbhd defined (18 ranges).",
+    "Wrote parcel_labels (6 rows, 4 columns).",
+    "PROC PRINT completed: 6 observations printed, 4 variables"
+  ],
+  "log_does_not_contain": [
+    "ERROR:",
+    "[JENNER-ERROR"
+  ],
+  "diagnostics": {
+    "parse_warnings": [],
+    "runtime_warnings": []
+  }
+}

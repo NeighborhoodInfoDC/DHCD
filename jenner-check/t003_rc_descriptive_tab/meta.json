@@ -1,0 +1,8 @@
+{
+  "bundle": "t003_rc_descriptive_tab",
+  "source_file": "Prog/RC_Descriptive_tables.sas",
+  "source_blob_sha": "8ab240505b70781e1c1bf5bfdf6efdd4c0ec1b09",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "By-ward PROC TABULATE (single CLASS row dim, N/PCTN/SUM/PCTSUM) with PROC SORT and $ward format, verbatim; external DHCD.rent_control_database replaced by inline sample (ward2002, rent_controlled, adj_unit_count); WHERE rent_controlled=1 intact."
+}

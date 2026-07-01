@@ -1,0 +1,35 @@
+                                   RCASD notice codes recoded via $rcasd_notice_type.                                   
+
+Notice_type                                        Notice_desc
+101          Condominium registration application
+203          Notice of foreclosure
+211          Right of first refusal
+212          TOPA letter of interest
+101          Condominium registration application
+204          DC opportunity to purchase act (DOPA) notice
+102          Not a housing accommodation exemption application
+211          Right of first refusal
+207          Tenant organization registration application
+103          Vacancy exemption application
+214          TOPA complaints
+211          Right of first refusal
+105          Tenant election application
+201          Notice of transfer
+
+                                           Distribution of RCASD notice types                                           
+
+                                                   The FREQ Procedure
+
+Notice_desc                                          Frequency    Percent
+--------------------------------------------------------------------------
+Right of first refusal                                       3     21.43
+Condominium registration application                         2     14.29
+DC opportunity to purchase act (DOPA) notice                 1      7.14
+Not a housing accommodation exemption application            1      7.14
+Notice of foreclosure                                        1      7.14
+Notice of transfer                                           1      7.14
+TOPA complaints                                              1      7.14
+TOPA letter of interest                                      1      7.14
+Tenant election application                                  1      7.14
+Tenant organization registration application                 1      7.14
+Vacancy exemption application                                1      7.14

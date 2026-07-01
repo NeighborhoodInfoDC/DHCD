@@ -1,0 +1,20 @@
+Jenner 0.1.0 (Unlicensed - limited to 100 observations)
+Get a license at https://jenneranalytics.com/license
+
+NOTE: Option OBS changed to 100.
+NOTE: DATA CPMP_2008
+
+NOTE: Processing inline DATALINES (10 lines)
+
+NOTE: Read 10 rows from DATALINES.
+NOTE: Wrote CPMP_2008 (10 rows, 9 columns).
+NOTE: DATA elapsed:
+  wall  0.00 seconds
+  cpu   0.00 seconds
+NOTE: PROC FORMAT library=WORK
+
+NOTE: FORMAT hudinc defined (3 ranges).
+NOTE: FORMAT ownershp defined (2 ranges).
+NOTE: FORMAT hhtype defined (4 ranges).
+NOTE: FORMAT raceeth defined (5 ranges).
+NOTE: PROC TABULATE

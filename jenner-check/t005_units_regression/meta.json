@@ -1,0 +1,8 @@
+{
+  "bundle": "t005_units_regression",
+  "source_file": "Prog/RC_Regression.sas",
+  "source_blob_sha": "cdd2b4aba38c7e9838577413b968bf2ecf462286",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "Use-code dummy-variable DATA step + PROC MEANS + PROC REG (SIMPLE, OUTPUT OUT= R=/P=) verbatim, incl. %let predictor lists; external dhcd.parcel_unit_geo_merge replaced by inline parcel sample (active_res, assess_val, landarea, usecode, ssl, ui_proptype, in_last_ownerpt)."
+}

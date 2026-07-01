@@ -1,0 +1,8 @@
+{
+  "bundle": "t008_rcasd_make_formats",
+  "source_file": "Prog/RCASD/Rcasd_make_formats.sas",
+  "source_blob_sha": "89d7fec060401399ada371ae89a20b731109e95a",
+  "source_commit": "ac221b855c1daf69fc24fe67326506b65c76799a",
+  "tier": "real_data",
+  "notes": "$rcasd_notice_type PROC FORMAT VALUE entries reproduced verbatim for the codes exercised (source defines the full code list); library=DHCD dropped to WORK; notice codes recoded via PUT() and tabulated with PROC FREQ order=freq, following the source's own Notice_type formatting usage."
+}
