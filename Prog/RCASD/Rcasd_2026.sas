@@ -19,7 +19,7 @@
 %DCData_lib( MAR )
 
 %Rcasd_read_all_files( 
-  revisions=%str(Add notices for Jul 27 to Aug 21, 2026.),
+  revisions=%str(Add notices for Aug 24 to Oct 2, 2026.),
   year=2026,
   infilelist=
     Weekly TOPA Report December 29-January 2.txt
@@ -56,4 +56,10 @@
     Weekly TOPA Report August 3-7_edited.txt
     Weekly TOPA Report August 10-14.txt
     Weekly TOPA Report August 17-21.txt
+    Weekly TOPA Report August 24-28.txt
+    Weekly TOPA Report August 31-September 4.txt
+    Weekly TOPA Report September 7-11.txt
+    Weekly TOPA Report September 14-18.txt
+    Weekly TOPA Report September 21-25.txt
+    Weekly TOPA Report September 28-October 2.txt
 )
