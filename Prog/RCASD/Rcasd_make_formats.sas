@@ -59,6 +59,7 @@ proc format library=DHCD;
     "154" = 'Conversion - Not a Housing Accommodation Exemption Application - SFD Letter to Landlord'
     "155" = 'Conversion - Warranty Claim - Complaint (TOPA)'
     "156" = "Conversion - Warranty Security Bond - SFD Letter to Landlord"
+    "157" = "Conversion - Warranty security release request"
     "160" = "Letter of credit amendment - Letter of interest (TOPA)"
     "161" = "Not a housing accommodation exemption application - SFD notice of solicitation of offer & notice of intent to sell"
     "162" = "Not a Housing Accommodation Exemption Application - Raze Permit Application"
