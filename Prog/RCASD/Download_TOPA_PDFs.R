@@ -25,10 +25,12 @@ library(pdftools)
 
 # Update with labels of specific files to download
 file_list <- c(
-  "August 17-21, 2026",
-  "August 10-14, 2026",
-  "August 3-7, 2026",
-  "July 27-31, 2026"
+  "September 28-October 2, 2026",
+  "September 21-25, 2026",
+  "September 14-18, 2026",
+  "September 7-11, 2026",
+  "August 31-September 4, 2026",
+  "August 24-28, 2026"
 )
 
 output_root_folder <- "C:/DCData/Libraries/DHCD/Raw/RCASD"
@@ -71,7 +73,8 @@ download_pdf <- function(url) {
     urls_pdf <- page %>% 
       html_elements("a") %>% 
       html_attr("href") %>% 
-      str_subset("\\.pdf") 
+      str_subset("\\.pdf") %>%
+      paste0("https://dhcd.dc.gov",.)
     file_name <- basename(urls_pdf[1])
     dest_path <- str_replace_all( file.path(output_folder, file_name), "%20", " ")
     download.file(urls_pdf[1], destfile = dest_path, mode = "wb")
